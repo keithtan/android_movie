@@ -40,7 +40,7 @@ android {
     }
     buildFeatures {
         dataBinding true
-        viewBinding = true
+        viewBinding true
     }
 }
 
@@ -57,7 +57,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
 
-    implementation "androidx.recyclerview:recyclerview:1.2.0-alpha02"
+    implementation "androidx.recyclerview:recyclerview:1.2.0-alpha06"
 
     // Moshi
     implementation "com.squareup.moshi:moshi:1.9.2"

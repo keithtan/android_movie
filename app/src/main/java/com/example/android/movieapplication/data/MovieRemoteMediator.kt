@@ -7,57 +7,58 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.RemoteKeys
-import com.example.android.movieapplication.model.Movie
+import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.network.MoviesApiService
 import retrofit2.HttpException
 import java.io.IOException
-import java.io.InvalidObjectException
 
 private const val MOVIE_DB_STARTING_PAGE_INDEX = 1
 
 @OptIn(ExperimentalPagingApi::class)
 class MovieRemoteMediator(
     private val service: MoviesApiService,
-    private val movieDatabase: MovieDatabase
+    private val movieDatabase: MovieDatabase,
+    private val position: MovieSection
 ) : RemoteMediator<Int, Movie>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Movie>): MediatorResult {
+        println("loadType: " + loadType)
         val page = when (loadType) {
             LoadType.REFRESH -> {
-                println("refresh")
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                println(remoteKeys)
                 remoteKeys?.nextKey?.minus(1) ?: MOVIE_DB_STARTING_PAGE_INDEX
             }
             LoadType.PREPEND -> {
-                println("prepend")
                 val remoteKeys = getRemoteKeyForFirstItem(state)
-                if (remoteKeys == null) {
-                    // The LoadType is PREPEND so some data was loaded before,
-                    // so we should have been able to get remote keys
-                    // If the remoteKeys are null, then we're an invalid state and we have a bug
-                    throw InvalidObjectException("Remote key and the prevKey should not be null")
-                }
+//                if (remoteKeys == null) {
+//                    // The LoadType is PREPEND so some data was loaded before,
+//                    // so we should have been able to get remote keys
+//                    // If the remoteKeys are null, then we're an invalid state and we have a bug
+//                    throw InvalidObjectException("Remote key and the prevKey should not be null")
+//                }
                 // If the previous key is null, then we can't request more data
-                val prevKey = remoteKeys.prevKey
+                val prevKey = remoteKeys?.prevKey
                 if (prevKey == null) {
                     return MediatorResult.Success(endOfPaginationReached = true)
                 }
                 remoteKeys.prevKey
             }
             LoadType.APPEND -> {
-                println("append")
                 val remoteKeys = getRemoteKeyForLastItem(state)
-                if (remoteKeys?.nextKey == null) {
-                    throw InvalidObjectException("Remote key should not be null for $loadType")
-                }
-                remoteKeys.nextKey
+//                if (remoteKeys?.nextKey == null) {
+//                    throw InvalidObjectException("Remote key should not be null for $loadType")
+//                }
+                remoteKeys?.nextKey ?: 1
             }
         }
 
         try {
-            println("page:" + page)
-            val apiResponse = service.getMovies(page)
+            val apiResponse =
+                when (position) {
+                    MovieSection.LATEST -> service.getLatest(page)
+                    MovieSection.COMINGSOON -> service.getComingSoon(page)
+                    MovieSection.CUSTOM -> service.getCustomMovies(page)
+                }
 
             val movies = apiResponse.results
             val endOfPaginationReached = movies.isEmpty()
@@ -65,7 +66,7 @@ class MovieRemoteMediator(
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
                     movieDatabase.remoteKeysDao().clearRemoteKeys()
-                    movieDatabase.moviesDao().clearMovies()
+                    movieDatabase.moviesDao().clearMovies(position.ordinal)
                 }
                 val prevKey = if (page == MOVIE_DB_STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1
@@ -73,11 +74,11 @@ class MovieRemoteMediator(
                     RemoteKeys(movieId = it.id, prevKey = prevKey, nextKey = nextKey)
                 }
                 movieDatabase.remoteKeysDao().insertAll(keys)
+                movies.map {
+                    it.position = position.ordinal
+                }
                 movieDatabase.moviesDao().insertAll(movies)
-                println("size: " + movieDatabase.moviesDao().movies1().size)
             }
-
-            println(endOfPaginationReached)
 
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (exception: IOException) {
@@ -92,8 +93,6 @@ class MovieRemoteMediator(
     ): RemoteKeys? {
         // The paging library is trying to load data after the anchor position
         // Get the item closest to the anchor position
-        println("anchor: " + state.anchorPosition)
-        println(state.pages)
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { movieId ->
                 movieDatabase.remoteKeysDao().remoteKeysMovieId(movieId)

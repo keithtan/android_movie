@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.model.Movie
+import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.model.MovieDetail
 import com.example.android.movieapplication.network.MoviesApiService
 import kotlinx.coroutines.flow.Flow
@@ -19,20 +19,32 @@ class MovieDbRepository(
         private const val NETWORK_PAGE_SIZE = 20
     }
 
-    fun getMovieResultStream(): Flow<PagingData<Movie>> {
-        val pagingSourceFactory =  { database.moviesDao().movies() }
+    fun getLatestMoviesStream(): Flow<PagingData<Movie>> {
+        return getMoviesStream(MovieSection.LATEST)
+    }
+
+    fun getComingSoonMoviesStream(): Flow<PagingData<Movie>> {
+        return getMoviesStream(MovieSection.COMINGSOON)
+    }
+
+    fun getCustomMoviesStream(): Flow<PagingData<Movie>> {
+        return getMoviesStream(MovieSection.CUSTOM)
+    }
+
+    private fun getMoviesStream(section: MovieSection): Flow<PagingData<Movie>> {
+        val pagingSourceFactory =  { database.moviesDao().movies(section.ordinal) }
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = true,
-                initialLoadSize = 80
+                initialLoadSize = 20
             ),
             remoteMediator = MovieRemoteMediator(
                 service,
-                database
+                database,
+                section
             ),
             pagingSourceFactory = pagingSourceFactory
-//            pagingSourceFactory = { MoviePagingSource(service) }
         ).flow
     }
 
@@ -40,4 +52,10 @@ class MovieDbRepository(
         emit(service.getMovieDetails(movieId))
     }
 
+}
+
+enum class MovieSection(val position: Int) {
+    LATEST(0),
+    COMINGSOON(1),
+    CUSTOM(2)
 }

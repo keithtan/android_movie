@@ -6,10 +6,10 @@
     <data>
         <variable
             name="movie"
-            type="com.example.android.movieapplication.model.Movie" />
+            type="com.example.android.movieapplication.db.Movie" />
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -22,7 +22,9 @@
                 android:layout_width="100dp"
                 android:layout_height="150dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
                 app:imageUrl="@{movie.posterPath}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/title"
                 tools:srcCompat="@tools:sample/avatars" />
@@ -78,6 +80,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

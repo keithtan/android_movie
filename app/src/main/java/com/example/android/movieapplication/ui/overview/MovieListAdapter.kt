@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.overview
+package com.example.android.movieapplication.ui.overview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.movieapplication.databinding.GridViewItemBinding
-import com.example.android.movieapplication.model.Movie
+import com.example.android.movieapplication.db.Movie
 
 class MovieListAdapter(private val onClickListener: OnClickListener)
     : PagingDataAdapter<Movie, MovieListAdapter.MovieViewHolder>(DiffCallback) {

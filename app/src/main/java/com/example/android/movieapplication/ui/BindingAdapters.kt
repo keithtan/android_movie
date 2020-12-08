@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.overview
+package com.example.android.movieapplication.ui
 
 import android.widget.ImageView
 import androidx.core.net.toUri

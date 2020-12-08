@@ -14,15 +14,31 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.text.SimpleDateFormat
+import java.util.*
 
 private const val BASE_URL = "https://api.themoviedb.org/3/"
 
+private val currentDate: String
+    get() = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
 interface MoviesApiService {
 
-    @GET("discover/movie")
+    @GET("discover/movie?sort_by=release_date.desc&vote_average.gte=5")
     suspend fun getLatest(
         @Query("page") page: Int,
-        @Query("sort_by") sortBy: String = "primary_release_date.desc"
+        @Query("release_date.lte") release_date: String = currentDate
+    ): MovieData
+
+    @GET("discover/movie?sort_by=release_date.asc")
+    suspend fun getComingSoon(
+        @Query("page") page: Int,
+        @Query("release_date.gte") release_date: String = currentDate
+    ): MovieData
+
+    @GET("discover/movie?sort_by=release_date.asc&release_date.gte=2019-11-01")
+    suspend fun getCustomMovies(
+        @Query("page") page: Int
     ): MovieData
 
     @GET("movie/now_playing")
@@ -39,6 +55,7 @@ class MovieDbInterceptor : Interceptor {
             .newBuilder()
             .addQueryParameter("api_key", BuildConfig.MOVIE_DB_API_KEY)
             .addQueryParameter("language", "en-US")
+            .addQueryParameter("region", "sg")
             .build()
         return chain.proceed(
             chain.request()

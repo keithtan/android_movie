@@ -1,6 +1,6 @@
 package com.example.android.movieapplication.network
 
-import com.example.android.movieapplication.model.Movie
+import com.example.android.movieapplication.db.Movie
 import com.squareup.moshi.Json
 
 data class MovieData(
