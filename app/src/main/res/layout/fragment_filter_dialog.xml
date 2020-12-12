@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -37,8 +38,10 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            app:layout_constraintVertical_bias="1.0">
 
             <EditText
                 android:id="@+id/date_from"
@@ -46,11 +49,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:autofillHints="Date"
                 android:ems="10"
+                android:hint="@string/date"
                 android:inputType="date"
                 android:text="@={viewModel.dateFrom}"
-                android:autofillHints="Date"
-                android:hint="@string/date"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,28 +61,42 @@
                 android:id="@+id/date_to"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:autofillHints="Date"
                 android:ems="10"
+                android:hint="@string/date"
                 android:inputType="date"
                 android:text="@={viewModel.dateTo}"
-                android:autofillHints="Date"
-                android:hint="@string/date"
-                app:layout_constraintBaseline_toBaselineOf="@+id/date_from"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/date_from" />
+                app:layout_constraintStart_toStartOf="@+id/date_from"
+                app:layout_constraintTop_toBottomOf="@+id/date_from" />
 
             <SeekBar
                 android:id="@+id/seekBar"
                 style="@style/Widget.AppCompat.SeekBar.Discrete"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:max="10"
                 android:progress="@={viewModel.voteAverage}"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/date_from" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/date_to"
+                app:layout_constraintTop_toBottomOf="@+id/date_to" />
 
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:genreChips="@{viewModel.genres}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/seekBar"
+                app:layout_constraintTop_toBottomOf="@+id/seekBar"
+                app:viewModel="@{viewModel}">
+
+            </com.google.android.material.chip.ChipGroup>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

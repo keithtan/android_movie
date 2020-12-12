@@ -23,7 +23,6 @@ class MovieDetailViewModel(
                 emit(null)
             }
             .collect { value ->
-                println(value)
                 emit(value)
             }
     }

@@ -5,9 +5,9 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.RemoteKeys
-import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.network.MoviesApiService
 import retrofit2.HttpException
 import java.io.IOException
@@ -53,11 +53,29 @@ class MovieRemoteMediator(
         }
 
         try {
+            val filter = movieDatabase.withTransaction {
+                movieDatabase.filterDao().filter()
+            }
+            val genres = movieDatabase.withTransaction {
+                movieDatabase.genresDao().genres()
+            }
+            val genreFilter = genres
+                .filter {
+                    it.checked
+                }.joinToString("%2C") {
+                    it.id.toString()
+                }
             val apiResponse =
                 when (position) {
                     MovieSection.LATEST -> service.getLatest(page)
                     MovieSection.COMINGSOON -> service.getComingSoon(page)
-                    MovieSection.CUSTOM -> service.getCustomMovies(page)
+                    MovieSection.CUSTOM -> service.getCustomMovies(
+                        page,
+                        filter?.dateFrom,
+                        filter?.dateTo,
+                        filter?.voteAverage,
+                        genreFilter
+                    )
                 }
 
             val movies = apiResponse.results

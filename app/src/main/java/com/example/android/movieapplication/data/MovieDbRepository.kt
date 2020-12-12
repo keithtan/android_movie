@@ -1,8 +1,11 @@
 package com.example.android.movieapplication.data
 
+import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.example.android.movieapplication.db.Filter
+import com.example.android.movieapplication.db.Genre
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.model.MovieDetail
@@ -50,6 +53,41 @@ class MovieDbRepository(
 
     fun getMovieDetailsStream(movieId: Long): Flow<MovieDetail> = flow {
         emit(service.getMovieDetails(movieId))
+    }
+
+    suspend fun saveFilter(filter: Filter) {
+        database.filterDao().insert(filter)
+    }
+
+    fun getFilter(): LiveData<Filter?> {
+        return database.filterDao().liveFilter()
+    }
+
+    suspend fun getNetworkGenres(): List<Genre> {
+        return service.getGenres().genres.map {
+            Genre(
+                it.id,
+                it.name,
+                false
+            )
+        }
+    }
+
+    fun getLiveDbGenres(): LiveData<List<Genre>> {
+        println("result: " + database.genresDao().liveGenres().value)
+        return database.genresDao().liveGenres()
+    }
+
+    suspend fun getDbGenres(): List<Genre> {
+        return database.genresDao().genres()
+    }
+
+    suspend fun saveGenres(genres: List<Genre>) {
+        database.genresDao().insertAll(genres)
+    }
+
+    suspend fun updateGenre(genre: Genre) {
+        database.genresDao().updateGenre(genre)
     }
 
 }

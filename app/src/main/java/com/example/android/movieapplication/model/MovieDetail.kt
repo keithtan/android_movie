@@ -14,11 +14,6 @@ data class MovieDetail(
     @Json(name = "vote_average") val voteAverage: Double
 ) {
 
-    data class Genre(
-        val id: Int,
-        val name: String
-    )
-
     data class Language(
         val name: String
     )

@@ -36,9 +36,13 @@ interface MoviesApiService {
         @Query("release_date.gte") release_date: String = currentDate
     ): MovieData
 
-    @GET("discover/movie?sort_by=release_date.asc&release_date.gte=2019-11-01")
+    @GET("discover/movie")
     suspend fun getCustomMovies(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("release_date.gte") releaseDateGte: String?,
+        @Query("release_date.lte") releaseDateLte: String?,
+        @Query("vote_average.gte") voteAverage: Int?,
+        @Query(value = "with_genres", encoded = false) genreFilter: String?
     ): MovieData
 
     @GET("movie/now_playing")
@@ -46,6 +50,9 @@ interface MoviesApiService {
 
     @GET("movie/{movieId}")
     suspend fun getMovieDetails(@Path("movieId") movieId: Long): MovieDetail
+
+    @GET("genre/movie/list")
+    suspend fun getGenres(): Genres
 }
 
 class MovieDbInterceptor : Interceptor {
@@ -57,10 +64,12 @@ class MovieDbInterceptor : Interceptor {
             .addQueryParameter("language", "en-US")
             .addQueryParameter("region", "sg")
             .build()
+        val urlStr = url.toString().replace("%252C", "%2C")
+        println(urlStr)
         return chain.proceed(
             chain.request()
                 .newBuilder()
-                .url(url)
+                .url(urlStr)
                 .build()
         )
     }

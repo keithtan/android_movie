@@ -1,12 +1,11 @@
 package com.example.android.movieapplication.ui.custommovies
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.android.movieapplication.data.MovieDbRepository
+import com.example.android.movieapplication.db.Filter
+import com.example.android.movieapplication.db.Genre
 import com.example.android.movieapplication.db.Movie
 import kotlinx.coroutines.flow.Flow
 
@@ -16,6 +15,10 @@ class CustomMoviesViewModel(private val repository: MovieDbRepository) : ViewMod
         return repository.getCustomMoviesStream()
             .cachedIn(viewModelScope)
     }
+
+    val filter = repository.getFilter()
+
+    val genres = repository.getLiveDbGenres()
 
     private val _navigateToSelectedMovie = MutableLiveData<Long>()
     val navigateToSelectedMovie: LiveData<Long>

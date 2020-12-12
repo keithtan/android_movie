@@ -24,6 +24,7 @@ class MovieDetailFragment : Fragment() {
 
         val movieId = MovieDetailFragmentArgs.fromBundle(requireArguments()).movieId
         val application = requireNotNull(activity).application
+        println(movieId)
 
         activity?.let {
             viewModelFactory = MovieDetailViewModelFactory(

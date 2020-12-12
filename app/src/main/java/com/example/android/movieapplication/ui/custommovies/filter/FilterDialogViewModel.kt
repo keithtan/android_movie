@@ -2,31 +2,62 @@ package com.example.android.movieapplication.ui.custommovies.filter
 
 import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.db.Filter
-import com.example.android.movieapplication.db.FilterDao
+import com.example.android.movieapplication.db.Genre
 import com.example.android.movieapplication.util.ObservableViewModel
 import kotlinx.coroutines.launch
 
-class FilterDialogViewModel(private val database: FilterDao) : ObservableViewModel() {
+class FilterDialogViewModel(private val repository: MovieDbRepository) : ObservableViewModel() {
 
     init {
-        getFilter()
+        viewModelScope.launch {
+            var genres = repository.getDbGenres()
+            println("db: " + genres)
+            if (genres.isEmpty()) {
+                genres = repository.getNetworkGenres()
+                println("network: " + genres)
+                repository.saveGenres(genres)
+            }
+            _genres.value = genres
+        }
+
     }
 
     fun saveFilter(filter: Filter) {
         viewModelScope.launch {
-            database.insert(filter)
+            repository.saveFilter(filter)
         }
     }
 
-    private fun getFilter() {
+    val filter: LiveData<Filter?> = repository.getFilter()
+
+    fun saveGenres(genres: List<Genre>) {
         viewModelScope.launch {
-            val data = database.filter()
-            dateFrom = data?.dateFrom ?: ""
-            dateTo = data?.dateTo ?: ""
+            repository.saveGenres(genres)
         }
     }
+
+    fun updateGenre(genre: Genre) {
+        println("saved genre: " + genre)
+        _genres.value
+            ?.filter {
+                it.id == genre.id
+            }
+            ?.map {
+            it.checked = genre.checked
+        }
+    }
+
+    private val _genres = MutableLiveData<List<Genre>>()
+    val genres: LiveData<List<Genre>>
+        get() = _genres
+
+
 
     @get:Bindable
     var dateFrom: String = ""
@@ -48,5 +79,7 @@ class FilterDialogViewModel(private val database: FilterDao) : ObservableViewMod
             field = value
             notifyPropertyChanged(BR.voteAverage)
         }
+
+
 
 }

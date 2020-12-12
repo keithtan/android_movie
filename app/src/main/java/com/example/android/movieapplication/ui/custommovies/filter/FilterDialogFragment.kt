@@ -7,16 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.android.movieapplication.R
+import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentFilterDialogBinding
 import com.example.android.movieapplication.db.Filter
-import com.example.android.movieapplication.db.FilterDao
 import com.example.android.movieapplication.db.MovieDatabase
+import com.example.android.movieapplication.network.MoviesApi
 
 
 class FilterDialogFragment : DialogFragment() {
 
     private lateinit var viewModelFactory: FilterDialogViewModelFactory
-    private lateinit var database: FilterDao
 
     private val viewModel: FilterDialogViewModel by viewModels { viewModelFactory }
 
@@ -27,9 +27,11 @@ class FilterDialogFragment : DialogFragment() {
     ): View {
 
         activity?.let {
-            database = MovieDatabase.getInstance(it).filterDao()
             viewModelFactory = FilterDialogViewModelFactory(
-                database
+                MovieDbRepository(
+                    MoviesApi.retrofitService,
+                    MovieDatabase.getInstance(it)
+                )
             )
         }
 
@@ -51,6 +53,10 @@ class FilterDialogFragment : DialogFragment() {
                         viewModel.voteAverage
                     )
                     viewModel.saveFilter(filter)
+
+                    viewModel.genres.value?.let {
+                        viewModel.saveGenres(it)
+                    }
                     dismiss()
                     true
                 }
@@ -61,6 +67,13 @@ class FilterDialogFragment : DialogFragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        viewModel.filter.observe(this) {
+            it?.let {
+                viewModel.dateFrom = it.dateFrom
+                viewModel.dateTo = it.dateTo
+                viewModel.voteAverage = it.voteAverage
+            }
+        }
 
         return binding.root
     }

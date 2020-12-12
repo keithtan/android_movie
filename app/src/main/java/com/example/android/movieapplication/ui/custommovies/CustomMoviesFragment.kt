@@ -1,12 +1,10 @@
 package com.example.android.movieapplication.ui.custommovies
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -70,6 +68,20 @@ class CustomMoviesFragment : Fragment() {
                         ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(it)
                     )
                 viewModel.displayMovieDetailsComplete()
+            }
+        }
+
+        viewModel.filter.observe(viewLifecycleOwner) {
+            it?.let {
+                println("refresh")
+                adapter.refresh()
+            }
+        }
+
+        viewModel.genres.observe(viewLifecycleOwner) {
+            it?.let {
+                println("refresh genres")
+                adapter.refresh()
             }
         }
 
