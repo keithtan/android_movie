@@ -1,18 +1,26 @@
 package com.example.android.movieapplication.ui.comingsoon
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.ComingSoonFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
@@ -29,6 +37,7 @@ class ComingSoonFragment : Fragment() {
     private lateinit var binding: ComingSoonFragmentBinding
     private lateinit var viewModelFactory: ComingSoonViewModelFactory
     private lateinit var adapter: MovieListAdapter
+    private lateinit var extras: Navigator.Extras
 
     private val viewModel: ComingSoonViewModel by viewModels { viewModelFactory }
 
@@ -52,8 +61,8 @@ class ComingSoonFragment : Fragment() {
         val decoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
         binding.movieList.addItemDecoration(decoration)
 
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener {
-            viewModel.displayMovieDetails(it)
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+            viewModel.displayMovieDetails(movieId)
         })
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
@@ -64,10 +73,7 @@ class ComingSoonFragment : Fragment() {
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
             it?.let {
-                this.findNavController()
-                    .navigate(
-                        ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(it)
-                    )
+
                 viewModel.displayMovieDetailsComplete()
             }
         }
@@ -113,6 +119,28 @@ class ComingSoonFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+            viewModel.displayMovieDetails(movieId)
+            extras = FragmentNavigatorExtras(
+                imageView to "$movieId"
+            )
+            this.findNavController()
+                .navigate(
+                    ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
+                        movieId
+                    ),
+                    extras
+                )
+        })
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
+        initAdapter()
+        search()
+
     }
 
 }

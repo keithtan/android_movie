@@ -1,16 +1,24 @@
 package com.example.android.movieapplication.ui.custommovies
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.CustomMoviesFragmentBinding
@@ -28,6 +36,7 @@ class CustomMoviesFragment : Fragment() {
     private lateinit var binding: CustomMoviesFragmentBinding
     private lateinit var viewModelFactory: CustomMoviesViewModelFactory
     private lateinit var adapter: MovieListAdapter
+    private lateinit var extras: Navigator.Extras
 
     private val viewModel: CustomMoviesViewModel by viewModels { viewModelFactory }
 
@@ -51,8 +60,8 @@ class CustomMoviesFragment : Fragment() {
         val decoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
         binding.movieList.addItemDecoration(decoration)
 
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener {
-            viewModel.displayMovieDetails(it)
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+            viewModel.displayMovieDetails(movieId)
         })
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
@@ -63,10 +72,7 @@ class CustomMoviesFragment : Fragment() {
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
             it?.let {
-                this.findNavController()
-                    .navigate(
-                        ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(it)
-                    )
+
                 viewModel.displayMovieDetailsComplete()
             }
         }
@@ -128,6 +134,28 @@ class CustomMoviesFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+            viewModel.displayMovieDetails(movieId)
+            extras = FragmentNavigatorExtras(
+                imageView to "$movieId"
+            )
+            this.findNavController()
+                .navigate(
+                    ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
+                        movieId
+                    ),
+                    extras
+                )
+        })
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
+        initAdapter()
+        search()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

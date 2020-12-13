@@ -65,7 +65,6 @@ class MovieDbInterceptor : Interceptor {
             .addQueryParameter("region", "sg")
             .build()
         val urlStr = url.toString().replace("%252C", "%2C")
-        println(urlStr)
         return chain.proceed(
             chain.request()
                 .newBuilder()

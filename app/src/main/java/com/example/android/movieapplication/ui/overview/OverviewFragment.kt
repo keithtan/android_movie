@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -27,6 +30,7 @@ class OverviewFragment : Fragment() {
     private lateinit var binding: OverviewFragmentBinding
     private lateinit var viewModelFactory: OverviewViewModelFactory
     private lateinit var adapter: MovieListAdapter
+    private lateinit var extras: Navigator.Extras
 
     private val viewModel: OverviewViewModel by viewModels { viewModelFactory }
 
@@ -50,24 +54,11 @@ class OverviewFragment : Fragment() {
         val decoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
         binding.movieList.addItemDecoration(decoration)
 
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener {
-            viewModel.displayMovieDetails(it)
-        })
-        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-
-        initAdapter()
-        search()
-
         binding.retryButton.setOnClickListener { adapter.retry() }
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
             it?.let {
-                this.findNavController()
-                    .navigate(
-                        ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
-                            it
-                        )
-                    )
+
                 viewModel.displayMovieDetailsComplete()
             }
         }
@@ -113,6 +104,28 @@ class OverviewFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+            viewModel.displayMovieDetails(movieId)
+            extras = FragmentNavigatorExtras(
+                imageView to "$movieId"
+            )
+            this.findNavController()
+                .navigate(
+                    ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
+                        movieId
+                    ),
+                    extras
+                )
+        })
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
+        initAdapter()
+        search()
+
     }
 
 }

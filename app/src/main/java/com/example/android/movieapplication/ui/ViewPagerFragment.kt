@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import com.example.android.movieapplication.databinding.FragmentViewPagerBinding
 import com.example.android.movieapplication.ui.comingsoon.ComingSoonFragment
 import com.example.android.movieapplication.ui.custommovies.CustomMoviesFragment
@@ -45,5 +46,13 @@ class ViewPagerFragment : Fragment() {
         }.attach()
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        (view.parent as? ViewGroup)?.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
     }
 }

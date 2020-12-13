@@ -54,10 +54,10 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
 
-    implementation "androidx.recyclerview:recyclerview:1.2.0-alpha06"
+    implementation "androidx.recyclerview:recyclerview:1.2.0-beta01"
 
     // Moshi
     implementation "com.squareup.moshi:moshi:1.9.2"
@@ -71,10 +71,10 @@ dependencies {
     implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
 
     // Glide
-    implementation "com.github.bumptech.glide:glide:4.8.0"
+    implementation "com.github.bumptech.glide:glide:4.11.0"
 
     // Paging
-    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha09"
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha10"
 
     // Room
     implementation "androidx.room:room-runtime:2.3.0-alpha03"
