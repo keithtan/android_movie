@@ -3,12 +3,14 @@ package com.example.android.movieapplication.moviedetail
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import androidx.lifecycle.map
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.model.MovieDetail
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MovieDetailViewModel(
     movieId: Long,
@@ -16,7 +18,6 @@ class MovieDetailViewModel(
     app: Application
 ) : AndroidViewModel(app) {
 
-    private val _movieDetail = MutableLiveData<MovieDetail>()
     val movieDetail: LiveData<MovieDetail?> = liveData {
         repository.getMovieDetailsStream(movieId)
             .catch { _ ->
@@ -25,6 +26,26 @@ class MovieDetailViewModel(
             .collect { value ->
                 emit(value)
             }
+    }
+
+    val release = movieDetail.map {
+        val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            .parse(it?.releaseDate ?: "")
+        val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        parser?.let { parser1 ->
+            formatter.format(parser1)
+        }
+
+    }
+
+    val ratingStars = movieDetail.map {
+        it?.voteAverage?.div(2)?.toFloat()
+    }
+
+    val runtime = movieDetail.map {
+        val hours = it?.runtime?.div(60)
+        val minutes = it?.runtime?.rem(60)
+        String.format("%dh %02dm", hours, minutes)
     }
 
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.transition.TransitionInflater
@@ -46,6 +47,19 @@ class MovieDetailFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
+
+
+
+        binding.toolbar.setNavigationOnClickListener {
+            (activity as AppCompatActivity).onBackPressed()
+        }
+
+        applySharedElementTransition()
+
+        return binding.root
+    }
+
+    private fun applySharedElementTransition() {
         postponeEnterTransition()
 
         binding.imageRequestListener = object : RequestListener<Drawable> {
@@ -69,10 +83,7 @@ class MovieDetailFragment : Fragment() {
                 startPostponedEnterTransition()
                 return false
             }
-
         }
-
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,6 +91,15 @@ class MovieDetailFragment : Fragment() {
         sharedElementEnterTransition = TransitionInflater
             .from(context)
             .inflateTransition(android.R.transition.move)
+    }
 
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (activity as AppCompatActivity).supportActionBar?.show()
     }
 }

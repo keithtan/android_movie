@@ -24,7 +24,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="16dp"
                 android:transitionName="@{String.valueOf(movie.id)}"
-                app:imageUrl="@{movie.posterPath}"
+                app:posterUrl="@{movie.posterPath}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/title"
