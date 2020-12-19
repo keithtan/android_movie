@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -7,6 +7,9 @@
         <variable
             name="viewModel"
             type="com.example.android.movieapplication.ui.custommovies.filter.FilterDialogViewModel" />
+        <variable
+            name="checkedChangeListener"
+            type="android.widget.CompoundButton.OnCheckedChangeListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -90,11 +93,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:genreChips="@{viewModel.genres}"
+                app:checkedChangedListener="@{checkedChangeListener}"
+                app:filterGenres="@{viewModel.genres}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/seekBar"
-                app:layout_constraintTop_toBottomOf="@+id/seekBar"
-                app:viewModel="@{viewModel}">
+                app:layout_constraintTop_toBottomOf="@+id/seekBar">
 
             </com.google.android.material.chip.ChipGroup>
 

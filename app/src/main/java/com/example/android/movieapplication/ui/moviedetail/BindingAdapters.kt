@@ -24,7 +24,6 @@ fun bindChips(chipGroup: ChipGroup, genres: List<Genre>? = emptyList()) {
         chip.text = genre.name
         chip.isEnabled = false
         chip.setTextColor(Color.BLACK)
-//        chip.setChipBackgroundColorResource(R.color.material_on_primary_disabled)
         val chipDrawable = ChipDrawable.createFromAttributes(
             chipGroup.context,
             null,

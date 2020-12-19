@@ -4,7 +4,6 @@ import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.db.Filter
@@ -42,15 +41,10 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
         }
     }
 
-    fun updateGenre(genre: Genre) {
-        println("saved genre: " + genre)
+    fun updateGenre(id: Int, isChecked: Boolean) {
         _genres.value
-            ?.filter {
-                it.id == genre.id
-            }
-            ?.map {
-                it.checked = genre.checked
-            }
+            ?.find { it.id == id }
+            ?.checked = isChecked
     }
 
     private val _genres = MutableLiveData<List<Genre>>()
