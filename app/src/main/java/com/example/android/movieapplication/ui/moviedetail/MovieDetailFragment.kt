@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.moviedetail
+package com.example.android.movieapplication.ui.moviedetail
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -46,9 +46,6 @@ class MovieDetailFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
-
-
-
 
         binding.toolbar.setNavigationOnClickListener {
             (activity as AppCompatActivity).onBackPressed()

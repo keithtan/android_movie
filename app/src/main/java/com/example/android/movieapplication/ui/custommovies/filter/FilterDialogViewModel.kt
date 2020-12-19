@@ -49,8 +49,8 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
                 it.id == genre.id
             }
             ?.map {
-            it.checked = genre.checked
-        }
+                it.checked = genre.checked
+            }
     }
 
     private val _genres = MutableLiveData<List<Genre>>()

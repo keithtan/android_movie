@@ -1,5 +1,6 @@
-package com.example.android.movieapplication.moviedetail
+package com.example.android.movieapplication.ui.moviedetail
 
+import android.graphics.Color
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.android.movieapplication.R
@@ -21,8 +22,9 @@ fun bindChips(chipGroup: ChipGroup, genres: List<Genre>? = emptyList()) {
         val chip = Chip(chipGroup.context)
         chip.id = genre.id
         chip.text = genre.name
-        chip.isSelected = true
-        chip.setChipBackgroundColorResource(R.color.material_on_primary_disabled)
+        chip.isEnabled = false
+        chip.setTextColor(Color.BLACK)
+//        chip.setChipBackgroundColorResource(R.color.material_on_primary_disabled)
         val chipDrawable = ChipDrawable.createFromAttributes(
             chipGroup.context,
             null,

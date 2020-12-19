@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.moviedetail
+package com.example.android.movieapplication.ui.moviedetail
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

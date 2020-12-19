@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.android.movieapplication.moviedetail.MovieDetailViewModel" />
+            type="com.example.android.movieapplication.ui.moviedetail.MovieDetailViewModel" />
 
         <variable
             name="imageRequestListener"
