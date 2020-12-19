@@ -1,9 +1,12 @@
 package com.example.android.movieapplication.ui.custommovies.filter
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -14,13 +17,17 @@ import com.example.android.movieapplication.db.Filter
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.google.android.material.chip.Chip
+import java.util.*
 
 
 class FilterDialogFragment : DialogFragment() {
 
     private lateinit var viewModelFactory: FilterDialogViewModelFactory
+    private lateinit var binding: FragmentFilterDialogBinding
 
     private val viewModel: FilterDialogViewModel by viewModels { viewModelFactory }
+
+    private val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +44,7 @@ class FilterDialogFragment : DialogFragment() {
             )
         }
 
-        val binding = FragmentFilterDialogBinding.inflate(layoutInflater, container, false)
+        binding = FragmentFilterDialogBinding.inflate(layoutInflater, container, false)
 
         val toolbar = binding.toolbar
         toolbar.setNavigationOnClickListener {
@@ -50,8 +57,8 @@ class FilterDialogFragment : DialogFragment() {
             when (item.itemId) {
                 R.id.action_save -> {
                     val filter = Filter(
-                        viewModel.dateFrom,
-                        viewModel.dateTo,
+                        "${viewModel.dateFrom}-01-01",
+                        "${viewModel.dateTo}-12-31",
                         viewModel.voteAverage
                     )
                     viewModel.saveFilter(filter)
@@ -71,11 +78,48 @@ class FilterDialogFragment : DialogFragment() {
 
         viewModel.filter.observe(this) {
             it?.let {
-                viewModel.dateFrom = it.dateFrom
-                viewModel.dateTo = it.dateTo
+                viewModel.dateFrom = it.dateFrom.substring(0, 4)
+                viewModel.dateTo = it.dateTo.substring(0, 4)
                 viewModel.voteAverage = it.voteAverage
+
+                updateYearFromAdapter()
+                updateYearToAdapter()
             }
         }
+
+
+        val yearsFrom = (1874..currentYear).toList()
+        val adapterFrom = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
+        binding.autoCompleteTextViewFrom.setAdapter(adapterFrom)
+
+        binding.autoCompleteTextViewFrom.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(str: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
+                viewModel.dateFrom = text.toString()
+                updateYearFromAdapter()
+            }
+
+            override fun afterTextChanged(str: Editable?) {}
+
+        })
+
+        val yearsTo = (1874..currentYear).toList()
+        val adapterTo = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsTo)
+        binding.autoCompleteTextViewTo.setAdapter(adapterTo)
+
+        binding.autoCompleteTextViewTo.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(str: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
+                viewModel.dateTo = text.toString()
+                updateYearToAdapter()
+            }
+
+            override fun afterTextChanged(str: Editable?) {}
+
+        })
+
 
         binding.checkedChangeListener =
             CompoundButton.OnCheckedChangeListener { chip, isChecked ->
@@ -84,6 +128,24 @@ class FilterDialogFragment : DialogFragment() {
             }
 
         return binding.root
+    }
+
+    private fun updateYearToAdapter() {
+        if (viewModel.dateTo.isNotBlank()) {
+            val dateTo = viewModel.dateTo.toInt()
+            val yearsFrom = (1874..dateTo).toList()
+            val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
+            binding.autoCompleteTextViewFrom.setAdapter(adapter)
+        }
+    }
+
+    private fun updateYearFromAdapter() {
+        if (viewModel.dateFrom.isNotBlank()) {
+            val dateFrom = viewModel.dateFrom.toInt()
+            val yearsTo = (dateFrom..currentYear).toList()
+            val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsTo)
+            binding.autoCompleteTextViewTo.setAdapter(adapter)
+        }
     }
 
     override fun onStart() {

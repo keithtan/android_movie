@@ -14,4 +14,6 @@
     <string name="runtime_label">Runtime:</string>
     <string name="release_label">Release:</string>
     <string name="overview_label">Plot Summary</string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
 </resources>

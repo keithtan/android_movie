@@ -56,6 +56,7 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
     @get:Bindable
     var dateFrom: String = ""
         set(value) {
+            println(value)
             field = value
             notifyPropertyChanged(BR.dateFrom)
         }
