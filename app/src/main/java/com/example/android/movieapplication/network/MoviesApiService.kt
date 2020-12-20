@@ -41,7 +41,7 @@ interface MoviesApiService {
         @Query("page") page: Int,
         @Query("release_date.gte") releaseDateGte: String?,
         @Query("release_date.lte") releaseDateLte: String?,
-        @Query("vote_average.gte") voteAverage: Int?,
+        @Query("vote_average.gte") voteAverage: Float?,
         @Query(value = "with_genres", encoded = false) genreFilter: String?
     ): MovieData
 
@@ -65,6 +65,7 @@ class MovieDbInterceptor : Interceptor {
             .addQueryParameter("region", "sg")
             .build()
         val urlStr = url.toString().replace("%252C", "%2C")
+        println(urlStr)
         return chain.proceed(
             chain.request()
                 .newBuilder()

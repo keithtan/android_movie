@@ -69,7 +69,7 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
         }
 
     @get:Bindable
-    var voteAverage: Int = 5
+    var voteAverage: Float = 5.0F
         set(value) {
             field = value
             notifyPropertyChanged(BR.voteAverage)

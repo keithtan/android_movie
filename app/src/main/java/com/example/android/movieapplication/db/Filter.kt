@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class Filter(
     val dateFrom: String,
     val dateTo: String,
-    val voteAverage: Int,
+    val voteAverage: Float,
     @PrimaryKey val filterId: Long = 0L
 )

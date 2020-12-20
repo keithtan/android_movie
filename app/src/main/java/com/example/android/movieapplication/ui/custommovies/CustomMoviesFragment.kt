@@ -75,7 +75,7 @@ class CustomMoviesFragment : Fragment() {
         viewModel.filter.observe(viewLifecycleOwner) {
             it?.let {
                 println("refresh")
-                adapter.refresh()
+                search()
             }
         }
 

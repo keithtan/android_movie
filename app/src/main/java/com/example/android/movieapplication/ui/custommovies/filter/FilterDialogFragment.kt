@@ -56,9 +56,15 @@ class FilterDialogFragment : DialogFragment() {
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_save -> {
+                    val dateFrom =
+                        if (viewModel.dateFrom.isNotBlank()) "${viewModel.dateFrom}-01-01"
+                        else ""
+                    val dateTo =
+                        if (viewModel.dateTo.isNotBlank()) "${viewModel.dateTo}-12-31"
+                        else ""
                     val filter = Filter(
-                        "${viewModel.dateFrom}-01-01",
-                        "${viewModel.dateTo}-12-31",
+                        dateFrom,
+                        dateTo,
                         viewModel.voteAverage
                     )
                     viewModel.saveFilter(filter)
@@ -78,8 +84,12 @@ class FilterDialogFragment : DialogFragment() {
 
         viewModel.filter.observe(this) {
             it?.let {
-                viewModel.dateFrom = it.dateFrom.substring(0, 4)
-                viewModel.dateTo = it.dateTo.substring(0, 4)
+                viewModel.dateFrom =
+                    if (it.dateFrom.isNotBlank()) it.dateFrom.substring(0, 4)
+                    else ""
+                viewModel.dateTo =
+                    if (it.dateTo.isNotBlank()) it.dateTo.substring(0, 4)
+                    else ""
                 viewModel.voteAverage = it.voteAverage
 
                 updateYearFromAdapter()
@@ -120,6 +130,11 @@ class FilterDialogFragment : DialogFragment() {
 
         })
 
+        binding.slider.addOnChangeListener { slider, value, fromUser ->
+            println(value)
+            viewModel.voteAverage = value
+        }
+
 
         binding.checkedChangeListener =
             CompoundButton.OnCheckedChangeListener { chip, isChecked ->
@@ -131,8 +146,10 @@ class FilterDialogFragment : DialogFragment() {
     }
 
     private fun updateYearToAdapter() {
-        if (viewModel.dateTo.isNotBlank()) {
-            val dateTo = viewModel.dateTo.toInt()
+        if (viewModel.dateTo.length >= 4) {
+            println(viewModel.dateTo)
+            val dateTo = viewModel.dateTo.substring(0, 4).toInt()
+//                viewModel.dateTo.substring(0, 4).toInt()
             val yearsFrom = (1874..dateTo).toList()
             val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
             binding.autoCompleteTextViewFrom.setAdapter(adapter)
@@ -140,8 +157,9 @@ class FilterDialogFragment : DialogFragment() {
     }
 
     private fun updateYearFromAdapter() {
-        if (viewModel.dateFrom.isNotBlank()) {
-            val dateFrom = viewModel.dateFrom.toInt()
+        if (viewModel.dateFrom.length >= 4) {
+            println(viewModel.dateFrom)
+            val dateFrom = viewModel.dateFrom.substring(0, 4).toInt()
             val yearsTo = (dateFrom..currentYear).toList()
             val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsTo)
             binding.autoCompleteTextViewTo.setAdapter(adapter)

@@ -86,10 +86,6 @@ class MovieDbRepository(
         database.genresDao().insertAll(genres)
     }
 
-    suspend fun updateGenre(genre: Genre) {
-        database.genresDao().updateGenre(genre)
-    }
-
 }
 
 enum class MovieSection(val position: Int) {
