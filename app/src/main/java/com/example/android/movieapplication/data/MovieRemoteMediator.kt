@@ -59,9 +59,15 @@ class MovieRemoteMediator(
             val genres = movieDatabase.withTransaction {
                 movieDatabase.genresDao().genres()
             }
-            val genreFilter = genres
+            val withGenreFilter = genres
                 .filter {
-                    it.checked
+                    it.included
+                }.joinToString("%2C") {
+                    it.id.toString()
+                }
+            val withoutGenreFilter = genres
+                .filter {
+                    it.excluded
                 }.joinToString("%2C") {
                     it.id.toString()
                 }
@@ -74,7 +80,8 @@ class MovieRemoteMediator(
                         filter?.dateFrom,
                         filter?.dateTo,
                         filter?.voteAverage,
-                        genreFilter
+                        withGenreFilter,
+                        withoutGenreFilter
                     )
                 }
 

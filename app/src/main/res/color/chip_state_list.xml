@@ -4,5 +4,8 @@
         android:color="@color/deep_orange_a200"
         android:state_checked="true" />
     <item
+        android:color="@color/black_500"
+        android:state_selected="true" />
+    <item
         android:color="@color/black" />
 </selector>

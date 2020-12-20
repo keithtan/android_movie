@@ -23,12 +23,12 @@
         <item name="colorPrimary">@color/black_700</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/white</item>
-        <item name="actionMenuTextColor">@color/white</item>
+        <item name="actionMenuTextColor">@color/black_400</item>
     </style>
 
     <style name="AppTheme.ChipGroupFilter" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="checkedIconTint">@color/deep_orange_a200</item>
-        <item name="android:textColor">@color/chip_text</item>
+        <item name="android:textColor">@color/chip_state_list</item>
     </style>
 
     <style name="AppTheme_Slide">

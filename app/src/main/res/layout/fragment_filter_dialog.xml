@@ -10,6 +10,9 @@
         <variable
             name="checkedChangeListener"
             type="android.widget.CompoundButton.OnCheckedChangeListener" />
+        <variable
+            name="longClickListener"
+            type="android.view.View.OnLongClickListener" />
     </data>
 
     <LinearLayout
@@ -29,6 +32,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:paddingStart="6dp"
                 android:paddingEnd="16dp"
+                app:titleTextColor="@color/black_400"
                 app:contentInsetStartWithNavigation="0dp"
                 app:navigationIcon="@drawable/ic_action_close" />
 
@@ -59,10 +63,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:hint="@string/from"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toBottomOf="@+id/textView3">
 
                     <AutoCompleteTextView
                         android:id="@+id/autoCompleteTextViewFrom"
@@ -91,22 +95,56 @@
                         android:text="@{viewModel.dateTo}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/slider"
+                <TextView
+                    android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
+                    android:text="Genres:"
+                    android:textSize="24sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/slider" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Release Date:"
+                    android:textSize="24sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Rating:"
+                    android:textSize="24sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/menu_date_from" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
+                    android:paddingLeft="30dp"
                     android:stepSize="0.1"
                     android:value="@{viewModel.voteAverage}"
                     android:valueFrom="0.0"
                     android:valueTo="10.0"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.868"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/menu_date_from"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4"
                     app:thumbColor="@color/deep_orange_a400"
-                    app:trackColorActive="@color/black_500"
+                    app:trackColorActive="@color/deep_orange_a100"
                     app:trackColorInactive="@color/deep_orange_a200" />
 
                 <com.google.android.material.chip.ChipGroup
@@ -114,13 +152,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
-                    app:checkedChangedListener="@{checkedChangeListener}"
+                    app:checkedChangeListener="@{checkedChangeListener}"
                     app:filterGenres="@{viewModel.genres}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/slider"
-                    app:layout_constraintTop_toBottomOf="@+id/slider">
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView2"
+                    app:longClickListener="@{longClickListener}">
 
                 </com.google.android.material.chip.ChipGroup>
 

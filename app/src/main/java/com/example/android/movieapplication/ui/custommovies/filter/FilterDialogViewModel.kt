@@ -41,10 +41,22 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
         }
     }
 
-    fun updateGenre(id: Int, isChecked: Boolean) {
+    fun updateIncludedGenres(id: Int, isChecked: Boolean) {
         _genres.value
             ?.find { it.id == id }
-            ?.checked = isChecked
+            ?.run {
+                included = isChecked
+                excluded = false
+            }
+    }
+
+    fun updateExcludedGenres(id: Int, isSelected: Boolean) {
+        _genres.value
+            ?.find { it.id == id }
+            ?.run {
+                excluded = isSelected
+                included = false
+            }
     }
 
     private val _genres = MutableLiveData<List<Genre>>()
@@ -56,7 +68,6 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
     @get:Bindable
     var dateFrom: String = ""
         set(value) {
-            println(value)
             field = value
             notifyPropertyChanged(BR.dateFrom)
         }

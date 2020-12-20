@@ -2,6 +2,7 @@ package com.example.android.movieapplication.ui
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.core.net.toUri
@@ -40,16 +41,22 @@ fun bindBackdrop(imgView: ImageView, imgUrl: String?, listener: RequestListener<
     }
 }
 
-@BindingAdapter(value = ["filterGenres", "checkedChangedListener"])
-fun ChipGroup.bindChips(genres: List<Genre>? = emptyList(), listener: CompoundButton.OnCheckedChangeListener) {
+@BindingAdapter(value = ["filterGenres", "checkedChangeListener", "longClickListener"])
+fun ChipGroup.bindChips(
+    genres: List<Genre>? = emptyList(),
+    checkedChangeListener: CompoundButton.OnCheckedChangeListener,
+    longClickListener: View.OnLongClickListener
+) {
     genres?.map {genre ->
         val chip = (LayoutInflater.from(context).inflate(R.layout.chip, null) as Chip)
             .apply {
                 id = genre.id
                 text = genre.name
-                isChecked = genre.checked
-                isCheckedIconVisible = genre.checked
-                setOnCheckedChangeListener(listener)
+                isChecked = genre.included
+                isCheckedIconVisible = genre.included
+                isSelected = genre.excluded
+                setOnCheckedChangeListener(checkedChangeListener)
+                setOnLongClickListener(longClickListener)
             }
         addView(chip)
     }

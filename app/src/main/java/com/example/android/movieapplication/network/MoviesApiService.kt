@@ -42,7 +42,8 @@ interface MoviesApiService {
         @Query("release_date.gte") releaseDateGte: String?,
         @Query("release_date.lte") releaseDateLte: String?,
         @Query("vote_average.gte") voteAverage: Float?,
-        @Query(value = "with_genres", encoded = false) genreFilter: String?
+        @Query(value = "with_genres") genreWithFilter: String?,
+        @Query(value = "without_genres") genreWithoutFilter: String?
     ): MovieData
 
     @GET("movie/now_playing")

@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Genre(
     @PrimaryKey val id: Int,
     val name: String,
-    var checked: Boolean
+    var included: Boolean,
+    var excluded: Boolean
 )

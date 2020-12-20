@@ -68,7 +68,8 @@ class MovieDbRepository(
             Genre(
                 it.id,
                 it.name,
-                false
+                included = false,
+                excluded = false
             )
         }
     }

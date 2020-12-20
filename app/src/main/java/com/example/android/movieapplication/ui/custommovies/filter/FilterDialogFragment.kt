@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CompoundButton
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.android.movieapplication.R
@@ -53,6 +54,7 @@ class FilterDialogFragment : DialogFragment() {
         }
         toolbar.title = "Filter Movies"
         toolbar.inflateMenu(R.menu.filter_menu)
+        toolbar.navigationIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.black_200))
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_save -> {
@@ -130,26 +132,32 @@ class FilterDialogFragment : DialogFragment() {
 
         })
 
-        binding.slider.addOnChangeListener { slider, value, fromUser ->
-            println(value)
+        binding.slider.addOnChangeListener { _, value, _ ->
             viewModel.voteAverage = value
         }
 
 
         binding.checkedChangeListener =
             CompoundButton.OnCheckedChangeListener { chip, isChecked ->
+                chip.isSelected = false
                 (chip as Chip).isCheckedIconVisible = isChecked
-                viewModel.updateGenre(chip.id, isChecked)
+                viewModel.updateIncludedGenres(chip.id, isChecked)
             }
+
+        binding.longClickListener = View.OnLongClickListener { it as Chip
+            println(it.isSelected)
+            it.isChecked = false
+            it.isSelected = !it.isSelected
+            viewModel.updateExcludedGenres(it.id, it.isSelected)
+            true
+        }
 
         return binding.root
     }
 
     private fun updateYearToAdapter() {
         if (viewModel.dateTo.length >= 4) {
-            println(viewModel.dateTo)
             val dateTo = viewModel.dateTo.substring(0, 4).toInt()
-//                viewModel.dateTo.substring(0, 4).toInt()
             val yearsFrom = (1874..dateTo).toList()
             val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
             binding.autoCompleteTextViewFrom.setAdapter(adapter)
@@ -158,7 +166,6 @@ class FilterDialogFragment : DialogFragment() {
 
     private fun updateYearFromAdapter() {
         if (viewModel.dateFrom.length >= 4) {
-            println(viewModel.dateFrom)
             val dateFrom = viewModel.dateFrom.substring(0, 4).toInt()
             val yearsTo = (dateFrom..currentYear).toList()
             val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsTo)
