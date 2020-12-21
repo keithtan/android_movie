@@ -6,14 +6,14 @@ import android.widget.ImageView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.movieapplication.databinding.GridViewItemBinding
+import com.example.android.movieapplication.databinding.ListViewItemBinding
 import com.example.android.movieapplication.db.Movie
 
-class MovieListAdapter(private val onClickListener: OnClickListener)
-    : PagingDataAdapter<Movie, MovieListAdapter.MovieViewHolder>(DiffCallback) {
+class MoviePagingAdapter(private val onClickListener: OnClickListener)
+    : PagingDataAdapter<Movie, MoviePagingAdapter.MovieViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        return MovieViewHolder(GridViewItemBinding.inflate(LayoutInflater.from(parent.context)))
+        return MovieViewHolder(ListViewItemBinding.inflate(LayoutInflater.from(parent.context)))
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
@@ -27,7 +27,7 @@ class MovieListAdapter(private val onClickListener: OnClickListener)
 
     }
 
-    class MovieViewHolder(private val binding: GridViewItemBinding)
+    class MovieViewHolder(private val binding: ListViewItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun bind(movie: Movie) {
             binding.movie = movie

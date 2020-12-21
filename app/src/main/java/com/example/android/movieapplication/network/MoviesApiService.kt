@@ -57,6 +57,9 @@ interface MoviesApiService {
 
     @GET("genre/movie/list")
     suspend fun getGenres(): Genres
+
+    @GET("person/{personId}?append_to_response=movie_credits")
+    suspend fun getPeopleDetails(@Path("personId") personId: Long): PeopleDetail
 }
 
 class MovieDbInterceptor : Interceptor {

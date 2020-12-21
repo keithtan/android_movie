@@ -29,7 +29,7 @@ class OverviewFragment : Fragment() {
 
     private lateinit var binding: OverviewFragmentBinding
     private lateinit var viewModelFactory: OverviewViewModelFactory
-    private lateinit var adapter: MovieListAdapter
+    private lateinit var adapter: MoviePagingAdapter
     private lateinit var extras: Navigator.Extras
 
     private val viewModel: OverviewViewModel by viewModels { viewModelFactory }
@@ -107,12 +107,12 @@ class OverviewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+        adapter = MoviePagingAdapter(MoviePagingAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
             viewModel.displayMovieDetails(movieId)
             extras = FragmentNavigatorExtras(
                 imageView to "$movieId"
             )
-            this.findNavController()
+            findNavController()
                 .navigate(
                     ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
                         movieId

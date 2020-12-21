@@ -20,7 +20,7 @@ import com.example.android.movieapplication.databinding.CustomMoviesFragmentBind
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.example.android.movieapplication.ui.ViewPagerFragmentDirections
-import com.example.android.movieapplication.ui.overview.MovieListAdapter
+import com.example.android.movieapplication.ui.overview.MoviePagingAdapter
 import com.example.android.movieapplication.ui.overview.MoviesLoadStateAdapter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -30,7 +30,7 @@ class CustomMoviesFragment : Fragment() {
 
     private lateinit var binding: CustomMoviesFragmentBinding
     private lateinit var viewModelFactory: CustomMoviesViewModelFactory
-    private lateinit var adapter: MovieListAdapter
+    private lateinit var adapter: MoviePagingAdapter
     private lateinit var extras: Navigator.Extras
 
     private val viewModel: CustomMoviesViewModel by viewModels { viewModelFactory }
@@ -130,12 +130,12 @@ class CustomMoviesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+        adapter = MoviePagingAdapter(MoviePagingAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
             viewModel.displayMovieDetails(movieId)
             extras = FragmentNavigatorExtras(
                 imageView to "$movieId"
             )
-            this.findNavController()
+            findNavController()
                 .navigate(
                     ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
                         movieId
@@ -157,7 +157,7 @@ class CustomMoviesFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.action_filter -> {
-            this.findNavController()
+            findNavController()
                 .navigate(
                     ViewPagerFragmentDirections.actionViewPagerFragmentToFilterDialogFragment2()
                 )

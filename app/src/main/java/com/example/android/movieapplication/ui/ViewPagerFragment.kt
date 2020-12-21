@@ -19,9 +19,7 @@ class ViewPagerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding = FragmentViewPagerBinding.inflate(layoutInflater)
-
-        val view = binding.root
+        val binding = FragmentViewPagerBinding.inflate(layoutInflater, container, false)
 
         val fragmentList = arrayListOf(
             OverviewFragment(),
@@ -45,7 +43,7 @@ class ViewPagerFragment : Fragment() {
             }
         }.attach()
 
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

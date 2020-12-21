@@ -12,6 +12,9 @@
         <argument
             android:name="movieId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_movieDetailFragment_to_peopleDetailFragment"
+            app:destination="@id/peopleDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewPagerFragment"
@@ -29,4 +32,15 @@
         android:id="@+id/filterDialogFragment2"
         android:name="com.example.android.movieapplication.ui.custommovies.filter.FilterDialogFragment"
         android:label="FilterDialogFragment" />
+    <fragment
+        android:id="@+id/peopleDetailFragment"
+        android:name="com.example.android.movieapplication.ui.people.PeopleDetailFragment"
+        android:label="PeopleDetailFragment" >
+        <argument
+            android:name="personId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_peopleDetailFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment" />
+    </fragment>
 </navigation>

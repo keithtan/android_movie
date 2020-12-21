@@ -1,19 +1,19 @@
 package com.example.android.movieapplication.ui.moviedetail
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.MovieDetailFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
@@ -24,75 +24,59 @@ class MovieDetailFragment : Fragment() {
     private lateinit var viewModelFactory: MovieDetailViewModelFactory
     private lateinit var binding: MovieDetailFragmentBinding
     private lateinit var adapter: MovieCastAdapter
+    private lateinit var extras: Navigator.Extras
 
     private val viewModel: MovieDetailViewModel by viewModels { viewModelFactory }
+    private val args: MovieDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val movieId = MovieDetailFragmentArgs.fromBundle(requireArguments()).movieId
         val application = requireNotNull(activity).application
 
         activity?.let {
             viewModelFactory = MovieDetailViewModelFactory(
-                movieId,
+                args.movieId,
                 MovieDbRepository(MoviesApi.retrofitService, MovieDatabase.getInstance(it)),
                 application
             )
         }
-
 
         binding = MovieDetailFragmentBinding.inflate(layoutInflater, container, false)
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        adapter = MovieCastAdapter(MovieCastAdapter.OnClickListener {
-            println("cast: $it")
+        adapter = MovieCastAdapter(MovieCastAdapter.OnClickListener { personId: Long, imageView: ImageView ->
+            println("cast: $personId")
+            extras = FragmentNavigatorExtras(
+                imageView to "$personId"
+            )
+            findNavController()
+                .navigate(
+                    MovieDetailFragmentDirections.actionMovieDetailFragmentToPeopleDetailFragment(
+                        personId
+                    ),
+                    extras
+                )
         })
 
         binding.movieCast.adapter = adapter
 
         viewModel.movieCast.observe(viewLifecycleOwner) {
             adapter.submitList(it)
+            (view?.parent as? ViewGroup)?.doOnPreDraw {
+                startPostponedEnterTransition()
+            }
         }
 
         binding.toolbar.setNavigationOnClickListener {
             (activity as AppCompatActivity).onBackPressed()
         }
 
-        applySharedElementTransition()
-
         return binding.root
-    }
-
-    private fun applySharedElementTransition() {
-        postponeEnterTransition()
-
-        binding.imageRequestListener = object : RequestListener<Drawable> {
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any?,
-                target: Target<Drawable>?,
-                isFirstResource: Boolean
-            ): Boolean {
-                startPostponedEnterTransition()
-                return false
-            }
-
-            override fun onResourceReady(
-                resource: Drawable?,
-                model: Any?,
-                target: Target<Drawable>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean
-            ): Boolean {
-                startPostponedEnterTransition()
-                return false
-            }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,6 +84,9 @@ class MovieDetailFragment : Fragment() {
         sharedElementEnterTransition = TransitionInflater
             .from(context)
             .inflateTransition(android.R.transition.move)
+
+        postponeEnterTransition()
+
     }
 
     override fun onResume() {

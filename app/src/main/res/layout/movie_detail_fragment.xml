@@ -4,15 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="android.graphics.drawable.Drawable" />
-
         <variable
             name="viewModel"
             type="com.example.android.movieapplication.ui.moviedetail.MovieDetailViewModel" />
-
-        <variable
-            name="imageRequestListener"
-            type="com.bumptech.glide.request.RequestListener&lt;Drawable>" />
     </data>
 
     <ScrollView
@@ -64,7 +58,6 @@
                 android:layout_width="130dp"
                 android:layout_height="200dp"
                 android:transitionName="@{String.valueOf(viewModel.movieDetail.id)}"
-                app:imageRequestListener="@{imageRequestListener}"
                 app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
                 app:layout_constraintStart_toStartOf="@+id/left_guideline"
                 app:posterUrl="@{viewModel.movieDetail.posterPath}"

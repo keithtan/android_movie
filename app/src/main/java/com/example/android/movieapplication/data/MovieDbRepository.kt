@@ -11,6 +11,7 @@ import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.model.MovieCast
 import com.example.android.movieapplication.model.MovieDetail
 import com.example.android.movieapplication.network.MoviesApiService
+import com.example.android.movieapplication.network.PeopleDetail
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -90,6 +91,10 @@ class MovieDbRepository(
 
     suspend fun saveGenres(genres: List<Genre>) {
         database.genresDao().insertAll(genres)
+    }
+
+    suspend fun getPeopleDetails(personId: Long): Flow<PeopleDetail> = flow {
+        emit(service.getPeopleDetails(personId))
     }
 
 }
