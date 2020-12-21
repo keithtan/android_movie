@@ -39,12 +39,13 @@ class CustomMoviesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activity?.let {
+        activity?.run {
             viewModelFactory = CustomMoviesViewModelFactory(
                 MovieDbRepository(
                     MoviesApi.retrofitService,
-                    MovieDatabase.getInstance(it)
-                )
+                    MovieDatabase.getInstance(this)
+                ),
+                application
             )
         }
 
@@ -52,22 +53,13 @@ class CustomMoviesFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        val decoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
+        val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         binding.movieList.addItemDecoration(decoration)
-
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
-            viewModel.displayMovieDetails(movieId)
-        })
-        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-
-        initAdapter()
-        search()
 
         binding.retryButton.setOnClickListener { adapter.retry() }
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
             it?.let {
-
                 viewModel.displayMovieDetailsComplete()
             }
         }
@@ -115,6 +107,11 @@ class CustomMoviesFragment : Fragment() {
             binding.progressBar.isVisible = loadState.source.refresh is LoadState.Loading
             // Show the retry state if initial load or refresh fails.
             binding.retryButton.isVisible = loadState.source.refresh is LoadState.Error
+
+            // Show info text if there are no movies
+            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
+                binding.emptyText.isVisible = adapter.itemCount < 1
+            }
 
             // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
             val errorState = loadState.source.append as? LoadState.Error

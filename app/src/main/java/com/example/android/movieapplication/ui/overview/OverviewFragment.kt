@@ -58,7 +58,6 @@ class OverviewFragment : Fragment() {
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
             it?.let {
-
                 viewModel.displayMovieDetailsComplete()
             }
         }

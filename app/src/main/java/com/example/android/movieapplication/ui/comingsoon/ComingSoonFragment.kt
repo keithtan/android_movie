@@ -1,6 +1,5 @@
 package com.example.android.movieapplication.ui.comingsoon
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.ComingSoonFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
@@ -61,19 +56,10 @@ class ComingSoonFragment : Fragment() {
         val decoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
         binding.movieList.addItemDecoration(decoration)
 
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
-            viewModel.displayMovieDetails(movieId)
-        })
-        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-
-        initAdapter()
-        search()
-
         binding.retryButton.setOnClickListener { adapter.retry() }
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
             it?.let {
-
                 viewModel.displayMovieDetailsComplete()
             }
         }
