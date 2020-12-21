@@ -52,6 +52,9 @@ interface MoviesApiService {
     @GET("movie/{movieId}")
     suspend fun getMovieDetails(@Path("movieId") movieId: Long): MovieDetail
 
+    @GET("movie/{movieId}/credits")
+    suspend fun getMovieCredits(@Path("movieId") movieId: Long): MovieCredits
+
     @GET("genre/movie/list")
     suspend fun getGenres(): Genres
 }

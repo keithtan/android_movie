@@ -16,4 +16,5 @@
     <string name="overview_label">Plot Summary</string>
     <string name="from">From:</string>
     <string name="to">To:</string>
+    <string name="cast">Cast</string>
 </resources>

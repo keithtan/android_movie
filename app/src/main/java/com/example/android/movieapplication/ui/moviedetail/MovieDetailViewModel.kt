@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.example.android.movieapplication.data.MovieDbRepository
+import com.example.android.movieapplication.model.MovieCast
 import com.example.android.movieapplication.model.MovieDetail
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -22,6 +23,16 @@ class MovieDetailViewModel(
         repository.getMovieDetailsStream(movieId)
             .catch { _ ->
                 emit(null)
+            }
+            .collect { value ->
+                emit(value)
+            }
+    }
+
+    val movieCast: LiveData<List<MovieCast>> = liveData {
+        repository.getMovieCastStream(movieId)
+            .catch { _ ->
+                emit(emptyList())
             }
             .collect { value ->
                 emit(value)

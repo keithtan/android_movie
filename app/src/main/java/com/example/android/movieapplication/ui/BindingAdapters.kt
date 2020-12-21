@@ -17,27 +17,38 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 @BindingAdapter(value = ["posterUrl", "imageRequestListener"], requireAll = false)
-fun bindPoster(imgView: ImageView, imgUrl: String?, listener: RequestListener<Drawable>?) {
+fun ImageView.bindPoster(imgUrl: String?, listener: RequestListener<Drawable>?) {
     imgUrl?.let {
         val fullUrl = "https://image.tmdb.org/t/p/w154$it"
         val imgUri = fullUrl.toUri().buildUpon().scheme("https").build()
-        Glide.with(imgView.context)
+        Glide.with(context)
             .load(imgUri)
             .listener(listener)
             .transform(CenterCrop(), RoundedCorners(25))
-            .into(imgView)
+            .into(this)
     }
 }
 
-@BindingAdapter(value = ["backdropUrl", "imageRequestListener"], requireAll = false)
-fun bindBackdrop(imgView: ImageView, imgUrl: String?, listener: RequestListener<Drawable>?) {
+@BindingAdapter("backdropUrl")
+fun ImageView.bindBackdrop(imgUrl: String?) {
     imgUrl?.let {
         val fullUrl = "https://image.tmdb.org/t/p/w780$it"
         val imgUri = fullUrl.toUri().buildUpon().scheme("https").build()
-        Glide.with(imgView.context)
+        Glide.with(context)
             .load(imgUri)
-            .listener(listener)
-            .into(imgView)
+            .into(this)
+    }
+}
+
+@BindingAdapter("profileUrl")
+fun ImageView.bindProfile(imgUrl: String?) {
+    imgUrl?.let {
+        val fullUrl = "https://image.tmdb.org/t/p/w92$it"
+        val imgUri = fullUrl.toUri().buildUpon().scheme("https").build()
+        Glide.with(context)
+            .load(imgUri)
+            .transform(CenterCrop(), RoundedCorners(50))
+            .into(this)
     }
 }
 

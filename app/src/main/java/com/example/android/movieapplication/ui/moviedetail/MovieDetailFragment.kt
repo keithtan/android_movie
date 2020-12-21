@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -22,6 +23,7 @@ class MovieDetailFragment : Fragment() {
 
     private lateinit var viewModelFactory: MovieDetailViewModelFactory
     private lateinit var binding: MovieDetailFragmentBinding
+    private lateinit var adapter: MovieCastAdapter
 
     private val viewModel: MovieDetailViewModel by viewModels { viewModelFactory }
 
@@ -46,6 +48,16 @@ class MovieDetailFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
+
+        adapter = MovieCastAdapter(MovieCastAdapter.OnClickListener {
+            println("cast: $it")
+        })
+
+        binding.movieCast.adapter = adapter
+
+        viewModel.movieCast.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
 
         binding.toolbar.setNavigationOnClickListener {
             (activity as AppCompatActivity).onBackPressed()
