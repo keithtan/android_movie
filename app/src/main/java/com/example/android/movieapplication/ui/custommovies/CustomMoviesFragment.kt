@@ -58,6 +58,21 @@ class CustomMoviesFragment : Fragment() {
 
         binding.retryButton.setOnClickListener { adapter.retry() }
 
+        binding.movieList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val position = binding.movieList.computeVerticalScrollOffset()
+                if (position > 0) binding.floatingActionButton.show()
+                else binding.floatingActionButton.hide()
+            }
+        })
+
+        binding.floatingActionButton.hide()
+
+        binding.floatingActionButton.setOnClickListener {
+            binding.movieList.layoutManager?.scrollToPosition(0)
+        }
+
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
             it?.let {
                 viewModel.displayMovieDetailsComplete()
