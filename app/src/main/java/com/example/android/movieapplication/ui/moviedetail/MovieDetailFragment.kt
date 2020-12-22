@@ -23,7 +23,8 @@ class MovieDetailFragment : Fragment() {
 
     private lateinit var viewModelFactory: MovieDetailViewModelFactory
     private lateinit var binding: MovieDetailFragmentBinding
-    private lateinit var adapter: MovieCastAdapter
+    private lateinit var castAdapter: MovieCastAdapter
+    private lateinit var videoAdapter: MovieVideoAdapter
     private lateinit var extras: Navigator.Extras
 
     private val viewModel: MovieDetailViewModel by viewModels { viewModelFactory }
@@ -49,7 +50,7 @@ class MovieDetailFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        adapter = MovieCastAdapter(MovieCastAdapter.OnClickListener { personId: Long, imageView: ImageView ->
+        castAdapter = MovieCastAdapter(MovieCastAdapter.OnClickListener { personId: Long, imageView: ImageView ->
             println("cast: $personId")
             extras = FragmentNavigatorExtras(
                 imageView to "$personId"
@@ -62,15 +63,23 @@ class MovieDetailFragment : Fragment() {
                     extras
                 )
         })
+        binding.movieCast.adapter = castAdapter
 
-        binding.movieCast.adapter = adapter
+        videoAdapter = MovieVideoAdapter(lifecycle)
+        binding.movieVideos.adapter = videoAdapter
 
         viewModel.movieCast.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+            castAdapter.submitList(it)
             (view?.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
             }
         }
+
+        viewModel.movieVideos.observe(viewLifecycleOwner) {
+            println("videos: $it")
+            videoAdapter.submitList(it)
+        }
+
 
         binding.toolbar.setNavigationOnClickListener {
             (activity as AppCompatActivity).onBackPressed()

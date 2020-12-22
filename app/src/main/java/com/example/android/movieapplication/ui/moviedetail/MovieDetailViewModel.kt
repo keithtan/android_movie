@@ -7,7 +7,8 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.network.MovieDetail
-import com.example.android.movieapplication.network.MovieDetail.MovieCast
+import com.example.android.movieapplication.network.MovieDetail.MovieVideos.VideoDetail
+import com.example.android.movieapplication.network.MovieDetail.MovieCredits.MovieCast
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import java.text.SimpleDateFormat
@@ -31,6 +32,10 @@ class MovieDetailViewModel(
 
     val movieCast: LiveData<List<MovieCast>?> = movieDetail.map {
         it?.credits?.cast
+    }
+
+    val movieVideos: LiveData<List<VideoDetail>?> = movieDetail.map {
+        it?.videos?.results
     }
 
     val release = movieDetail.map {

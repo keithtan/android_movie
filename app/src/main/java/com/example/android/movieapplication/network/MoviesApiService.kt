@@ -48,7 +48,7 @@ interface MoviesApiService {
     @GET("movie/now_playing")
     suspend fun getMovies(@Query("page") page: Int): MovieData
 
-    @GET("movie/{movieId}?append_to_response=credits")
+    @GET("movie/{movieId}?append_to_response=credits,videos")
     suspend fun getMovieDetails(@Path("movieId") movieId: Long): MovieDetail
 
     @GET("genre/movie/list")

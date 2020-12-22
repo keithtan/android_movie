@@ -13,7 +13,8 @@ data class MovieDetail(
     @Json(name = "spoken_languages") val spokenLanguages: List<Language>,
     val title: String,
     @Json(name = "vote_average") val voteAverage: Double,
-    val credits: MovieCredits
+    val credits: MovieCredits,
+    val videos: MovieVideos
 ) {
 
     data class Language(
@@ -22,13 +23,23 @@ data class MovieDetail(
 
     data class MovieCredits(
         val cast: List<MovieCast>
-    )
+    ) {
+        data class MovieCast(
+            val id: Long,
+            val name: String,
+            @Json(name = "profile_path") val profilePath: String?,
+            val character: String
+        )
+    }
 
-    data class MovieCast(
-        val id: Long,
-        val name: String,
-        @Json(name = "profile_path") val profilePath: String?,
-        val character: String
-    )
+    data class MovieVideos(
+        val results: List<VideoDetail>
+    ) {
+        data class VideoDetail(
+            val id: String,
+            val key: String,
+            val name: String
+        )
+    }
 
 }

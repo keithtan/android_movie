@@ -11,7 +11,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -41,6 +42,24 @@
                     android:background="@drawable/scrim" />
             </FrameLayout>
 
+            <HorizontalScrollView
+                android:id="@+id/horizontalScroll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+                app:layout_constraintStart_toStartOf="@+id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/poster">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:chipSpacingHorizontal="-10dp"
+                    app:genreDisplayChips="@{viewModel.movieDetail.genres}"
+                    app:singleLine="true" />
+            </HorizontalScrollView>
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -62,6 +81,22 @@
                 app:layout_constraintStart_toStartOf="@+id/left_guideline"
                 app:posterUrl="@{viewModel.movieDetail.posterPath}"
                 tools:src="@tools:sample/avatars" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                style="@android:style/Widget.DeviceDefault.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:isIndicator="true"
+                android:paddingTop="2dp"
+                android:rating="@{viewModel.ratingStars}"
+                android:scaleX="1"
+                android:scaleY="1"
+                android:transformPivotX="0dp"
+                android:transformPivotY="0dp"
+                app:layout_constraintStart_toStartOf="@+id/release_label"
+                app:layout_constraintTop_toBottomOf="@+id/release_label" />
 
             <TextView
                 android:id="@+id/title"
@@ -113,22 +148,6 @@
                 app:layout_constraintStart_toStartOf="@+id/runtime_label"
                 app:layout_constraintTop_toBottomOf="@+id/runtime_label" />
 
-            <RatingBar
-                android:id="@+id/ratingBar"
-                style="@android:style/Widget.DeviceDefault.RatingBar.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:isIndicator="true"
-                android:paddingTop="2dp"
-                android:rating="@{viewModel.ratingStars}"
-                android:scaleX="1"
-                android:scaleY="1"
-                android:transformPivotX="0dp"
-                android:transformPivotY="0dp"
-                app:layout_constraintStart_toStartOf="@+id/release_label"
-                app:layout_constraintTop_toBottomOf="@+id/release_label" />
-
             <TextView
                 android:id="@+id/rating"
                 android:layout_width="wrap_content"
@@ -138,24 +157,6 @@
                 app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
                 app:layout_constraintStart_toEndOf="@+id/ratingBar"
                 app:layout_constraintTop_toTopOf="@+id/ratingBar" />
-
-            <HorizontalScrollView
-                android:id="@+id/horizontalScroll"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-                app:layout_constraintStart_toStartOf="@+id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@+id/poster">
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroup"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:chipSpacingHorizontal="-10dp"
-                    app:genreDisplayChips="@{viewModel.movieDetail.genres}"
-                    app:singleLine="true" />
-            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/overview_label"
@@ -195,14 +196,24 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/right_guideline"
                 app:layout_constraintStart_toStartOf="@+id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView6"
                 tools:listitem="@layout/cast_view_item" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/movieVideos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/movieCast"
+                tools:listitem="@layout/list_item_video" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/left_guideline"
