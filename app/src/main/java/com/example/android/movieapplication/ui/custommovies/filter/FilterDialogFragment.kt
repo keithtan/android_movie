@@ -18,6 +18,7 @@ import com.example.android.movieapplication.db.Filter
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
 
@@ -74,7 +75,9 @@ class FilterDialogFragment : DialogFragment() {
                     viewModel.genres.value?.let {
                         viewModel.saveGenres(it)
                     }
-                    dismiss()
+                    Snackbar.make(binding.layout, "Filter saved. You may close this dialog.", Snackbar.LENGTH_SHORT)
+                        .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_orange_a100))
+                        .show()
                     true
                 }
                 else -> true

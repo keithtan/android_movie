@@ -82,7 +82,7 @@ class PeopleDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         sharedElementEnterTransition = TransitionInflater
             .from(context)
-            .inflateTransition(android.R.transition.slide_right)
+            .inflateTransition(android.R.transition.move)
 
         postponeEnterTransition()
 
