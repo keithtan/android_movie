@@ -8,8 +8,8 @@ import com.example.android.movieapplication.db.Filter
 import com.example.android.movieapplication.db.Genre
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.Movie
-import com.example.android.movieapplication.model.MovieCast
-import com.example.android.movieapplication.model.MovieDetail
+import com.example.android.movieapplication.network.MovieCredits.MovieCast
+import com.example.android.movieapplication.network.MovieDetail
 import com.example.android.movieapplication.network.MoviesApiService
 import com.example.android.movieapplication.network.PeopleDetail
 import kotlinx.coroutines.flow.Flow

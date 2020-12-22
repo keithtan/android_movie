@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.android.movieapplication.R
-import com.example.android.movieapplication.model.Genre
+import com.example.android.movieapplication.network.Genre
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup

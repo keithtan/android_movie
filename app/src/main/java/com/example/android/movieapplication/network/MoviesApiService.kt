@@ -1,7 +1,6 @@
 package com.example.android.movieapplication.network
 
 import com.example.android.movieapplication.BuildConfig
-import com.example.android.movieapplication.model.MovieDetail
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

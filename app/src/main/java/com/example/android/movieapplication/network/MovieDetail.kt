@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.model
+package com.example.android.movieapplication.network
 
 import com.squareup.moshi.Json
 

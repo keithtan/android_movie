@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.movieapplication.databinding.CastViewItemBinding
-import com.example.android.movieapplication.model.MovieCast
+import com.example.android.movieapplication.network.MovieCredits.MovieCast
 
 class MovieCastAdapter(private val onClickListener: OnClickListener)
     : ListAdapter<MovieCast, MovieCastAdapter.CastViewHolder>(DiffCallback) {

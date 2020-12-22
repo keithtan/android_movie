@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.model.MovieCast
-import com.example.android.movieapplication.model.MovieDetail
+import com.example.android.movieapplication.network.MovieCredits.MovieCast
+import com.example.android.movieapplication.network.MovieDetail
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import java.text.SimpleDateFormat
