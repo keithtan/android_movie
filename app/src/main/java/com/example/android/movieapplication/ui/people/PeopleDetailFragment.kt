@@ -13,6 +13,7 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
+import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.PeopleDetailFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
@@ -97,7 +98,7 @@ class PeopleDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         sharedElementEnterTransition = TransitionInflater
             .from(context)
-            .inflateTransition(android.R.transition.move)
+            .inflateTransition(R.transition.curved_motion)
 
         postponeEnterTransition()
 
