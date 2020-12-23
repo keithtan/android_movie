@@ -17,6 +17,7 @@ import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.PeopleDetailFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class PeopleDetailFragment : Fragment() {
 
@@ -63,10 +64,24 @@ class PeopleDetailFragment : Fragment() {
 
         viewModel.peopleDetail.observe(viewLifecycleOwner) {
             println(it?.movieCredits?.movieList)
+            if (it?.deathday == null) {
+                binding.deathLabel.visibility = View.GONE
+                binding.death.visibility = View.GONE
+            }
             adapter.submitList(it?.movieCredits?.movieList)
             (view?.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
             }
+        }
+
+        binding.button.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Biography")
+                .setMessage(viewModel.peopleDetail.value?.biography)
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
