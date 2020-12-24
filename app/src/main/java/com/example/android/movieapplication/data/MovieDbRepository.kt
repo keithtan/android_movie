@@ -8,6 +8,7 @@ import com.example.android.movieapplication.db.Filter
 import com.example.android.movieapplication.db.Genre
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.Movie
+import com.example.android.movieapplication.network.MovieData
 import com.example.android.movieapplication.network.MovieDetail
 import com.example.android.movieapplication.network.MoviesApiService
 import com.example.android.movieapplication.network.PeopleDetail
@@ -33,6 +34,10 @@ class MovieDbRepository(
 
     fun getCustomMoviesStream(): Flow<PagingData<Movie>> {
         return getMoviesStream(MovieSection.CUSTOM)
+    }
+
+    suspend fun getSearchedMoviesStream(query: String): MovieData {
+        return service.getSearchedMovies(query)
     }
 
     private fun getMoviesStream(section: MovieSection): Flow<PagingData<Movie>> {

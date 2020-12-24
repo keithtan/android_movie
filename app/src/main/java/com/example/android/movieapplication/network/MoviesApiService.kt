@@ -45,6 +45,11 @@ interface MoviesApiService {
         @Query(value = "without_genres") genreWithoutFilter: String?
     ): MovieData
 
+    @GET("search/movie")
+    suspend fun getSearchedMovies(
+        @Query("query") query: String
+    ): MovieData
+
     @GET("movie/now_playing")
     suspend fun getMovies(@Query("page") page: Int): MovieData
 

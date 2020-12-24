@@ -178,6 +178,13 @@ class CustomMoviesFragment : Fragment() {
                 )
             true
         }
+        R.id.action_search -> {
+            findNavController()
+                .navigate(
+                    ViewPagerFragmentDirections.actionViewPagerFragmentToSearchDialogFragment()
+                )
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
