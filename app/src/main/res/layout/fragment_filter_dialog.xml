@@ -13,6 +13,7 @@
         <variable
             name="longClickListener"
             type="android.view.View.OnLongClickListener" />
+        <import type="com.example.android.movieapplication.ui.Converter" />
     </data>
 
     <LinearLayout
@@ -75,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:dropDownHeight="200dp"
                         android:inputType="number"
-                        android:text="@{String.valueOf(viewModel.startYear)}"/>
+                        android:text="@={Converter.intToString(viewModel.startYear)}"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -95,7 +96,7 @@
                         android:layout_height="wrap_content"
                         android:dropDownHeight="200dp"
                         android:inputType="number"
-                        android:text="@{String.valueOf(viewModel.endYear)}"/>
+                        android:text="@={Converter.intToString(viewModel.endYear)}"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView

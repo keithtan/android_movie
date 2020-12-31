@@ -1,17 +1,14 @@
 package com.example.android.movieapplication.ui
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.CompoundButton
 import android.widget.ImageView
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.net.toUri
-import androidx.core.widget.doOnTextChanged
 import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseMethod
+import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -103,4 +100,21 @@ fun ChipGroup.bindChips(
 //    imm?.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0)
 //}
 
+object Converter {
+    @InverseMethod("stringToInt")
+    @JvmStatic fun intToString(
+        value: Int
+    ): String {
+        // Converts long to String.
+        return value.toString()
+    }
+
+    @JvmStatic fun stringToInt(
+        value: String
+    ): Int {
+        // Converts String to long.
+        return value.toInt()
+    }
+
+}
 

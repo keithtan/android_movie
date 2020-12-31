@@ -9,7 +9,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.android.movieapplication.R
@@ -21,15 +20,17 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
+private const val DEFAULT_YEAR = 0
+private const val INITIAL_YEAR = 1874
 
 class FilterDialogFragment : DialogFragment() {
 
     private lateinit var viewModelFactory: FilterDialogViewModelFactory
     private lateinit var binding: FragmentFilterDialogBinding
 
-    private val viewModel: FilterDialogViewModel by viewModels { viewModelFactory }
-
     private val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+    private val viewModel: FilterDialogViewModel by viewModels { viewModelFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,49 +78,35 @@ class FilterDialogFragment : DialogFragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+
+
         viewModel.filterModel.observe(viewLifecycleOwner) {
             it?.let {
-                println(it)
-                if (it.startYear != 0)
-                    viewModel.startYear = it.startYear
-                if (it.endYear != 0)
-                    viewModel.endYear = it.endYear
+                if (it.startYear != DEFAULT_YEAR)
+                    viewModel.startYear.value = it.startYear
+                else viewModel.startYear.value = INITIAL_YEAR
+                if (it.endYear != DEFAULT_YEAR)
+                    viewModel.endYear.value = it.endYear
+                else viewModel.endYear.value = currentYear
                 if (it.voteAverage != 0.0f)
                     viewModel.voteAverage.value = it.voteAverage
 
-                binding.autoCompleteStartYear.setText(viewModel.startYear.toString(), false)
-                binding.autoCompleteEndYear.setText(viewModel.endYear.toString(), false)
+                disableFilter()
 
+            }
+        }
+
+        viewModel.startYear.observe(viewLifecycleOwner) {
+            it?.let {
                 setEndYearAdapter()
+            }
+        }
+
+        viewModel.endYear.observe(viewLifecycleOwner) {
+            it?.let {
                 setStartYearAdapter()
             }
         }
-
-
-        with(binding.autoCompleteStartYear) {
-            doOnTextChanged { text, _, _, _ ->
-                if (viewModel.startYear != text.toString().toInt()) {
-                    viewModel.startYear = text.toString().toInt()
-                    setEndYearAdapter()
-                }
-            }
-            setOnItemClickListener { _, view, _, _ ->
-                hideKeyboard(view)
-            }
-        }
-
-        with(binding.autoCompleteEndYear) {
-            doOnTextChanged { text, _, _, _ ->
-                if (viewModel.endYear != text.toString().toInt()) {
-                    viewModel.endYear = text.toString().toInt()
-                    setStartYearAdapter()
-                }
-            }
-            setOnItemClickListener { _, view, _, _ ->
-                hideKeyboard(view)
-            }
-        }
-
 
         setCheckChangedListener()
         setLongClickListener()
@@ -127,16 +114,25 @@ class FilterDialogFragment : DialogFragment() {
         return binding.root
     }
 
+    private fun disableFilter() {
+        binding.autoCompleteStartYear.setText(viewModel.startYear.value.toString(), false)
+        binding.autoCompleteEndYear.setText(viewModel.endYear.value.toString(), false)
+    }
+
     private fun setStartYearAdapter() {
-        val endYear = viewModel.endYear
-        val yearsFrom = (1874..endYear).toList()
+        val endYear = viewModel.endYear.value!!
+        val yearsFrom =
+            if (endYear != DEFAULT_YEAR) (INITIAL_YEAR..endYear).toList()
+            else (INITIAL_YEAR..currentYear).toList()
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
         binding.autoCompleteStartYear.setAdapter(adapter)
     }
 
     private fun setEndYearAdapter() {
-        val startYear = viewModel.startYear
-        val yearsTo = (startYear..currentYear).toList()
+        val startYear = viewModel.startYear.value!!
+        val yearsTo =
+            if (startYear != DEFAULT_YEAR) (startYear..currentYear).toList()
+            else (INITIAL_YEAR..currentYear).toList()
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsTo)
         binding.autoCompleteEndYear.setAdapter(adapter)
     }
@@ -162,7 +158,7 @@ class FilterDialogFragment : DialogFragment() {
     private fun hideKeyboard(view: View) {
         val imm: InputMethodManager? =
             view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0)
+        imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     override fun onStart() {
