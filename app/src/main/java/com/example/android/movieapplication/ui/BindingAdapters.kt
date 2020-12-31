@@ -1,10 +1,16 @@
 package com.example.android.movieapplication.ui
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.CompoundButton
 import android.widget.ImageView
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.net.toUri
+import androidx.core.widget.doOnTextChanged
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -13,6 +19,7 @@ import com.example.android.movieapplication.R
 import com.example.android.movieapplication.db.Genre
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+
 
 @BindingAdapter("posterUrl")
 fun ImageView.bindPoster(imgUrl: String?) {
@@ -55,7 +62,7 @@ fun ChipGroup.bindChips(
     checkedChangeListener: CompoundButton.OnCheckedChangeListener,
     longClickListener: View.OnLongClickListener
 ) {
-    genres?.map {genre ->
+    genres?.map { genre ->
         val chip = (LayoutInflater.from(context).inflate(R.layout.chip, null) as Chip)
             .apply {
                 id = genre.id
@@ -68,5 +75,32 @@ fun ChipGroup.bindChips(
             }
         addView(chip)
     }
-
 }
+
+//@BindingAdapter(value = ["startYear"])
+//fun AutoCompleteTextView.bindStartYear(
+//    startYear: Int
+//) {
+//    this.setText(startYear.toString(), false)
+//    this.setOnItemClickListener { _, view, _, _ ->
+//        hideKeyboard(view)
+//    }
+//}
+//
+//@BindingAdapter(value = ["endYear"])
+//fun AutoCompleteTextView.bindEndYear(
+//    endYear: Int
+//) {
+//    this.setText(endYear.toString(), false)
+//    this.setOnItemClickListener { _, view, _, _ ->
+//        hideKeyboard(view)
+//    }
+//}
+//
+//private fun hideKeyboard(view: View) {
+//    val imm: InputMethodManager? =
+//        view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+//    imm?.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0)
+//}
+
+

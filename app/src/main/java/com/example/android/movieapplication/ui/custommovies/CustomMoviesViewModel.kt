@@ -24,7 +24,7 @@ class CustomMoviesViewModel(
             .cachedIn(viewModelScope)
     }
 
-    val filter = repository.getFilter()
+    val filter = repository.userPreferencesFlow.asLiveData()
 
     val genres = repository.getLiveDbGenres()
 

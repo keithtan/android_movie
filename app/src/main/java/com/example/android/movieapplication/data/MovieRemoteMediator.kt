@@ -5,10 +5,14 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.example.android.movieapplication.UserPreferences
+import com.example.android.movieapplication.db.Genre
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.RemoteKeys
 import com.example.android.movieapplication.network.MoviesApiService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -18,7 +22,8 @@ private const val MOVIE_DB_STARTING_PAGE_INDEX = 1
 class MovieRemoteMediator(
     private val service: MoviesApiService,
     private val movieDatabase: MovieDatabase,
-    private val position: MovieSection
+    private val position: MovieSection,
+    private val userPreferencesFlow: Flow<UserPreferences>
 ) : RemoteMediator<Int, Movie>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Movie>): MediatorResult {
@@ -53,33 +58,21 @@ class MovieRemoteMediator(
         }
 
         try {
-            val filter = movieDatabase.withTransaction {
-                movieDatabase.filterDao().filter()
-            }
+            val filter = userPreferencesFlow.first()
             val genres = movieDatabase.withTransaction {
                 movieDatabase.genresDao().genres()
             }
-            val withGenreFilter = genres
-                .filter {
-                    it.included
-                }.joinToString("%2C") {
-                    it.id.toString()
-                }
-            val withoutGenreFilter = genres
-                .filter {
-                    it.excluded
-                }.joinToString("%2C") {
-                    it.id.toString()
-                }
+            val withGenreFilter = genres.joinIncludedIds()
+            val withoutGenreFilter = genres.joinExcludedIds()
             val apiResponse =
                 when (position) {
                     MovieSection.LATEST -> service.getLatest(page)
                     MovieSection.COMINGSOON -> service.getComingSoon(page)
                     MovieSection.CUSTOM -> service.getCustomMovies(
                         page,
-                        filter?.dateFrom,
-                        filter?.dateTo,
-                        filter?.voteAverage,
+                        filter.startYear.toStartDate(),
+                        filter.endYear.toEndDate(),
+                        filter.voteAverage,
                         withGenreFilter,
                         withoutGenreFilter
                     )
@@ -143,6 +136,32 @@ class MovieRemoteMediator(
                 // Get the remote keys of the last item retrieved
                 movieDatabase.remoteKeysDao().remoteKeysMovieId(movie.id)
             }
+    }
+
+    private fun Int.toStartDate(): String? {
+        return if (this != 0) "$this-01-01"
+        else null
+    }
+
+    private fun Int.toEndDate(): String? {
+        return if (this != 0) "$this-12-31"
+        else null
+    }
+
+    private fun List<Genre>.joinIncludedIds(): String {
+        return this.filter {
+            it.included
+        }.joinToString("%2C") {
+            it.id.toString()
+        }
+    }
+
+    private fun List<Genre>.joinExcludedIds(): String {
+        return this.filter {
+            it.excluded
+        }.joinToString("%2C") {
+            it.id.toString()
+        }
     }
 
 }

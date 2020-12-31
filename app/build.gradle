@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.protobuf' version '0.8.12'
 }
 
 def apikeyPropertiesFile = rootProject.file("apikey.properties")
@@ -81,9 +82,33 @@ dependencies {
     implementation "androidx.room:room-ktx:2.3.0-alpha03"
     kapt "androidx.room:room-compiler:2.3.0-alpha03"
 
+    // YouTube Player
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
+
+    // Proto DataStore
+    implementation  "androidx.datastore:datastore-core:1.0.0-alpha02"
+    implementation  "com.google.protobuf:protobuf-javalite:3.10.0"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.10.0"
+    }
+
+    // Generates the java Protobuf-lite code for the Protobufs in this project. See
+    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+    // for more information.
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
 }

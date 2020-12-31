@@ -41,10 +41,12 @@ class OverviewFragment : Fragment() {
 
         activity?.let {
             viewModelFactory = OverviewViewModelFactory(
-                MovieDbRepository(
+                MovieDbRepository.getInstance(
+                    it,
                     MoviesApi.retrofitService,
                     MovieDatabase.getInstance(it)
-                ))
+                )
+            )
         }
 
         binding = OverviewFragmentBinding.inflate(layoutInflater, container, false)

@@ -37,7 +37,8 @@ class SearchDialogFragment : DialogFragment() {
 
         activity?.let {
             viewModelFactory = SearchDialogViewModelFactory(
-                MovieDbRepository(
+                MovieDbRepository.getInstance(
+                    it,
                     MoviesApi.retrofitService,
                     MovieDatabase.getInstance(it)
                 )

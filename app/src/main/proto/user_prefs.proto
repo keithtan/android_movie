@@ -1,0 +1,11 @@
+
+
+option java_package = "com.example.android.movieapplication";
+option java_multiple_files = true;
+
+message UserPreferences {
+  // filter
+  optional int32 startYear = 1;
+  optional int32 endYear = 2;
+  optional float voteAverage = 3;
+}

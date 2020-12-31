@@ -3,7 +3,6 @@ package com.example.android.movieapplication.ui.custommovies.filter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.db.FilterDao
 
 class FilterDialogViewModelFactory(
     private val repository: MovieDbRepository

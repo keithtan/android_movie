@@ -41,7 +41,8 @@ class CustomMoviesFragment : Fragment() {
     ): View? {
         activity?.run {
             viewModelFactory = CustomMoviesViewModelFactory(
-                MovieDbRepository(
+                MovieDbRepository.getInstance(
+                    this,
                     MoviesApi.retrofitService,
                     MovieDatabase.getInstance(this)
                 ),

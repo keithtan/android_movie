@@ -1,20 +1,20 @@
 package com.example.android.movieapplication.ui.custommovies.filter
 
+import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentFilterDialogBinding
-import com.example.android.movieapplication.db.Filter
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.google.android.material.chip.Chip
@@ -39,7 +39,8 @@ class FilterDialogFragment : DialogFragment() {
 
         activity?.let {
             viewModelFactory = FilterDialogViewModelFactory(
-                MovieDbRepository(
+                MovieDbRepository.getInstance(
+                    it,
                     MoviesApi.retrofitService,
                     MovieDatabase.getInstance(it)
                 )
@@ -59,18 +60,7 @@ class FilterDialogFragment : DialogFragment() {
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_save -> {
-                    val dateFrom =
-                        if (viewModel.dateFrom.isNotBlank()) "${viewModel.dateFrom}-01-01"
-                        else ""
-                    val dateTo =
-                        if (viewModel.dateTo.isNotBlank()) "${viewModel.dateTo}-12-31"
-                        else ""
-                    val filter = Filter(
-                        dateFrom,
-                        dateTo,
-                        viewModel.voteAverage
-                    )
-                    viewModel.saveFilter(filter)
+                    viewModel.saveFilter()
 
                     viewModel.genres.value?.let {
                         viewModel.saveGenres(it)
@@ -87,93 +77,93 @@ class FilterDialogFragment : DialogFragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.filter.observe(this) {
+        viewModel.filterModel.observe(viewLifecycleOwner) {
             it?.let {
-                viewModel.dateFrom =
-                    if (it.dateFrom.isNotBlank()) it.dateFrom.substring(0, 4)
-                    else ""
-                viewModel.dateTo =
-                    if (it.dateTo.isNotBlank()) it.dateTo.substring(0, 4)
-                    else ""
-                viewModel.voteAverage = it.voteAverage
+                println(it)
+                if (it.startYear != 0)
+                    viewModel.startYear = it.startYear
+                if (it.endYear != 0)
+                    viewModel.endYear = it.endYear
+                if (it.voteAverage != 0.0f)
+                    viewModel.voteAverage = it.voteAverage
 
-                updateYearFromAdapter()
-                updateYearToAdapter()
+                binding.autoCompleteStartYear.setText(viewModel.startYear.toString(), false)
+                binding.autoCompleteEndYear.setText(viewModel.endYear.toString(), false)
+
+                setEndYearAdapter()
+                setStartYearAdapter()
             }
         }
 
 
-        val yearsFrom = (1874..currentYear).toList()
-        val adapterFrom = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
-        binding.autoCompleteTextViewFrom.setAdapter(adapterFrom)
-
-        binding.autoCompleteTextViewFrom.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(str: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
-                viewModel.dateFrom = text.toString()
-                updateYearFromAdapter()
+        binding.autoCompleteStartYear.setOnItemClickListener { _, view, _, _ ->
+            hideKeyboard(view)
+        }
+        binding.autoCompleteStartYear.doOnTextChanged { text, _, _, _ ->
+            if (viewModel.startYear != text.toString().toInt()) {
+                viewModel.startYear = text.toString().toInt()
+                setEndYearAdapter()
             }
+        }
 
-            override fun afterTextChanged(str: Editable?) {}
 
-        })
-
-        val yearsTo = (1874..currentYear).toList()
-        val adapterTo = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsTo)
-        binding.autoCompleteTextViewTo.setAdapter(adapterTo)
-
-        binding.autoCompleteTextViewTo.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(str: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
-                viewModel.dateTo = text.toString()
-                updateYearToAdapter()
+        binding.autoCompleteEndYear.doOnTextChanged { text, _, _, _ ->
+            if (viewModel.endYear != text.toString().toInt()) {
+                viewModel.endYear = text.toString().toInt()
+                setStartYearAdapter()
             }
-
-            override fun afterTextChanged(str: Editable?) {}
-
-        })
+        }
+        binding.autoCompleteEndYear.setOnItemClickListener { _, view, _, _ ->
+            hideKeyboard(view)
+        }
 
         binding.slider.addOnChangeListener { _, value, _ ->
             viewModel.voteAverage = value
         }
 
-
-        binding.checkedChangeListener =
-            CompoundButton.OnCheckedChangeListener { chip, isChecked ->
-                chip.isSelected = false
-                (chip as Chip).isCheckedIconVisible = isChecked
-                viewModel.updateIncludedGenres(chip.id, isChecked)
-            }
-
-        binding.longClickListener = View.OnLongClickListener { it as Chip
-            println(it.isSelected)
-            it.isChecked = false
-            it.isSelected = !it.isSelected
-            viewModel.updateExcludedGenres(it.id, it.isSelected)
-            true
-        }
+        setCheckChangedListener()
+        setLongClickListener()
 
         return binding.root
     }
 
-    private fun updateYearToAdapter() {
-        if (viewModel.dateTo.length >= 4) {
-            val dateTo = viewModel.dateTo.substring(0, 4).toInt()
-            val yearsFrom = (1874..dateTo).toList()
-            val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
-            binding.autoCompleteTextViewFrom.setAdapter(adapter)
+    private fun setStartYearAdapter() {
+        val endYear = viewModel.endYear
+        println("endYear: " + endYear)
+        val yearsFrom = (1874..endYear).toList()
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
+        binding.autoCompleteStartYear.setAdapter(adapter)
+    }
+
+    private fun setEndYearAdapter() {
+        val startYear = viewModel.startYear
+        val yearsTo = (startYear..currentYear).toList()
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsTo)
+        binding.autoCompleteEndYear.setAdapter(adapter)
+    }
+
+
+    private fun setCheckChangedListener() {
+        binding.checkedChangeListener = CompoundButton.OnCheckedChangeListener { chip, isChecked ->
+            (chip as Chip).isCheckedIconVisible = isChecked
+            chip.isSelected = false
+            viewModel.updateIncludedGenres(chip.id, isChecked)
         }
     }
 
-    private fun updateYearFromAdapter() {
-        if (viewModel.dateFrom.length >= 4) {
-            val dateFrom = viewModel.dateFrom.substring(0, 4).toInt()
-            val yearsTo = (dateFrom..currentYear).toList()
-            val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsTo)
-            binding.autoCompleteTextViewTo.setAdapter(adapter)
+    private fun setLongClickListener() {
+        binding.longClickListener = View.OnLongClickListener {
+            (it as Chip).isChecked = false
+            it.isSelected = !it.isSelected
+            viewModel.updateExcludedGenres(it.id, it.isSelected)
+            true
         }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm: InputMethodManager? =
+            view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0)
     }
 
     override fun onStart() {

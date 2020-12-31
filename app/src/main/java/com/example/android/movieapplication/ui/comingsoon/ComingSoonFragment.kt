@@ -42,7 +42,8 @@ class ComingSoonFragment : Fragment() {
     ): View? {
         activity?.let {
             viewModelFactory = ComingSoonViewModelFactory(
-                MovieDbRepository(
+                MovieDbRepository.getInstance(
+                    it,
                     MoviesApi.retrofitService,
                     MovieDatabase.getInstance(it)
                 )

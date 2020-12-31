@@ -4,11 +4,12 @@ import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.db.Filter
 import com.example.android.movieapplication.db.Genre
 import com.example.android.movieapplication.util.ObservableViewModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class FilterDialogViewModel(private val repository: MovieDbRepository) : ObservableViewModel() {
@@ -16,30 +17,34 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
     init {
         viewModelScope.launch {
             var genres = repository.getDbGenres()
-            println("db: " + genres)
             if (genres.isEmpty()) {
                 genres = repository.getNetworkGenres()
-                println("network: " + genres)
                 repository.saveGenres(genres)
             }
             _genres.value = genres
         }
-
     }
 
-    fun saveFilter(filter: Filter) {
+    private val filterModelFlow = repository.userPreferencesFlow.map {
+        FilterModel(it.startYear, it.endYear, it.voteAverage)
+    }
+    val filterModel = filterModelFlow.asLiveData()
+
+    fun saveFilter() {
         viewModelScope.launch {
-            repository.saveFilter(filter)
+            repository.updateFilter(startYear, endYear, voteAverage)
         }
     }
-
-    val filter: LiveData<Filter?> = repository.getFilter()
 
     fun saveGenres(genres: List<Genre>) {
         viewModelScope.launch {
             repository.saveGenres(genres)
         }
     }
+
+    private val _genres = MutableLiveData<List<Genre>>()
+    val genres: LiveData<List<Genre>>
+        get() = _genres
 
     fun updateIncludedGenres(id: Int, isChecked: Boolean) {
         _genres.value
@@ -59,24 +64,18 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
             }
     }
 
-    private val _genres = MutableLiveData<List<Genre>>()
-    val genres: LiveData<List<Genre>>
-        get() = _genres
-
-
-
     @get:Bindable
-    var dateFrom: String = ""
+    var startYear: Int = 1874
         set(value) {
             field = value
-            notifyPropertyChanged(BR.dateFrom)
+            notifyPropertyChanged(BR.startYear)
         }
 
     @get:Bindable
-    var dateTo: String = ""
+    var endYear: Int = 2020
         set(value) {
             field = value
-            notifyPropertyChanged(BR.dateTo)
+            notifyPropertyChanged(BR.endYear)
         }
 
     @get:Bindable
@@ -85,6 +84,27 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
             field = value
             notifyPropertyChanged(BR.voteAverage)
         }
+
+//    private val _startYear = MutableLiveData(1874)
+//    val startYear: LiveData<Int>
+//        get() = _startYear
+//    fun setStartYear(startYear: Int) {
+//        _startYear.value = startYear
+//    }
+//
+//    private val _endYear = MutableLiveData(2020)
+//    val endYear: LiveData<Int>
+//        get() = _endYear
+//    fun setEndYear(endYear: Int) {
+//        _endYear.value = endYear
+//    }
+//
+//    private val _voteAverage = MutableLiveData(5.0f)
+//    val voteAverage: LiveData<Float>
+//        get() = _voteAverage
+//    fun setVoteAverage(voteAverage: Float) {
+//        _voteAverage.value = voteAverage
+//    }
 
 
 

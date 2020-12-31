@@ -38,7 +38,11 @@ class PeopleDetailFragment : Fragment() {
         activity?.let {
             viewModelFactory = PeopleDetailViewModelFactory(
                 args.personId,
-                MovieDbRepository(MoviesApi.retrofitService, MovieDatabase.getInstance(it))
+                MovieDbRepository.getInstance(
+                    it,
+                    MoviesApi.retrofitService,
+                    MovieDatabase.getInstance(it)
+                )
             )
         }
 
