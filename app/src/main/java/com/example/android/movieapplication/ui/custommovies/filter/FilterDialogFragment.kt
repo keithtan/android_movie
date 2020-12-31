@@ -85,7 +85,7 @@ class FilterDialogFragment : DialogFragment() {
                 if (it.endYear != 0)
                     viewModel.endYear = it.endYear
                 if (it.voteAverage != 0.0f)
-                    viewModel.voteAverage = it.voteAverage
+                    viewModel.voteAverage.value = it.voteAverage
 
                 binding.autoCompleteStartYear.setText(viewModel.startYear.toString(), false)
                 binding.autoCompleteEndYear.setText(viewModel.endYear.toString(), false)
@@ -96,30 +96,30 @@ class FilterDialogFragment : DialogFragment() {
         }
 
 
-        binding.autoCompleteStartYear.setOnItemClickListener { _, view, _, _ ->
-            hideKeyboard(view)
-        }
-        binding.autoCompleteStartYear.doOnTextChanged { text, _, _, _ ->
-            if (viewModel.startYear != text.toString().toInt()) {
-                viewModel.startYear = text.toString().toInt()
-                setEndYearAdapter()
+        with(binding.autoCompleteStartYear) {
+            doOnTextChanged { text, _, _, _ ->
+                if (viewModel.startYear != text.toString().toInt()) {
+                    viewModel.startYear = text.toString().toInt()
+                    setEndYearAdapter()
+                }
+            }
+            setOnItemClickListener { _, view, _, _ ->
+                hideKeyboard(view)
             }
         }
 
-
-        binding.autoCompleteEndYear.doOnTextChanged { text, _, _, _ ->
-            if (viewModel.endYear != text.toString().toInt()) {
-                viewModel.endYear = text.toString().toInt()
-                setStartYearAdapter()
+        with(binding.autoCompleteEndYear) {
+            doOnTextChanged { text, _, _, _ ->
+                if (viewModel.endYear != text.toString().toInt()) {
+                    viewModel.endYear = text.toString().toInt()
+                    setStartYearAdapter()
+                }
+            }
+            setOnItemClickListener { _, view, _, _ ->
+                hideKeyboard(view)
             }
         }
-        binding.autoCompleteEndYear.setOnItemClickListener { _, view, _, _ ->
-            hideKeyboard(view)
-        }
 
-        binding.slider.addOnChangeListener { _, value, _ ->
-            viewModel.voteAverage = value
-        }
 
         setCheckChangedListener()
         setLongClickListener()
@@ -129,7 +129,6 @@ class FilterDialogFragment : DialogFragment() {
 
     private fun setStartYearAdapter() {
         val endYear = viewModel.endYear
-        println("endYear: " + endYear)
         val yearsFrom = (1874..endYear).toList()
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_year, yearsFrom)
         binding.autoCompleteStartYear.setAdapter(adapter)

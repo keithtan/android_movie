@@ -32,7 +32,8 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
 
     fun saveFilter() {
         viewModelScope.launch {
-            repository.updateFilter(startYear, endYear, voteAverage)
+            println("vote: " + voteAverage)
+            repository.updateFilter(startYear, endYear, voteAverage.value!!)
         }
     }
 
@@ -78,12 +79,11 @@ class FilterDialogViewModel(private val repository: MovieDbRepository) : Observa
             notifyPropertyChanged(BR.endYear)
         }
 
-    @get:Bindable
-    var voteAverage: Float = 5.0F
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.voteAverage)
-        }
+
+    val voteAverage = MutableLiveData(5.0f)
+
+
+
 
 //    private val _startYear = MutableLiveData(1874)
 //    val startYear: LiveData<Int>
