@@ -8,7 +8,6 @@ import android.widget.CompoundButton
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseMethod
 import com.example.android.movieapplication.R
-import com.example.android.movieapplication.db.Genre
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import java.util.*
@@ -53,7 +52,7 @@ fun AutoCompleteTextView.bindEndYearAdapter(startYear: Int? = 1874) {
 
 @BindingAdapter(value = ["filterGenres", "checkedChangeListener", "longClickListener"])
 fun ChipGroup.bindChips(
-    genres: List<Genre>? = emptyList(),
+    genres: List<GenreModel>?,
     checkedChangeListener: CompoundButton.OnCheckedChangeListener,
     longClickListener: View.OnLongClickListener
 ) {

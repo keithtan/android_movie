@@ -87,12 +87,12 @@ class CustomMoviesFragment : Fragment() {
             }
         }
 
-        viewModel.genres.observe(viewLifecycleOwner) {
-            it?.let {
-                println("refresh genres")
-                adapter.refresh()
-            }
-        }
+//        viewModel.genres.observe(viewLifecycleOwner) {
+//            it?.let {
+//                println("refresh genres")
+//                adapter.refresh()
+//            }
+//        }
 
         setHasOptionsMenu(true)
 

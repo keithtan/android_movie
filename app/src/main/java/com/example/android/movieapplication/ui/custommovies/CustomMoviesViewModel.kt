@@ -26,7 +26,7 @@ class CustomMoviesViewModel(
 
     val filter = repository.userPreferencesFlow.asLiveData()
 
-    val genres = repository.getLiveDbGenres()
+//    val genres = repository.getLiveDbGenres()
 
     val emptyText = SpannableString("No movies found..\nTry a different filter")
         .apply {

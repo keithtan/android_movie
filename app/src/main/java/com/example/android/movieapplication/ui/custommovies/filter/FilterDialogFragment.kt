@@ -1,13 +1,9 @@
 package com.example.android.movieapplication.ui.custommovies.filter
 
-import android.content.Context
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -58,10 +54,6 @@ class FilterDialogFragment : DialogFragment() {
             when (item.itemId) {
                 R.id.action_save -> {
                     viewModel.saveFilter()
-
-                    viewModel.genres.value?.let {
-                        viewModel.saveGenres(it)
-                    }
                     Snackbar.make(binding.layout, "Filter saved. You may close this dialog.", Snackbar.LENGTH_SHORT)
                         .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_orange_a100))
                         .show()

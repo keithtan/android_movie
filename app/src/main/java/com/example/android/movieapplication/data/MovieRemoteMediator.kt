@@ -5,8 +5,8 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.UserPreferences
-import com.example.android.movieapplication.db.Genre
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.RemoteKeys
@@ -59,11 +59,11 @@ class MovieRemoteMediator(
 
         try {
             val filter = userPreferencesFlow.first()
-            val genres = movieDatabase.withTransaction {
-                movieDatabase.genresDao().genres()
-            }
-            val withGenreFilter = genres.joinIncludedIds()
-            val withoutGenreFilter = genres.joinExcludedIds()
+//            val genres = movieDatabase.withTransaction {
+//                movieDatabase.genresDao().genres()
+//            }
+            val withGenreFilter = filter.genrePrefList.joinIncludedIds()
+            val withoutGenreFilter = filter.genrePrefList.joinExcludedIds()
             val apiResponse =
                 when (position) {
                     MovieSection.LATEST -> service.getLatest(page)
@@ -148,7 +148,7 @@ class MovieRemoteMediator(
         else null
     }
 
-    private fun List<Genre>.joinIncludedIds(): String {
+    private fun List<GenrePreferences>.joinIncludedIds(): String {
         return this.filter {
             it.included
         }.joinToString("%2C") {
@@ -156,7 +156,7 @@ class MovieRemoteMediator(
         }
     }
 
-    private fun List<Genre>.joinExcludedIds(): String {
+    private fun List<GenrePreferences>.joinExcludedIds(): String {
         return this.filter {
             it.excluded
         }.joinToString("%2C") {

@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.db.Genre
+import com.example.android.movieapplication.data.toDomainModel
 import com.example.android.movieapplication.util.ObservableViewModel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -17,54 +17,51 @@ class FilterDialogViewModel(
     application: Application
 ) : ObservableViewModel(application) {
 
-    init {
-        viewModelScope.launch {
-            var genres = repository.getDbGenres()
-            if (genres.isEmpty()) {
-                genres = repository.getNetworkGenres()
-                repository.saveGenres(genres)
-            }
-            _genres.value = genres
-
-            setFilter()
-        }
-    }
-
 
     val startYear = MutableLiveData(INITIAL_YEAR)
     val endYear = MutableLiveData(currentYear)
     val voteAverage = MutableLiveData(5.0f)
 
+    private val _genres = MutableLiveData<List<GenreModel>>()
+    val genres: LiveData<List<GenreModel>>
+        get() = _genres
+
     private val filterModelFlow = repository.userPreferencesFlow.map {
-        FilterModel(it.startYear, it.endYear, it.voteAverage)
+        val genreList = it.genrePrefList.toDomainModel()
+        FilterModel(it.startYear, it.endYear, it.voteAverage, genreList)
     }
     val filterModel = filterModelFlow.asLiveData()
 
+    init {
+        viewModelScope.launch {
+            setFilter()
+        }
+    }
+
     private suspend fun setFilter() {
-        filterModelFlow.collect {
+        filterModelFlow.first().let {
             if (it.startYear != DEFAULT_YEAR)
                 startYear.value = it.startYear
             if (it.endYear != DEFAULT_YEAR)
                 endYear.value = it.endYear
             if (it.voteAverage != DEFAULT_VOTE)
                 voteAverage.value = it.voteAverage
+            if (it.genrePrefList.isEmpty()) {
+                _genres.value = repository.getNetworkGenres()
+            }
+            else {
+                _genres.value = it.genrePrefList
+            }
         }
     }
 
     fun saveFilter() {
         viewModelScope.launch {
-            repository.updateFilter(startYear.value!!, endYear.value!!, voteAverage.value!!)
-        }
-    }
-
-
-    private val _genres = MutableLiveData<List<Genre>>()
-    val genres: LiveData<List<Genre>>
-        get() = _genres
-
-    fun saveGenres(genres: List<Genre>) {
-        viewModelScope.launch {
-            repository.saveGenres(genres)
+            repository.updateFilter(
+                startYear.value!!,
+                endYear.value!!,
+                voteAverage.value!!,
+                _genres.value!!)
         }
     }
 

@@ -8,4 +8,13 @@ message UserPreferences {
   optional int32 startYear = 1;
   optional int32 endYear = 2;
   optional float voteAverage = 3;
+  repeated GenrePreferences genrePref = 4;
+
+}
+
+message GenrePreferences {
+  required int32 id = 1;
+  required string name = 2;
+  optional bool included = 3;
+  optional bool excluded = 4;
 }

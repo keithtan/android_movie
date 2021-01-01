@@ -4,22 +4,20 @@ import android.content.Context
 import android.util.Log
 import androidx.datastore.DataStore
 import androidx.datastore.createDataStore
-import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.UserPreferences
-import com.example.android.movieapplication.db.Genre
-import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.Movie
+import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MovieData
 import com.example.android.movieapplication.network.MovieDetail
 import com.example.android.movieapplication.network.MoviesApiService
 import com.example.android.movieapplication.network.PeopleDetail
+import com.example.android.movieapplication.ui.custommovies.filter.GenreModel
 import com.example.android.movieapplication.ui.custommovies.filter.UserPreferencesSerializer
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import java.io.IOException
 
 class MovieDbRepository private constructor(
@@ -102,26 +100,32 @@ class MovieDbRepository private constructor(
         .catch { exception ->
             // dataStore.data throws an IOException when an error is encountered when reading data
             if (exception is IOException) {
-                Log.e(TAG, "Error reading sort order preferences.", exception)
+                Log.e(TAG, "Error reading user preferences.", exception)
                 emit(UserPreferences.getDefaultInstance())
             } else {
                 throw exception
             }
         }
 
-    suspend fun updateFilter(startYear: Int, endYear: Int, voteAverage: Float) {
+    suspend fun updateFilter(startYear: Int, endYear: Int, voteAverage: Float, genres: List<GenreModel>) {
+        val genrePrefs = genres.toDataStoreModel()
         dataStore.updateData { preferences ->
             preferences.toBuilder()
                 .setStartYear(startYear)
                 .setEndYear(endYear)
                 .setVoteAverage(voteAverage)
+                .apply {
+                    genrePrefs.forEachIndexed { index, genrePreferences ->
+                        setGenrePref(index, genrePreferences)
+                    }
+                }
                 .build()
         }
     }
 
-    suspend fun getNetworkGenres(): List<Genre> {
+    suspend fun getNetworkGenres(): List<GenreModel> {
         return service.getGenres().genres.map {
-            Genre(
+            GenreModel(
                 it.id,
                 it.name,
                 included = false,
@@ -130,23 +134,32 @@ class MovieDbRepository private constructor(
         }
     }
 
-    fun getLiveDbGenres(): LiveData<List<Genre>> {
-        println("result: " + database.genresDao().liveGenres().value)
-        return database.genresDao().liveGenres()
-    }
-
-    suspend fun getDbGenres(): List<Genre> {
-        return database.genresDao().genres()
-    }
-
-    suspend fun saveGenres(genres: List<Genre>) {
-        database.genresDao().insertAll(genres)
-    }
-
     suspend fun getPeopleDetails(personId: Long): Flow<PeopleDetail> = flow {
         emit(service.getPeopleDetails(personId))
     }
 
+}
+
+fun List<GenreModel>.toDataStoreModel(): List<GenrePreferences> {
+    return this.map {
+        GenrePreferences.newBuilder()
+            .setId(it.id)
+            .setName(it.name)
+            .setIncluded(it.included)
+            .setExcluded(it.excluded)
+            .build()
+    }
+}
+
+fun List<GenrePreferences>.toDomainModel(): List<GenreModel> {
+    return this.map {
+        GenreModel(
+            it.id,
+            it.name,
+            it.included,
+            it.excluded
+        )
+    }
 }
 
 enum class MovieSection(val position: Int) {
