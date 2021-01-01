@@ -75,9 +75,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:dropDownHeight="200dp"
-                        android:inputType="number"
+                        android:inputType="none"
                         android:text="@={Converter.intToString(viewModel.startYear)}"
-                        app:startYearAdapter="@{viewModel.endYear}"/>
+                        app:startYearAdapter="@{viewModel.endYear}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -96,7 +96,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:dropDownHeight="200dp"
-                        android:inputType="number"
+                        android:inputType="none"
                         android:text="@={Converter.intToString(viewModel.endYear)}"
                         app:endYearAdapter="@{viewModel.startYear}"/>
                 </com.google.android.material.textfield.TextInputLayout>

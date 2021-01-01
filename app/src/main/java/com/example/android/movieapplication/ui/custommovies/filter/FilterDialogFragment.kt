@@ -2,9 +2,11 @@ package com.example.android.movieapplication.ui.custommovies.filter
 
 import android.content.Context
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
@@ -106,12 +108,6 @@ class FilterDialogFragment : DialogFragment() {
             viewModel.updateExcludedGenres(it.id, it.isSelected)
             true
         }
-    }
-
-    private fun hideKeyboard(view: View) {
-        val imm: InputMethodManager? =
-            view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     override fun onStart() {
