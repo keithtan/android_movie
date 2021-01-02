@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentFilterDialogBinding
@@ -66,11 +68,10 @@ class FilterDialogFragment : DialogFragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        TooltipCompat.setTooltipText(binding.textView2, "Hold on chips to disable them")
 
         viewModel.filterModel.observe(viewLifecycleOwner) {
-            it?.let {
-                disableAutoCompleteFilters()
-            }
+            disableAutoCompleteFilters()
         }
 
         setCheckChangedListener()

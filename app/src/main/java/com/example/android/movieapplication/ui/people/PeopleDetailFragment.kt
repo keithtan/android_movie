@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -90,9 +91,7 @@ class PeopleDetailFragment : Fragment() {
         }
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
-            it?.let {
-                viewModel.displayMovieDetailsComplete()
-            }
+            viewModel.displayMovieDetailsComplete()
         }
 
         return binding.root

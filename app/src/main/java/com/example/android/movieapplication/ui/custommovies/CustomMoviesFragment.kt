@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -75,16 +76,11 @@ class CustomMoviesFragment : Fragment() {
         }
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
-            it?.let {
-                viewModel.displayMovieDetailsComplete()
-            }
+            viewModel.displayMovieDetailsComplete()
         }
 
         viewModel.filter.observe(viewLifecycleOwner) {
-            it?.let {
-                println("refresh")
-                search()
-            }
+            search()
         }
 
         setHasOptionsMenu(true)

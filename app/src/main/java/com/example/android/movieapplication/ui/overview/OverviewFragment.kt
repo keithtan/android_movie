@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -74,9 +75,7 @@ class OverviewFragment : Fragment() {
         }
 
         viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
-            it?.let {
-                viewModel.displayMovieDetailsComplete()
-            }
+            viewModel.displayMovieDetailsComplete()
         }
 
         return binding.root
