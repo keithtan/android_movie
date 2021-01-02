@@ -7,36 +7,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.databinding.SearchDialogFragmentBinding
+import com.example.android.movieapplication.databinding.SearchFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 
+class SearchFragment : Fragment() {
 
-class SearchDialogFragment : DialogFragment() {
-
-    private lateinit var viewModelFactory: SearchDialogViewModelFactory
-    private lateinit var binding: SearchDialogFragmentBinding
+    private lateinit var viewModelFactory: SearchViewModelFactory
+    private lateinit var binding: SearchFragmentBinding
     private lateinit var adapter: SearchAdapter
     private lateinit var extras: Navigator.Extras
 
-    private val viewModel: SearchDialogViewModel by viewModels { viewModelFactory }
+    private val viewModel: SearchViewModel by viewModels { viewModelFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         activity?.let {
-            viewModelFactory = SearchDialogViewModelFactory(
+            viewModelFactory = SearchViewModelFactory(
                 MovieDbRepository.getInstance(
                     it,
                     MoviesApi.retrofitService,
@@ -45,12 +45,13 @@ class SearchDialogFragment : DialogFragment() {
             )
         }
 
-        binding = SearchDialogFragmentBinding.inflate(layoutInflater, container, false)
+        binding = SearchFragmentBinding.inflate(layoutInflater, container, false)
+
 
         val toolbar = binding.toolbar
         toolbar.setNavigationOnClickListener {
-            println("close")
-            dismiss()
+            hideKeyboard()
+            findNavController().popBackStack()
         }
         toolbar.navigationIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.black_200))
 
@@ -59,26 +60,18 @@ class SearchDialogFragment : DialogFragment() {
         binding.actionSearch.performClick()
         binding.actionSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                println("search query: $query")
-                closeKeyboard()
+                hideKeyboard()
                 return true
-            }
-
-            private fun closeKeyboard() {
-                val imm: InputMethodManager? =
-                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.toggleSoftInput(0, 0)
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                println("search text: $newText")
                 if (!newText.isNullOrBlank()) {
                     viewModel.searchMovies(newText)
                 }
-
                 return true
             }
         })
+        binding.actionSearch.setOnCloseListener { true }
 
         adapter = SearchAdapter(SearchAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
             viewModel.displayMovieDetails(movieId)
@@ -87,7 +80,7 @@ class SearchDialogFragment : DialogFragment() {
             )
             findNavController()
                 .navigate(
-                    SearchDialogFragmentDirections.actionSearchDialogFragmentToMovieDetailFragment(
+                    SearchFragmentDirections.actionSearchFragmentToMovieDetailFragment(
                         movieId
                     ),
                     extras
@@ -114,20 +107,15 @@ class SearchDialogFragment : DialogFragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        val dialog = dialog
-        if (dialog != null) {
-            val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.MATCH_PARENT
-            dialog.window!!.setLayout(width, height)
-            dialog.window!!.attributes.windowAnimations = R.style.AppTheme_Slide
-        }
+    private fun hideKeyboard() {
+        val imm: InputMethodManager? =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity).supportActionBar?.hide()
     }
 
 }

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.android.movieapplication.ui.custommovies.search.SearchDialogViewModel" />
+            type="com.example.android.movieapplication.ui.custommovies.search.SearchViewModel" />
     </data>
 
     <LinearLayout

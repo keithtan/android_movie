@@ -38,7 +38,7 @@ class CustomMoviesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         activity?.run {
             viewModelFactory = CustomMoviesViewModelFactory(
                 MovieDbRepository.getInstance(
@@ -86,13 +86,6 @@ class CustomMoviesFragment : Fragment() {
                 search()
             }
         }
-
-//        viewModel.genres.observe(viewLifecycleOwner) {
-//            it?.let {
-//                println("refresh genres")
-//                adapter.refresh()
-//            }
-//        }
 
         setHasOptionsMenu(true)
 
@@ -182,7 +175,7 @@ class CustomMoviesFragment : Fragment() {
         R.id.action_search -> {
             findNavController()
                 .navigate(
-                    ViewPagerFragmentDirections.actionViewPagerFragmentToSearchDialogFragment()
+                    ViewPagerFragmentDirections.actionViewPagerFragmentToSearchFragment()
                 )
             true
         }

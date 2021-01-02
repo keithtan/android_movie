@@ -28,8 +28,8 @@
             android:id="@+id/action_viewPagerFragment_to_filterDialogFragment2"
             app:destination="@id/filterDialogFragment2" />
         <action
-            android:id="@+id/action_viewPagerFragment_to_searchDialogFragment"
-            app:destination="@id/searchDialogFragment" />
+            android:id="@+id/action_viewPagerFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <dialog
         android:id="@+id/filterDialogFragment2"
@@ -46,13 +46,13 @@
             android:id="@+id/action_peopleDetailFragment_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />
     </fragment>
-    <dialog
-        android:id="@+id/searchDialogFragment"
-        android:name="com.example.android.movieapplication.ui.custommovies.search.SearchDialogFragment"
-        android:label="search_dialog_fragment"
-        tools:layout="@layout/search_dialog_fragment" >
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.android.movieapplication.ui.custommovies.search.SearchFragment"
+        android:label="search_fragment"
+        tools:layout="@layout/search_fragment" >
         <action
-            android:id="@+id/action_searchDialogFragment_to_movieDetailFragment"
+            android:id="@+id/action_searchFragment_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />
-    </dialog>
+    </fragment>
 </navigation>

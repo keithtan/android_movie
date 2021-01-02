@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import com.example.android.movieapplication.databinding.FragmentViewPagerBinding
 import com.example.android.movieapplication.ui.comingsoon.ComingSoonFragment
@@ -52,5 +53,10 @@ class ViewPagerFragment : Fragment() {
         (view.parent as? ViewGroup)?.doOnPreDraw {
             startPostponedEnterTransition()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity).supportActionBar?.show()
     }
 }

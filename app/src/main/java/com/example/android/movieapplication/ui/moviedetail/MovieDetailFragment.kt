@@ -33,7 +33,7 @@ class MovieDetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         val application = requireNotNull(activity).application
 
@@ -55,7 +55,6 @@ class MovieDetailFragment : Fragment() {
         binding.lifecycleOwner = this
 
         castAdapter = MovieCastAdapter(MovieCastAdapter.OnClickListener { personId: Long, imageView: ImageView ->
-            println("cast: $personId")
             extras = FragmentNavigatorExtras(
                 imageView to "$personId"
             )
@@ -80,7 +79,6 @@ class MovieDetailFragment : Fragment() {
         }
 
         viewModel.movieVideos.observe(viewLifecycleOwner) {
-            println("videos: $it")
             videoAdapter.submitList(it)
         }
 
@@ -107,8 +105,4 @@ class MovieDetailFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.hide()
     }
 
-    override fun onStop() {
-        super.onStop()
-        (activity as AppCompatActivity).supportActionBar?.show()
-    }
 }

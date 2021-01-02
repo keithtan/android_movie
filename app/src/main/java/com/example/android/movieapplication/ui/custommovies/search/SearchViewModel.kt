@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class SearchDialogViewModel(private val repository: MovieDbRepository) : ViewModel() {
+class SearchViewModel(private val repository: MovieDbRepository) : ViewModel() {
 
     fun searchMovies(query: String) {
         viewModelScope.launch {

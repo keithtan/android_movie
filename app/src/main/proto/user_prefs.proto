@@ -9,7 +9,6 @@ message UserPreferences {
   optional int32 endYear = 2;
   optional float voteAverage = 3;
   repeated GenrePreferences genrePref = 4;
-
 }
 
 message GenrePreferences {
