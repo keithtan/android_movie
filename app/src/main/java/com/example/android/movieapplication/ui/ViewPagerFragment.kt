@@ -44,6 +44,8 @@ class ViewPagerFragment : Fragment() {
             }
         }.attach()
 
+        binding.viewPager.setPageTransformer(ZoomOutPageTransformer())
+
         return binding.root
     }
 
