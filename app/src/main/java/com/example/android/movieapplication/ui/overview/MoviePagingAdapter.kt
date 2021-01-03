@@ -2,7 +2,7 @@ package com.example.android.movieapplication.ui.overview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.cardview.widget.CardView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +13,9 @@ class MoviePagingAdapter(private val onClickListener: OnClickListener)
     : PagingDataAdapter<Movie, MoviePagingAdapter.MovieViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        return MovieViewHolder(ListViewItemBinding.inflate(LayoutInflater.from(parent.context)))
+        return MovieViewHolder(
+            ListViewItemBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
@@ -21,7 +23,7 @@ class MoviePagingAdapter(private val onClickListener: OnClickListener)
         movie?.let {
             holder.bind(it)
             holder.itemView.setOnClickListener {
-                onClickListener.onClick(movie.id, holder.imageView)
+                onClickListener.onClick(movie.id, holder.cardView)
             }
         }
 
@@ -33,7 +35,7 @@ class MoviePagingAdapter(private val onClickListener: OnClickListener)
             binding.movie = movie
         }
 
-        val imageView = binding.imageView
+        val cardView = binding.cardView
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<Movie>() {
@@ -46,8 +48,8 @@ class MoviePagingAdapter(private val onClickListener: OnClickListener)
         }
     }
 
-    class OnClickListener(val clickListener: (movieId: Long, imageView: ImageView) -> Unit) {
-        fun onClick(movieId: Long, imageView: ImageView) = clickListener(movieId, imageView)
+    class OnClickListener(val clickListener: (movieId: Long, cardView: CardView) -> Unit) {
+        fun onClick(movieId: Long, cardView: CardView) = clickListener(movieId, cardView)
     }
 
 }

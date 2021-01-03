@@ -26,8 +26,6 @@ class CustomMoviesViewModel(
 
     val filter = repository.userPreferencesFlow.asLiveData()
 
-//    val genres = repository.getLiveDbGenres()
-
     val emptyText = SpannableString("No movies found..\nTry a different filter")
         .apply {
             setSpan(
@@ -49,15 +47,4 @@ class CustomMoviesViewModel(
             )
         }
 
-    private val _navigateToSelectedMovie = MutableLiveData<Long>()
-    val navigateToSelectedMovie: LiveData<Long>
-        get() = _navigateToSelectedMovie
-
-    fun displayMovieDetails(movieId: Long) {
-        _navigateToSelectedMovie.value = movieId
-    }
-
-    fun displayMovieDetailsComplete() {
-        _navigateToSelectedMovie.value = null
-    }
 }

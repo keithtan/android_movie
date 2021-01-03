@@ -1,5 +1,6 @@
 package com.example.android.movieapplication.ui.moviedetail
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +11,17 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
-import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
+import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.MovieDetailFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
+import com.example.android.movieapplication.util.themeColor
+import com.google.android.material.transition.MaterialContainerTransform
 
 class MovieDetailFragment : Fragment() {
 
@@ -26,7 +29,6 @@ class MovieDetailFragment : Fragment() {
     private lateinit var binding: MovieDetailFragmentBinding
     private lateinit var castAdapter: MovieCastAdapter
     private lateinit var videoAdapter: MovieVideoAdapter
-    private lateinit var extras: Navigator.Extras
 
     private val viewModel: MovieDetailViewModel by viewModels { viewModelFactory }
     private val args: MovieDetailFragmentArgs by navArgs()
@@ -56,7 +58,7 @@ class MovieDetailFragment : Fragment() {
         binding.lifecycleOwner = this
 
         castAdapter = MovieCastAdapter(MovieCastAdapter.OnClickListener { personId: Long, imageView: ImageView ->
-            extras = FragmentNavigatorExtras(
+            val extras = FragmentNavigatorExtras(
                 imageView to "$personId"
             )
             findNavController()
@@ -93,9 +95,15 @@ class MovieDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedElementEnterTransition = TransitionInflater
-            .from(context)
-            .inflateTransition(android.R.transition.move)
+//        sharedElementEnterTransition = TransitionInflater
+//            .from(context)
+//            .inflateTransition(android.R.transition.move)
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(requireContext().themeColor(R.attr.colorSurface))
+        }
 
         postponeEnterTransition()
 

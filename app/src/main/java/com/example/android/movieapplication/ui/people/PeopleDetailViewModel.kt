@@ -44,16 +44,4 @@ class PeopleDetailViewModel(
         return year
     }
 
-    private val _navigateToSelectedMovie = MutableLiveData<Long>()
-    val navigateToSelectedMovie: LiveData<Long>
-        get() = _navigateToSelectedMovie
-
-    fun displayMovieDetails(movieId: Long) {
-        _navigateToSelectedMovie.value = movieId
-    }
-
-    fun displayMovieDetailsComplete() {
-        _navigateToSelectedMovie.value = null
-    }
-
 }

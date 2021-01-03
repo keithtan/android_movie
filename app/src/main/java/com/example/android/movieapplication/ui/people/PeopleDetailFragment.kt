@@ -9,7 +9,6 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
-import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -26,7 +25,6 @@ class PeopleDetailFragment : Fragment() {
     private lateinit var binding: PeopleDetailFragmentBinding
     private lateinit var viewModelFactory: PeopleDetailViewModelFactory
     private lateinit var adapter: MovieListAdapter
-    private lateinit var extras: Navigator.Extras
 
     private val viewModel: PeopleDetailViewModel by viewModels { viewModelFactory }
     private val args: PeopleDetailFragmentArgs by navArgs()
@@ -53,8 +51,7 @@ class PeopleDetailFragment : Fragment() {
         binding.lifecycleOwner = this
 
         adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
-            viewModel.displayMovieDetails(movieId)
-            extras = FragmentNavigatorExtras(
+            val extras = FragmentNavigatorExtras(
                 imageView to "$movieId"
             )
             findNavController()
@@ -88,10 +85,6 @@ class PeopleDetailFragment : Fragment() {
                     dialog.dismiss()
                 }
                 .show()
-        }
-
-        viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
-            viewModel.displayMovieDetailsComplete()
         }
 
         return binding.root

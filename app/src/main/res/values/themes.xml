@@ -15,6 +15,7 @@
             tools:targetApi="l">?attr/colorPrimaryVariant
         </item>
         <!-- Customize your theme here. -->
+        <item name="android:colorBackground">@color/black_200</item>
     </style>
 
     <style name="AppTheme.FullScreenDialog" parent="Theme.MaterialComponents.Light.Dialog">

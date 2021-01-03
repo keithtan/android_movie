@@ -6,22 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.OverviewFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.example.android.movieapplication.ui.ViewPagerFragmentDirections
+import com.google.android.material.transition.MaterialElevationScale
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,12 +52,9 @@ class OverviewFragment : Fragment() {
             )
         }
 
-        binding = OverviewFragmentBinding.inflate(layoutInflater, container, false)
+        binding = OverviewFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
-
-        val decoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
-        binding.movieList.addItemDecoration(decoration)
 
         binding.retryButton.setOnClickListener { adapter.retry() }
 
@@ -72,10 +71,6 @@ class OverviewFragment : Fragment() {
 
         binding.floatingActionButton.setOnClickListener {
             binding.movieList.layoutManager?.scrollToPosition(0)
-        }
-
-        viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
-            viewModel.displayMovieDetailsComplete()
         }
 
         return binding.root
@@ -123,10 +118,9 @@ class OverviewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = MoviePagingAdapter(MoviePagingAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
-            viewModel.displayMovieDetails(movieId)
+        adapter = MoviePagingAdapter(MoviePagingAdapter.OnClickListener { movieId: Long, cardView: CardView ->
             extras = FragmentNavigatorExtras(
-                imageView to "$movieId"
+                cardView to "$movieId"
             )
             findNavController()
                 .navigate(
@@ -135,6 +129,13 @@ class OverviewFragment : Fragment() {
                     ),
                     extras
                 )
+
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+            }
+            reenterTransition = MaterialElevationScale(true).apply {
+                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+            }
         })
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 

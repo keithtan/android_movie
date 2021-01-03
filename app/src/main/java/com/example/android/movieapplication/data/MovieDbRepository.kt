@@ -114,11 +114,8 @@ class MovieDbRepository private constructor(
                 .setStartYear(startYear)
                 .setEndYear(endYear)
                 .setVoteAverage(voteAverage)
-                .apply {
-                    genrePrefs.forEachIndexed { index, genrePreferences ->
-                        setGenrePref(index, genrePreferences)
-                    }
-                }
+                .clearGenrePref()
+                .addAllGenrePref(genrePrefs)
                 .build()
         }
     }
