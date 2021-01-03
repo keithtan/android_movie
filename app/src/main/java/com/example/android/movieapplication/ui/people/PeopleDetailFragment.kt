@@ -1,10 +1,12 @@
 package com.example.android.movieapplication.ui.people
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,12 +15,14 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
+import androidx.transition.TransitionManager
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.PeopleDetailFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.transition.MaterialContainerTransform
 
 class PeopleDetailFragment : Fragment() {
 
@@ -50,9 +54,9 @@ class PeopleDetailFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, cardView: CardView ->
             val extras = FragmentNavigatorExtras(
-                imageView to "$movieId"
+                cardView to "$movieId"
             )
             findNavController()
                 .navigate(

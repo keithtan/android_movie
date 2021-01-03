@@ -12,11 +12,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class FilterDialogViewModel(
+class FilterViewModel(
     private val repository: MovieDbRepository,
     application: Application
 ) : ObservableViewModel(application) {
-
 
     val startYear = MutableLiveData(INITIAL_YEAR)
     val endYear = MutableLiveData(currentYear)

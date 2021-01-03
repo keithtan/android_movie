@@ -7,7 +7,7 @@
         <import type="com.example.android.movieapplication.ui.custommovies.filter.Converter" />
         <variable
             name="viewModel"
-            type="com.example.android.movieapplication.ui.custommovies.filter.FilterDialogViewModel" />
+            type="com.example.android.movieapplication.ui.custommovies.filter.FilterViewModel" />
         <variable
             name="checkedChangeListener"
             type="android.widget.CompoundButton.OnCheckedChangeListener" />
@@ -20,6 +20,7 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:transitionGroup="true"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout

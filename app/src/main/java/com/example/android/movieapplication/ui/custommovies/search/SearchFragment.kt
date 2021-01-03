@@ -6,13 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigator
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.example.android.movieapplication.R
@@ -20,13 +21,16 @@ import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.SearchFragmentBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
+import com.example.android.movieapplication.ui.people.MovieListAdapter
+import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
 
     private lateinit var viewModelFactory: SearchViewModelFactory
     private lateinit var binding: SearchFragmentBinding
-    private lateinit var adapter: SearchAdapter
-    private lateinit var extras: Navigator.Extras
+    private lateinit var adapter: MovieListAdapter
 
     private val viewModel: SearchViewModel by viewModels { viewModelFactory }
 
@@ -47,7 +51,6 @@ class SearchFragment : Fragment() {
 
         binding = SearchFragmentBinding.inflate(layoutInflater, container, false)
 
-
         val toolbar = binding.toolbar
         toolbar.setNavigationOnClickListener {
             hideKeyboard()
@@ -57,7 +60,6 @@ class SearchFragment : Fragment() {
 
         binding.actionSearch.queryHint = "Search Movies"
         binding.actionSearch.isIconified = false
-        binding.actionSearch.performClick()
         binding.actionSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 hideKeyboard()
@@ -73,10 +75,9 @@ class SearchFragment : Fragment() {
         })
         binding.actionSearch.setOnCloseListener { true }
 
-        adapter = SearchAdapter(SearchAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
-            viewModel.displayMovieDetails(movieId)
-            extras = FragmentNavigatorExtras(
-                imageView to "$movieId"
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, cardView: CardView ->
+            val extras = FragmentNavigatorExtras(
+                cardView to "$movieId"
             )
             findNavController()
                 .navigate(
@@ -92,16 +93,7 @@ class SearchFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel.movies.observe(viewLifecycleOwner) {
-            it?.let {
-                println(it)
-                adapter.submitList(it)
-            }
-        }
-
-        viewModel.navigateToSelectedMovie.observe(viewLifecycleOwner) {
-            it?.let {
-                viewModel.displayMovieDetailsComplete()
-            }
+            adapter.submitList(it)
         }
 
         return binding.root
@@ -116,6 +108,24 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+        }
+
+        lifecycleScope.launch {
+            GlobalScope.launch {}.join()
+            val imm: InputMethodManager? =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm?.toggleSoftInputFromWindow(view?.windowToken, 0, 0)
+        }
     }
 
 }

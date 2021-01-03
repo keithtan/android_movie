@@ -25,16 +25,16 @@
             android:id="@+id/action_viewPagerFragment_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />
         <action
-            android:id="@+id/action_viewPagerFragment_to_filterDialogFragment2"
-            app:destination="@id/filterDialogFragment2" />
+            android:id="@+id/action_viewPagerFragment_to_filterFragment"
+            app:destination="@id/filterFragment" />
         <action
             android:id="@+id/action_viewPagerFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
     </fragment>
-    <dialog
-        android:id="@+id/filterDialogFragment2"
-        android:name="com.example.android.movieapplication.ui.custommovies.filter.FilterDialogFragment"
-        android:label="FilterDialogFragment" />
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.example.android.movieapplication.ui.custommovies.filter.FilterFragment"
+        android:label="FilterFragment" />
     <fragment
         android:id="@+id/peopleDetailFragment"
         android:name="com.example.android.movieapplication.ui.people.PeopleDetailFragment"

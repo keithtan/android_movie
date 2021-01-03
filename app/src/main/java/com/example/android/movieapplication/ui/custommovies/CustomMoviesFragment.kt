@@ -22,6 +22,7 @@ import com.example.android.movieapplication.ui.ViewPagerFragmentDirections
 import com.example.android.movieapplication.ui.overview.MoviePagingAdapter
 import com.example.android.movieapplication.ui.overview.MoviesLoadStateAdapter
 import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -127,6 +128,14 @@ class CustomMoviesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = MoviePagingAdapter(MoviePagingAdapter.OnClickListener { movieId: Long, cardView: CardView ->
+
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+            }
+            reenterTransition = MaterialElevationScale(true).apply {
+                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+            }
+
             val extras = FragmentNavigatorExtras(
                 cardView to "$movieId"
             )
@@ -138,12 +147,6 @@ class CustomMoviesFragment : Fragment() {
                     extras
                 )
 
-            exitTransition = MaterialElevationScale(false).apply {
-                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-            }
-            reenterTransition = MaterialElevationScale(true).apply {
-                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-            }
         })
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
@@ -157,15 +160,39 @@ class CustomMoviesFragment : Fragment() {
         inflater.inflate(R.menu.app_menu, menu)
     }
 
+    private val currentNavigationFragment: Fragment?
+        get() = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+            ?.childFragmentManager
+            ?.fragments
+            ?.first()
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.action_filter -> {
+            currentNavigationFragment.apply {
+                exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+                    duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+                }
+                reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+                    duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+                }
+            }
+
             findNavController()
                 .navigate(
-                    ViewPagerFragmentDirections.actionViewPagerFragmentToFilterDialogFragment2()
+                    ViewPagerFragmentDirections.actionViewPagerFragmentToFilterFragment()
                 )
             true
         }
         R.id.action_search -> {
+            currentNavigationFragment.apply {
+                exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+                    duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+                }
+                reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+                    duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+                }
+            }
+
             findNavController()
                 .navigate(
                     ViewPagerFragmentDirections.actionViewPagerFragmentToSearchFragment()

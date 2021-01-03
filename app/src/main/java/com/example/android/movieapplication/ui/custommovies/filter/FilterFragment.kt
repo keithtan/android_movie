@@ -5,25 +5,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.databinding.FragmentFilterDialogBinding
+import com.example.android.movieapplication.databinding.FragmentFilterBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialSharedAxis
 
-class FilterDialogFragment : DialogFragment() {
+class FilterFragment : Fragment() {
 
-    private lateinit var viewModelFactory: FilterDialogViewModelFactory
-    private lateinit var binding: FragmentFilterDialogBinding
+    private lateinit var viewModelFactory: FilterViewModelFactory
+    private lateinit var binding: FragmentFilterBinding
 
-    private val viewModel: FilterDialogViewModel by viewModels { viewModelFactory }
+    private val viewModel: FilterViewModel by viewModels { viewModelFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +35,7 @@ class FilterDialogFragment : DialogFragment() {
     ): View {
 
         activity?.run {
-            viewModelFactory = FilterDialogViewModelFactory(
+            viewModelFactory = FilterViewModelFactory(
                 MovieDbRepository.getInstance(
                     this,
                     MoviesApi.retrofitService,
@@ -42,12 +45,11 @@ class FilterDialogFragment : DialogFragment() {
             )
         }
 
-        binding = FragmentFilterDialogBinding.inflate(layoutInflater, container, false)
+        binding = FragmentFilterBinding.inflate(layoutInflater, container, false)
 
         val toolbar = binding.toolbar
         toolbar.setNavigationOnClickListener {
-            println("close")
-            dismiss()
+            findNavController().popBackStack()
         }
         toolbar.title = "Filter Movies"
         toolbar.inflateMenu(R.menu.filter_menu)
@@ -103,20 +105,21 @@ class FilterDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        val dialog = dialog
-        dialog?.run {
-            val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.MATCH_PARENT
-            window?.setLayout(width, height)
-            window?.attributes?.windowAnimations = R.style.AppTheme_Slide
-        }
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity).supportActionBar?.hide()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+        }
+
     }
 
 }

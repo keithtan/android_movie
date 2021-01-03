@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="biography_text_popup_elevation_compat">3dp</dimen>
+</resources>

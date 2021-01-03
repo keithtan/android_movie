@@ -33,7 +33,6 @@ class OverviewFragment : Fragment() {
     private lateinit var binding: OverviewFragmentBinding
     private lateinit var viewModelFactory: OverviewViewModelFactory
     private lateinit var adapter: MoviePagingAdapter
-    private lateinit var extras: Navigator.Extras
 
     private val viewModel: OverviewViewModel by viewModels { viewModelFactory }
 
@@ -119,7 +118,15 @@ class OverviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = MoviePagingAdapter(MoviePagingAdapter.OnClickListener { movieId: Long, cardView: CardView ->
-            extras = FragmentNavigatorExtras(
+
+            exitTransition = MaterialElevationScale(false).apply {
+                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+            }
+            reenterTransition = MaterialElevationScale(true).apply {
+                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
+            }
+
+            val extras = FragmentNavigatorExtras(
                 cardView to "$movieId"
             )
             findNavController()
@@ -130,12 +137,6 @@ class OverviewFragment : Fragment() {
                     extras
                 )
 
-            exitTransition = MaterialElevationScale(false).apply {
-                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-            }
-            reenterTransition = MaterialElevationScale(true).apply {
-                duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-            }
         })
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
