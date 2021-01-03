@@ -68,7 +68,7 @@ class CustomMoviesFragment : Fragment() {
         binding.floatingActionButton.hide()
 
         binding.floatingActionButton.setOnClickListener {
-            binding.movieList.layoutManager?.scrollToPosition(0)
+            binding.movieList.layoutManager?.smoothScrollToPosition(binding.movieList, RecyclerView.State(), 0)
         }
 
         viewModel.filter.observe(viewLifecycleOwner) {

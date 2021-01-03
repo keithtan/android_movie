@@ -67,7 +67,7 @@ class ComingSoonFragment : Fragment() {
         binding.floatingActionButton.hide()
 
         binding.floatingActionButton.setOnClickListener {
-            binding.movieList.layoutManager?.scrollToPosition(0)
+            binding.movieList.layoutManager?.smoothScrollToPosition(binding.movieList, RecyclerView.State(), 0)
         }
 
         return binding.root
