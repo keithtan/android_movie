@@ -14,10 +14,9 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.transition.TransitionInflater
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.databinding.MovieDetailFragmentBinding
+import com.example.android.movieapplication.databinding.FragmentMovieDetailBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.example.android.movieapplication.util.themeColor
@@ -26,7 +25,7 @@ import com.google.android.material.transition.MaterialContainerTransform
 class MovieDetailFragment : Fragment() {
 
     private lateinit var viewModelFactory: MovieDetailViewModelFactory
-    private lateinit var binding: MovieDetailFragmentBinding
+    private lateinit var binding: FragmentMovieDetailBinding
     private lateinit var castAdapter: MovieCastAdapter
     private lateinit var videoAdapter: MovieVideoAdapter
 
@@ -52,7 +51,7 @@ class MovieDetailFragment : Fragment() {
             )
         }
 
-        binding = MovieDetailFragmentBinding.inflate(layoutInflater, container, false)
+        binding = FragmentMovieDetailBinding.inflate(layoutInflater, container, false)
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this

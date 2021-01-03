@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import com.example.android.movieapplication.databinding.FragmentViewPagerBinding
-import com.example.android.movieapplication.ui.comingsoon.ComingSoonFragment
-import com.example.android.movieapplication.ui.custommovies.CustomMoviesFragment
-import com.example.android.movieapplication.ui.overview.OverviewFragment
+import com.example.android.movieapplication.ui.movies.custommovies.CustomMoviesFragment
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSectionFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
 class ViewPagerFragment : Fragment() {
@@ -23,8 +23,8 @@ class ViewPagerFragment : Fragment() {
         val binding = FragmentViewPagerBinding.inflate(layoutInflater, container, false)
 
         val fragmentList = arrayListOf(
-            OverviewFragment(),
-            ComingSoonFragment(),
+            MovieSectionFragment(MovieSection.LATEST),
+            MovieSectionFragment(MovieSection.COMINGSOON),
             CustomMoviesFragment()
         )
 

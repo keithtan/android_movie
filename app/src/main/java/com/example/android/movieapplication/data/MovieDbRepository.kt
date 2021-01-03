@@ -11,12 +11,13 @@ import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.UserPreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.network.MovieData
+import com.example.android.movieapplication.network.MovieDto
 import com.example.android.movieapplication.network.MovieDetail
 import com.example.android.movieapplication.network.MoviesApiService
 import com.example.android.movieapplication.network.PeopleDetail
-import com.example.android.movieapplication.ui.custommovies.filter.GenreModel
-import com.example.android.movieapplication.ui.custommovies.filter.UserPreferencesSerializer
+import com.example.android.movieapplication.ui.movies.custommovies.filter.GenreModel
+import com.example.android.movieapplication.ui.movies.custommovies.filter.UserPreferencesSerializer
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import kotlinx.coroutines.flow.*
 import java.io.IOException
 
@@ -49,23 +50,11 @@ class MovieDbRepository private constructor(
         }
     }
 
-    fun getLatestMoviesStream(): Flow<PagingData<Movie>> {
-        return getMoviesStream(MovieSection.LATEST)
-    }
-
-    fun getComingSoonMoviesStream(): Flow<PagingData<Movie>> {
-        return getMoviesStream(MovieSection.COMINGSOON)
-    }
-
-    fun getCustomMoviesStream(): Flow<PagingData<Movie>> {
-        return getMoviesStream(MovieSection.CUSTOM)
-    }
-
-    suspend fun getSearchedMoviesStream(query: String): MovieData {
+    suspend fun getSearchedMoviesStream(query: String): MovieDto {
         return service.getSearchedMovies(query)
     }
 
-    private fun getMoviesStream(section: MovieSection): Flow<PagingData<Movie>> {
+    fun getMoviesStream(section: MovieSection): Flow<PagingData<Movie>> {
         val pagingSourceFactory =  { database.moviesDao().movies(section.ordinal) }
         return Pager(
             config = PagingConfig(
@@ -157,10 +146,4 @@ fun List<GenrePreferences>.toDomainModel(): List<GenreModel> {
             it.excluded
         )
     }
-}
-
-enum class MovieSection(val position: Int) {
-    LATEST(0),
-    COMINGSOON(1),
-    CUSTOM(2)
 }

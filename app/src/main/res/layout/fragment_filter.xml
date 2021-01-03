@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="com.example.android.movieapplication.ui.custommovies.filter.Converter" />
+        <import type="com.example.android.movieapplication.ui.movies.custommovies.filter.Converter" />
         <variable
             name="viewModel"
-            type="com.example.android.movieapplication.ui.custommovies.filter.FilterViewModel" />
+            type="com.example.android.movieapplication.ui.movies.custommovies.filter.FilterViewModel" />
         <variable
             name="checkedChangeListener"
             type="android.widget.CompoundButton.OnCheckedChangeListener" />
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:text="Genres"
+                    android:text="@string/genres_filter"
                     android:textSize="24sp"
                     app:drawableEndCompat="@drawable/ic_info_outline"
                     app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:text="Release Date"
+                    android:text="@string/release_date_filter"
                     android:textSize="24sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -131,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="24dp"
-                    android:text="Rating"
+                    android:text="@string/rating_filter"
                     android:textSize="24sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/menu_date_from" />

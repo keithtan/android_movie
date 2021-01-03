@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/movieDetailFragment"
         android:name="com.example.android.movieapplication.ui.moviedetail.MovieDetailFragment"
-        tools:layout="@layout/movie_detail_fragment">
+        tools:layout="@layout/fragment_movie_detail">
         <argument
             android:name="movieId"
             app:argType="long" />
@@ -33,11 +33,11 @@
     </fragment>
     <fragment
         android:id="@+id/filterFragment"
-        android:name="com.example.android.movieapplication.ui.custommovies.filter.FilterFragment"
+        android:name="com.example.android.movieapplication.ui.movies.custommovies.filter.FilterFragment"
         android:label="FilterFragment" />
     <fragment
         android:id="@+id/peopleDetailFragment"
-        android:name="com.example.android.movieapplication.ui.people.PeopleDetailFragment"
+        android:name="com.example.android.movieapplication.ui.peopledetail.PeopleDetailFragment"
         android:label="PeopleDetailFragment" >
         <argument
             android:name="personId"
@@ -48,9 +48,9 @@
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.android.movieapplication.ui.custommovies.search.SearchFragment"
+        android:name="com.example.android.movieapplication.ui.movies.custommovies.search.SearchFragment"
         android:label="search_fragment"
-        tools:layout="@layout/search_fragment" >
+        tools:layout="@layout/fragment_search" >
         <action
             android:id="@+id/action_searchFragment_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />

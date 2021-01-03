@@ -4,20 +4,20 @@ import android.graphics.Color
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.android.movieapplication.R
-import com.example.android.movieapplication.network.Genre
+import com.example.android.movieapplication.network.GenreDto
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 
 @BindingAdapter("genres")
-fun TextView.setGenres(genres: List<Genre>?) {
+fun TextView.setGenres(genres: List<GenreDto>?) {
     if (!genres.isNullOrEmpty()) {
         this.text = genres.joinToString(", ") { it.name }
     }
 }
 
 @BindingAdapter("genreDisplayChips")
-fun bindChips(chipGroup: ChipGroup, genres: List<Genre>? = emptyList()) {
+fun bindChips(chipGroup: ChipGroup, genres: List<GenreDto>? = emptyList()) {
     genres?.map {genre ->
         val chip = Chip(chipGroup.context)
         chip.id = genre.id

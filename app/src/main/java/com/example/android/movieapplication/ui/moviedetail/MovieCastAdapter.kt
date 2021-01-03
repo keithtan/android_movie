@@ -6,14 +6,14 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.movieapplication.databinding.CastViewItemBinding
+import com.example.android.movieapplication.databinding.ListItemCastBinding
 import com.example.android.movieapplication.network.MovieDetail.MovieCredits.MovieCast
 
 class MovieCastAdapter(private val onClickListener: OnClickListener)
     : ListAdapter<MovieCast, MovieCastAdapter.CastViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CastViewHolder {
-        return CastViewHolder(CastViewItemBinding.inflate(LayoutInflater.from(parent.context)))
+        return CastViewHolder(ListItemCastBinding.inflate(LayoutInflater.from(parent.context)))
     }
 
     override fun onBindViewHolder(holder: CastViewHolder, position: Int) {
@@ -26,7 +26,7 @@ class MovieCastAdapter(private val onClickListener: OnClickListener)
         }
     }
 
-    class CastViewHolder(private val binding: CastViewItemBinding)
+    class CastViewHolder(private val binding: ListItemCastBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun bind(movieCast: MovieCast) {
             binding.movieCast = movieCast

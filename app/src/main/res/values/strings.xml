@@ -1,21 +1,34 @@
 <resources>
+    <!-- General Use -->
     <string name="app_name">MovieApplication</string>
+    <string name="retry">Retry</string>
+
+    <!-- Menu -->
+    <string name="filter">Filter</string>
+    <string name="search">Search</string>
+
+    <!-- Movie -->
     <string name="release">RELEASE</string>
     <string name="rating">RATING</string>
-    <string name="retry">Retry</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="filter">Filter</string>
-    <string name="save">Save</string>
-    <string name="date">Date</string>
-    <string name="animation">Animation</string>
-    <string name="action">Action</string>
-    <string name="drama">Drama</string>
+
+    <!-- Movie Detail -->
     <string name="runtime_label">Runtime:</string>
     <string name="release_label">Release:</string>
     <string name="overview_label">Plot Summary</string>
+    <string name="cast">Cast</string>
+
+    <!-- Filter -->
+    <string name="save">Save</string>
     <string name="from">From:</string>
     <string name="to">To:</string>
-    <string name="cast">Cast</string>
-    <string name="search">Search</string>
+    <string name="genres_filter">Genres</string>
+    <string name="release_date_filter">Release Date</string>
+    <string name="rating_filter">Rating</string>
+
+    <!-- People Detail -->
+    <string name="people_name">Name</string>
+    <string name="people_birth">Birth</string>
+    <string name="people_death">Death</string>
+    <string name="people_biography">Biography</string>
+    <string name="people_read_more">Read more</string>
 </resources>

@@ -11,6 +11,7 @@ import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.RemoteKeys
 import com.example.android.movieapplication.network.MoviesApiService
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import retrofit2.HttpException
@@ -59,9 +60,6 @@ class MovieRemoteMediator(
 
         try {
             val filter = userPreferencesFlow.first()
-//            val genres = movieDatabase.withTransaction {
-//                movieDatabase.genresDao().genres()
-//            }
             val withGenreFilter = filter.genrePrefList.joinIncludedIds()
             val withoutGenreFilter = filter.genrePrefList.joinExcludedIds()
             val apiResponse =

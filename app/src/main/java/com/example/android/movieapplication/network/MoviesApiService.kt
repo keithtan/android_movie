@@ -27,13 +27,13 @@ interface MoviesApiService {
     suspend fun getLatest(
         @Query("page") page: Int,
         @Query("release_date.lte") release_date: String = currentDate
-    ): MovieData
+    ): MovieDto
 
     @GET("discover/movie?sort_by=release_date.asc")
     suspend fun getComingSoon(
         @Query("page") page: Int,
         @Query("release_date.gte") release_date: String = currentDate
-    ): MovieData
+    ): MovieDto
 
     @GET("discover/movie")
     suspend fun getCustomMovies(
@@ -41,23 +41,23 @@ interface MoviesApiService {
         @Query("release_date.gte") releaseDateGte: String?,
         @Query("release_date.lte") releaseDateLte: String?,
         @Query("vote_average.gte") voteAverage: Float?,
-        @Query(value = "with_genres") genreWithFilter: String?,
-        @Query(value = "without_genres") genreWithoutFilter: String?
-    ): MovieData
+        @Query("with_genres") genreWithFilter: String?,
+        @Query("without_genres") genreWithoutFilter: String?
+    ): MovieDto
 
     @GET("search/movie")
     suspend fun getSearchedMovies(
         @Query("query") query: String
-    ): MovieData
+    ): MovieDto
 
     @GET("movie/now_playing")
-    suspend fun getMovies(@Query("page") page: Int): MovieData
+    suspend fun getMovies(@Query("page") page: Int): MovieDto
 
     @GET("movie/{movieId}?append_to_response=credits,videos")
     suspend fun getMovieDetails(@Path("movieId") movieId: Long): MovieDetail
 
     @GET("genre/movie/list")
-    suspend fun getGenres(): Genres
+    suspend fun getGenres(): GenresDto
 
     @GET("person/{personId}?append_to_response=movie_credits")
     suspend fun getPeopleDetails(@Path("personId") personId: Long): PeopleDetail
@@ -73,7 +73,6 @@ class MovieDbInterceptor : Interceptor {
             .addQueryParameter("region", "sg")
             .build()
         val urlStr = url.toString().replace("%252C", "%2C")
-        println(urlStr)
         return chain.proceed(
             chain.request()
                 .newBuilder()
