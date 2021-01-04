@@ -11,7 +11,8 @@ import com.example.android.movieapplication.network.MovieDetail.MovieVideos.Vide
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 
-class MovieVideoAdapter(val lifecycle: Lifecycle) : ListAdapter<VideoDetail, MovieVideoAdapter.VideoViewHolder>(DiffCallback) {
+class MovieVideoAdapter(val lifecycle: Lifecycle)
+    : ListAdapter<VideoDetail, MovieVideoAdapter.VideoViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         return VideoViewHolder(ListItemVideoBinding.inflate(LayoutInflater.from(parent.context)))

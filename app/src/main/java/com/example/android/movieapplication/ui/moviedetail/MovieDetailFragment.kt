@@ -38,8 +38,6 @@ class MovieDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val application = requireNotNull(activity).application
-
         activity?.let {
             viewModelFactory = MovieDetailViewModelFactory(
                 args.movieId,
@@ -48,7 +46,7 @@ class MovieDetailFragment : Fragment() {
                     MoviesApi.retrofitService,
                     MovieDatabase.getInstance(it)
                 ),
-                application
+                it.application
             )
         }
 
@@ -74,24 +72,9 @@ class MovieDetailFragment : Fragment() {
         videoAdapter = MovieVideoAdapter(lifecycle)
         binding.movieVideos.adapter = videoAdapter
 
-        viewModel.movieCast.observe(viewLifecycleOwner) {
-            castAdapter.submitList(it)
+        viewModel.movieDetail.observe(viewLifecycleOwner) {
             (view?.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
-            }
-        }
-
-        viewModel.movieVideos.observe(viewLifecycleOwner) {
-            videoAdapter.submitList(it)
-        }
-
-        viewModel.movieDetail.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.movieDetailConstraintLayout.isVisible = true
-                binding.errorText.isVisible = false
-            } ?: run {
-                binding.movieDetailConstraintLayout.isVisible = false
-                binding.errorText.isVisible = true
             }
         }
 
@@ -110,9 +93,7 @@ class MovieDetailFragment : Fragment() {
             scrimColor = Color.TRANSPARENT
             setAllContainerColors(requireContext().themeColor(R.attr.colorSurface))
         }
-
         postponeEnterTransition()
-
     }
 
     override fun onResume() {
