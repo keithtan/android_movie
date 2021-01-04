@@ -1,10 +1,16 @@
 package com.example.android.movieapplication.ui.moviedetail
 
 import android.app.Application
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
+import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.network.MovieDetail
 import com.example.android.movieapplication.network.MovieDetail.MovieVideos.VideoDetail
@@ -22,7 +28,7 @@ class MovieDetailViewModel(
 
     val movieDetail: LiveData<MovieDetail?> = liveData {
         repository.getMovieDetailsStream(movieId)
-            .catch { _ ->
+            .catch {
                 emit(null)
             }
             .collect { value ->
@@ -39,12 +45,14 @@ class MovieDetailViewModel(
     }
 
     val release = movieDetail.map {
-        val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            .parse(it?.releaseDate ?: "")
-        val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-        parser?.let { parser1 ->
-            formatter.format(parser1)
-        }
+        it?.releaseDate?.let {releaseDate ->
+            val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                .parse(releaseDate)
+            val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            parser?.let { parser1 ->
+                formatter.format(parser1)
+            }
+        } ?: ""
 
     }
 
@@ -57,5 +65,26 @@ class MovieDetailViewModel(
         val minutes = it?.runtime?.rem(60)
         String.format("%dh %02dm", hours, minutes)
     }
+
+    val errorText = SpannableString("Details not found...\nCheck your internet connection")
+        .apply {
+            setSpan(
+                RelativeSizeSpan(1.5f),
+                0,
+                17,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ForegroundColorSpan(
+                    ContextCompat.getColor(
+                        app.applicationContext,
+                        R.color.deep_orange_a200
+                    )
+                ),
+                0,
+                17,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
 
 }

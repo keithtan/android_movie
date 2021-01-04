@@ -6,6 +6,8 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.example.android.movieapplication.R
 
 @BindingAdapter("posterUrl")
 fun ImageView.bindPoster(imgUrl: String?) {
@@ -14,6 +16,9 @@ fun ImageView.bindPoster(imgUrl: String?) {
         val imgUri = fullUrl.toUri().buildUpon().scheme("https").build()
         Glide.with(context)
             .load(imgUri)
+            .apply(RequestOptions()
+                .placeholder(R.drawable.loading_animation)
+                .error(R.drawable.ic_broken_image))
             .transform(CenterCrop(), RoundedCorners(25))
             .into(this)
     }
@@ -26,6 +31,9 @@ fun ImageView.bindBackdrop(imgUrl: String?) {
         val imgUri = fullUrl.toUri().buildUpon().scheme("https").build()
         Glide.with(context)
             .load(imgUri)
+            .apply(RequestOptions()
+                .placeholder(R.drawable.loading_animation)
+                .error(R.drawable.ic_broken_image))
             .into(this)
     }
 }
@@ -37,6 +45,9 @@ fun ImageView.bindProfile(imgUrl: String?) {
         val imgUri = fullUrl.toUri().buildUpon().scheme("https").build()
         Glide.with(context)
             .load(imgUri)
+            .apply(RequestOptions()
+                .placeholder(R.drawable.loading_animation)
+                .error(R.drawable.ic_broken_image))
             .transform(CenterCrop(), RoundedCorners(50))
             .into(this)
     }

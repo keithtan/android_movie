@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -84,6 +85,15 @@ class MovieDetailFragment : Fragment() {
             videoAdapter.submitList(it)
         }
 
+        viewModel.movieDetail.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.movieDetailConstraintLayout.isVisible = true
+                binding.errorText.isVisible = false
+            } ?: run {
+                binding.movieDetailConstraintLayout.isVisible = false
+                binding.errorText.isVisible = true
+            }
+        }
 
         binding.toolbar.setNavigationOnClickListener {
             (activity as AppCompatActivity).onBackPressed()
@@ -94,9 +104,6 @@ class MovieDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        sharedElementEnterTransition = TransitionInflater
-//            .from(context)
-//            .inflateTransition(android.R.transition.move)
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_host_fragment
             duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
