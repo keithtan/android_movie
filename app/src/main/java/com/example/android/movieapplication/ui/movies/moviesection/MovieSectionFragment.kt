@@ -19,7 +19,7 @@ import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentOverviewBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
-import com.example.android.movieapplication.ui.ViewPagerFragmentDirections
+import com.example.android.movieapplication.ui.MoviesViewPagerFragmentDirections
 import com.example.android.movieapplication.ui.movies.MoviePagingAdapter
 import com.example.android.movieapplication.ui.movies.MoviesLoadStateAdapter
 import com.google.android.material.transition.MaterialElevationScale
@@ -136,7 +136,7 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
                     )
                     findNavController()
                         .navigate(
-                            ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
+                            MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
                                 movieId
                             ),
                             extras

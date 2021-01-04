@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/viewPagerFragment">
+    app:startDestination="@id/moviesViewPagerFragment">
 
     <fragment
         android:id="@+id/movieDetailFragment"
@@ -17,10 +17,10 @@
             app:destination="@id/peopleDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/viewPagerFragment"
-        android:name="com.example.android.movieapplication.ui.ViewPagerFragment"
-        android:label="MovieApplication"
-        tools:layout="@layout/fragment_view_pager" >
+        android:id="@+id/moviesViewPagerFragment"
+        android:name="com.example.android.movieapplication.ui.MoviesViewPagerFragment"
+        android:label="Movies"
+        tools:layout="@layout/fragment_movies_view_pager" >
         <action
             android:id="@+id/action_viewPagerFragment_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />
@@ -55,4 +55,9 @@
             android:id="@+id/action_searchFragment_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/tvViewPagerFragment"
+        android:name="com.example.android.movieapplication.ui.tvshows.TvViewPagerFragment"
+        android:label="TV Shows"
+        tools:layout="@layout/fragment_tv_view_pager" />
 </navigation>

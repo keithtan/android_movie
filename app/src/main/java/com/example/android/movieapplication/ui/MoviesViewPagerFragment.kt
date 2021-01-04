@@ -7,20 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
-import com.example.android.movieapplication.databinding.FragmentViewPagerBinding
+import com.example.android.movieapplication.databinding.FragmentMoviesViewPagerBinding
 import com.example.android.movieapplication.ui.movies.custommovies.CustomMoviesFragment
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSectionFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
-class ViewPagerFragment : Fragment() {
+class MoviesViewPagerFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding = FragmentViewPagerBinding.inflate(layoutInflater, container, false)
+        val binding = FragmentMoviesViewPagerBinding.inflate(layoutInflater, container, false)
 
         val fragmentList = arrayListOf(
             MovieSectionFragment(MovieSection.LATEST),
@@ -28,7 +28,7 @@ class ViewPagerFragment : Fragment() {
             CustomMoviesFragment()
         )
 
-        val adapter = ViewPagerAdapter(
+        val adapter = MoviesViewPagerAdapter(
             fragmentList,
             requireActivity().supportFragmentManager,
             lifecycle

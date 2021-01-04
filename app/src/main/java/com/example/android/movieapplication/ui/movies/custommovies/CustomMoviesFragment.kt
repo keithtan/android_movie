@@ -18,7 +18,7 @@ import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentCustomMoviesBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
-import com.example.android.movieapplication.ui.ViewPagerFragmentDirections
+import com.example.android.movieapplication.ui.MoviesViewPagerFragmentDirections
 import com.example.android.movieapplication.ui.movies.MoviePagingAdapter
 import com.example.android.movieapplication.ui.movies.MoviesLoadStateAdapter
 import com.google.android.material.transition.MaterialElevationScale
@@ -145,7 +145,7 @@ class CustomMoviesFragment : Fragment() {
                     )
                     findNavController()
                         .navigate(
-                            ViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
+                            MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
                                 movieId
                             ),
                             extras
@@ -183,7 +183,7 @@ class CustomMoviesFragment : Fragment() {
 
             findNavController()
                 .navigate(
-                    ViewPagerFragmentDirections.actionViewPagerFragmentToFilterFragment()
+                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToFilterFragment()
                 )
             true
         }
@@ -199,7 +199,7 @@ class CustomMoviesFragment : Fragment() {
 
             findNavController()
                 .navigate(
-                    ViewPagerFragmentDirections.actionViewPagerFragmentToSearchFragment()
+                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToSearchFragment()
                 )
             true
         }

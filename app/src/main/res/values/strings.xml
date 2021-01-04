@@ -31,4 +31,6 @@
     <string name="people_death">Death</string>
     <string name="people_biography">Biography</string>
     <string name="people_read_more">Read more</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
 </resources>
