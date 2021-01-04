@@ -94,12 +94,14 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
             footer = MoviesLoadStateAdapter { adapter.retry() }
         )
         adapter.addLoadStateListener { loadState ->
+            val loadingState = loadState.source.refresh is LoadState.Loading && adapter.itemCount == 0
+            val retryState = loadState.source.refresh is LoadState.Error
             // Only show the list if refresh succeeds.
-            binding.movieList.isVisible = loadState.source.refresh is LoadState.NotLoading
+            binding.movieList.isVisible = !(loadingState || retryState)
             // Show loading spinner during initial load or refresh.
-            binding.progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+            binding.progressBar.isVisible = loadingState
             // Show the retry state if initial load or refresh fails.
-            binding.retryButton.isVisible = loadState.source.refresh is LoadState.Error
+            binding.retryButton.isVisible = retryState
 
             // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
             val errorState = loadState.source.append as? LoadState.Error
