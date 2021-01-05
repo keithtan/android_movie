@@ -19,11 +19,14 @@ import com.example.android.movieapplication.databinding.FragmentSearchBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.example.android.movieapplication.ui.peopledetail.MovieListAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
 
-    private lateinit var viewModelFactory: SearchViewModelFactory
     private lateinit var binding: FragmentSearchBinding
+    @Inject lateinit var viewModelFactory: SearchViewModelFactory
     private lateinit var adapter: MovieListAdapter
 
     private val viewModel: SearchViewModel by viewModels { viewModelFactory }
@@ -32,16 +35,6 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        activity?.let {
-            viewModelFactory = SearchViewModelFactory(
-                MovieDbRepository.getInstance(
-                    it,
-                    MoviesApi.retrofitService,
-                    MovieDatabase.getInstance(it)
-                )
-            )
-        }
 
         binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
 

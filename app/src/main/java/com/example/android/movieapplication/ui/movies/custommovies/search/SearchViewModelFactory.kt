@@ -3,8 +3,9 @@ package com.example.android.movieapplication.ui.movies.custommovies.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.movieapplication.data.MovieDbRepository
+import javax.inject.Inject
 
-class SearchViewModelFactory(
+class SearchViewModelFactory @Inject constructor(
     private val repository: MovieDbRepository
 ) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")

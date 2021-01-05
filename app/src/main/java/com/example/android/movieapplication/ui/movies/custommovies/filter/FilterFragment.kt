@@ -20,10 +20,13 @@ import com.example.android.movieapplication.network.MoviesApi
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FilterFragment : Fragment() {
 
-    private lateinit var viewModelFactory: FilterViewModelFactory
+    @Inject lateinit var viewModelFactory: FilterViewModelFactory
     private lateinit var binding: FragmentFilterBinding
 
     private val viewModel: FilterViewModel by viewModels { viewModelFactory }
@@ -33,17 +36,6 @@ class FilterFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        activity?.run {
-            viewModelFactory = FilterViewModelFactory(
-                MovieDbRepository.getInstance(
-                    this,
-                    MoviesApi.retrofitService,
-                    MovieDatabase.getInstance(this)
-                ),
-                application
-            )
-        }
 
         binding = FragmentFilterBinding.inflate(layoutInflater, container, false)
 

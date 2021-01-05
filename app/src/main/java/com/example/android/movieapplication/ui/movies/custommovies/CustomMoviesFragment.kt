@@ -14,22 +14,22 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.movieapplication.R
-import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentCustomMoviesBinding
-import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.network.MoviesApi
 import com.example.android.movieapplication.ui.MoviesViewPagerFragmentDirections
 import com.example.android.movieapplication.ui.movies.MoviePagingAdapter
 import com.example.android.movieapplication.ui.movies.MoviesLoadStateAdapter
 import com.google.android.material.transition.MaterialSharedAxis
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CustomMoviesFragment : Fragment() {
 
     private lateinit var binding: FragmentCustomMoviesBinding
-    private lateinit var viewModelFactory: CustomMoviesViewModelFactory
+    @Inject lateinit var viewModelFactory: CustomMoviesViewModelFactory
     private lateinit var adapter: MoviePagingAdapter
 
     private val viewModel: CustomMoviesViewModel by viewModels { viewModelFactory }
@@ -38,16 +38,6 @@ class CustomMoviesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activity?.run {
-            viewModelFactory = CustomMoviesViewModelFactory(
-                MovieDbRepository.getInstance(
-                    this,
-                    MoviesApi.retrofitService,
-                    MovieDatabase.getInstance(this)
-                ),
-                application
-            )
-        }
 
         binding = FragmentCustomMoviesBinding.inflate(layoutInflater, container, false)
         binding.viewModel = viewModel

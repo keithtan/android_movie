@@ -4,8 +4,9 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.movieapplication.data.MovieDbRepository
+import javax.inject.Inject
 
-class CustomMoviesViewModelFactory(
+class CustomMoviesViewModelFactory @Inject constructor(
     private val repository: MovieDbRepository,
     private val application: Application
 ) : ViewModelProvider.Factory {
