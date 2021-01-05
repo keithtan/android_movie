@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -36,7 +37,8 @@ class MovieDetailFragment : Fragment() {
 
         activity?.let {
             viewModelFactory = MovieDetailViewModelFactory(
-                args.movieId,
+//                args.movieId,
+                SavedStateHandle(),
                 MovieDbRepository.getInstance(
                     it,
                     MoviesApi.retrofitService,
@@ -45,6 +47,8 @@ class MovieDetailFragment : Fragment() {
                 it.application
             )
         }
+
+        viewModel.saveMovieId(args.movieId)
 
         binding = FragmentMovieDetailBinding.inflate(layoutInflater, container, false)
 

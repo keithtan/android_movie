@@ -8,6 +8,7 @@ import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.liveData
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
@@ -16,13 +17,19 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 
 class MovieDetailViewModel(
-    movieId: Long,
+//    movieId: Long,
+    private val savedStateHandle: SavedStateHandle,
     repository: MovieDbRepository,
     app: Application
 ) : AndroidViewModel(app) {
 
+    fun saveMovieId(movieId: Long) {
+        savedStateHandle.set(MOVIE_KEY, movieId)
+    }
+
     val movieDetail: LiveData<MovieDetail?> = liveData {
-        repository.getMovieDetailsStream(movieId)
+        val movieId = savedStateHandle.get<Long>(MOVIE_KEY)
+        repository.getMovieDetailsStream(movieId!!)
             .catch {
                 emit(null)
             }
@@ -51,5 +58,9 @@ class MovieDetailViewModel(
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
+
+    companion object {
+        private const val MOVIE_KEY = "movieId"
+    }
 
 }
