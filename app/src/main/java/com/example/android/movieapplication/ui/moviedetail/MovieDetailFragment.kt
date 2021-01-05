@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -57,6 +58,11 @@ class MovieDetailFragment : Fragment() {
         binding.movieVideos.adapter = videoAdapter
 
         viewModel.movieDetail.observe(viewLifecycleOwner) {
+            if (it == null) {
+                binding.appbar.setExpanded(false, false)
+                binding.collapseToolbar.scrimAnimationDuration = 0L
+                ViewCompat.setNestedScrollingEnabled(binding.nestedScroll, false)
+            }
             (view?.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
             }

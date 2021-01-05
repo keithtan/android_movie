@@ -7,7 +7,9 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.android.movieapplication.R

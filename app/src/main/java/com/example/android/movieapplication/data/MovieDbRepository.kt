@@ -26,6 +26,7 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Singleton
 class MovieDbRepository @Inject constructor(
     @ApplicationContext context: Context,
     private val service: MoviesApiService,
