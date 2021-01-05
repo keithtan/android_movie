@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
     id 'com.google.protobuf' version '0.8.12'
+    id 'dagger.hilt.android.plugin'
 }
 
 def apikeyPropertiesFile = rootProject.file("apikey.properties")
@@ -87,6 +88,13 @@ dependencies {
     // Proto DataStore
     implementation  "androidx.datastore:datastore-core:1.0.0-alpha02"
     implementation  "com.google.protobuf:protobuf-javalite:3.10.0"
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

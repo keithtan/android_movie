@@ -9,11 +9,10 @@ import com.example.android.movieapplication.db.Movie
 import kotlinx.coroutines.flow.Flow
 
 class MovieSectionViewModel(
-    private val repository: MovieDbRepository,
-    private val section: MovieSection
+    private val repository: MovieDbRepository
 ) : ViewModel() {
 
-    fun searchMovies(): Flow<PagingData<Movie>> {
+    fun searchMovies(section: MovieSection): Flow<PagingData<Movie>> {
         return repository.getMoviesStream(section)
             .cachedIn(viewModelScope)
     }

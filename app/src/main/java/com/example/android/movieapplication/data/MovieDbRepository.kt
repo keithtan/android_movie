@@ -1,7 +1,6 @@
 package com.example.android.movieapplication.data
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.DataStore
 import androidx.datastore.createDataStore
 import androidx.paging.Pager
@@ -18,11 +17,17 @@ import com.example.android.movieapplication.network.PeopleDetail
 import com.example.android.movieapplication.ui.movies.custommovies.filter.GenreModel
 import com.example.android.movieapplication.ui.movies.custommovies.filter.UserPreferencesSerializer
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import dagger.Provides
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MovieDbRepository private constructor(
-    context: Context,
+class MovieDbRepository @Inject constructor(
+    @ApplicationContext context: Context,
     private val service: MoviesApiService,
     private val database: MovieDatabase
 ) {
@@ -50,10 +55,6 @@ class MovieDbRepository private constructor(
         }
     }
 
-    suspend fun getSearchedMoviesStream(query: String): MovieDto {
-        return service.getSearchedMovies(query)
-    }
-
     fun getMoviesStream(section: MovieSection): Flow<PagingData<Movie>> {
         val pagingSourceFactory =  { database.moviesDao().movies(section.ordinal) }
         return Pager(
@@ -72,10 +73,13 @@ class MovieDbRepository private constructor(
         ).flow
     }
 
+    suspend fun getSearchedMoviesStream(query: String): MovieDto {
+        return service.getSearchedMovies(query)
+    }
+
     fun getMovieDetailsStream(movieId: Long): Flow<MovieDetail> = flow {
         emit(service.getMovieDetails(movieId))
     }
-
 
     private val dataStore: DataStore<UserPreferences> =
         context.createDataStore(
@@ -83,13 +87,11 @@ class MovieDbRepository private constructor(
             serializer = UserPreferencesSerializer
         )
 
-    private val TAG: String = "UserPreferencesRepo"
-
     val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
         .catch { exception ->
             // dataStore.data throws an IOException when an error is encountered when reading data
             if (exception is IOException) {
-                Log.e(TAG, "Error reading user preferences.", exception)
+                Timber.e(exception, "Error reading user preferences.")
                 emit(UserPreferences.getDefaultInstance())
             } else {
                 throw exception

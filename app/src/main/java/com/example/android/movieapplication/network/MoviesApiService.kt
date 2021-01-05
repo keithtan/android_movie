@@ -4,6 +4,7 @@ import com.example.android.movieapplication.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dagger.hilt.InstallIn
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -15,14 +16,12 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import java.text.SimpleDateFormat
 import java.util.*
-
-private const val BASE_URL = "https://api.themoviedb.org/3/"
+import javax.inject.Inject
 
 private val currentDate: String
     get() = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
 interface MoviesApiService {
-
     @GET("discover/movie?sort_by=release_date.desc&vote_average.gte=5")
     suspend fun getLatest(
         @Query("page") page: Int,
@@ -63,7 +62,7 @@ interface MoviesApiService {
     suspend fun getPeopleDetails(@Path("personId") personId: Long): PeopleDetail
 }
 
-class MovieDbInterceptor : Interceptor {
+class MovieDbInterceptor @Inject constructor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val url: HttpUrl = chain.request()
             .url()
@@ -82,23 +81,26 @@ class MovieDbInterceptor : Interceptor {
     }
 }
 
-private val client = OkHttpClient.Builder()
-    .addInterceptor(MovieDbInterceptor())
-    .build()
-
-private val moshi = Moshi.Builder()
-    .add(KotlinJsonAdapterFactory())
-    .build()
-
-private val retrofit = Retrofit.Builder()
-    .addConverterFactory(MoshiConverterFactory.create(moshi))
-    .addCallAdapterFactory(CoroutineCallAdapterFactory())
-    .baseUrl(BASE_URL)
-    .client(client)
-    .build()
-
 object MoviesApi {
+    private const val BASE_URL = "https://api.themoviedb.org/3/"
+
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(MovieDbInterceptor())
+        .build()
+
+    private val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+
+    private val retrofit = Retrofit.Builder()
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .baseUrl(BASE_URL)
+        .client(client)
+        .build()
+
     val retrofitService : MoviesApiService by lazy {
         retrofit.create(MoviesApiService::class.java)
     }
+
 }
