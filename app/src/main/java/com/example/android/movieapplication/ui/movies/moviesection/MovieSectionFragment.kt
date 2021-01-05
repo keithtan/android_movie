@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
@@ -122,19 +123,9 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter =
             MoviePagingAdapter(
-                MoviePagingAdapter.OnClickListener { movieId: Long, cardView: CardView ->
-
-                    exitTransition = MaterialElevationScale(false).apply {
-                        duration =
-                            resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-                    }
-                    reenterTransition = MaterialElevationScale(true).apply {
-                        duration =
-                            resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-                    }
-
+                MoviePagingAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
                     val extras = FragmentNavigatorExtras(
-                        cardView to "$movieId"
+                        imageView to "$movieId"
                     )
                     findNavController()
                         .navigate(

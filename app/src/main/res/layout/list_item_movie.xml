@@ -15,7 +15,6 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
             android:layout_marginVertical="2dp"
-            android:transitionName="@{String.valueOf(movie.id)}"
             app:cardCornerRadius="0dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,6 +28,7 @@
                     android:layout_width="100dp"
                     android:layout_height="150dp"
                     android:layout_marginStart="16dp"
+                    android:transitionName="@{String.valueOf(movie.id)}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/title"
                     app:posterUrl="@{movie.posterPath}"

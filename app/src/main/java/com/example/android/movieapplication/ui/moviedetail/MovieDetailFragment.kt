@@ -1,27 +1,23 @@
 package com.example.android.movieapplication.ui.moviedetail
 
-import android.graphics.Color
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentMovieDetailBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
-import com.example.android.movieapplication.util.themeColor
-import com.google.android.material.transition.MaterialContainerTransform
 
 class MovieDetailFragment : Fragment() {
 
@@ -79,7 +75,7 @@ class MovieDetailFragment : Fragment() {
         }
 
         binding.toolbar.setNavigationOnClickListener {
-            (activity as AppCompatActivity).onBackPressed()
+            findNavController().popBackStack()
         }
 
         return binding.root
@@ -87,12 +83,9 @@ class MovieDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.nav_host_fragment
-            duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
-            setAllContainerColors(requireContext().themeColor(R.attr.colorSurface))
-        }
+        sharedElementEnterTransition = TransitionInflater
+            .from(context)
+            .inflateTransition(android.R.transition.move)
         postponeEnterTransition()
     }
 

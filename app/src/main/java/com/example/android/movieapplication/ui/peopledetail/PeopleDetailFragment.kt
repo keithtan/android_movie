@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -50,9 +52,9 @@ class PeopleDetailFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, cardView: CardView ->
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
             val extras = FragmentNavigatorExtras(
-                cardView to "$movieId"
+                imageView to "$movieId"
             )
             findNavController()
                 .navigate(
@@ -95,9 +97,12 @@ class PeopleDetailFragment : Fragment() {
         sharedElementEnterTransition = TransitionInflater
             .from(context)
             .inflateTransition(R.transition.curved_motion)
-
         postponeEnterTransition()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity).supportActionBar?.show()
     }
 
 }

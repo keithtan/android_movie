@@ -2,6 +2,7 @@ package com.example.android.movieapplication.ui.movies.custommovies
 
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
@@ -131,19 +132,9 @@ class CustomMoviesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter =
             MoviePagingAdapter(
-                MoviePagingAdapter.OnClickListener { movieId: Long, cardView: CardView ->
-
-                    exitTransition = MaterialElevationScale(false).apply {
-                        duration =
-                            resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-                    }
-                    reenterTransition = MaterialElevationScale(true).apply {
-                        duration =
-                            resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-                    }
-
+                MoviePagingAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
                     val extras = FragmentNavigatorExtras(
-                        cardView to "$movieId"
+                        imageView to "$movieId"
                     )
                     findNavController()
                         .navigate(
@@ -190,15 +181,6 @@ class CustomMoviesFragment : Fragment() {
             true
         }
         R.id.action_search -> {
-            currentNavigationFragment.apply {
-                exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
-                    duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-                }
-                reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
-                    duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-                }
-            }
-
             findNavController()
                 .navigate(
                     MoviesViewPagerFragmentDirections.actionViewPagerFragmentToSearchFragment()

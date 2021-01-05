@@ -6,26 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentSearchBinding
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.example.android.movieapplication.ui.peopledetail.MovieListAdapter
-import com.google.android.material.transition.MaterialElevationScale
-import com.google.android.material.transition.MaterialSharedAxis
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
 
@@ -57,7 +50,6 @@ class SearchFragment : Fragment() {
             hideKeyboard()
             findNavController().popBackStack()
         }
-        toolbar.navigationIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.black_200))
 
         binding.actionSearch.queryHint = "Search Movies"
         binding.actionSearch.isIconified = false
@@ -76,18 +68,9 @@ class SearchFragment : Fragment() {
         })
         binding.actionSearch.setOnCloseListener { true }
 
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, cardView: CardView ->
-            exitTransition = MaterialElevationScale(false).apply {
-                duration =
-                    resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-            }
-            reenterTransition = MaterialElevationScale(true).apply {
-                duration =
-                    resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-            }
-
+        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
             val extras = FragmentNavigatorExtras(
-                cardView to "$movieId"
+                imageView to "$movieId"
             )
             findNavController()
                 .navigate(
@@ -118,24 +101,6 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as AppCompatActivity).supportActionBar?.hide()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
-            duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-        }
-        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
-            duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
-        }
-
-        lifecycleScope.launch {
-            GlobalScope.launch {}.join()
-            val imm: InputMethodManager? =
-                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-            imm?.toggleSoftInputFromWindow(view?.windowToken, 0, 0)
-        }
     }
 
 }

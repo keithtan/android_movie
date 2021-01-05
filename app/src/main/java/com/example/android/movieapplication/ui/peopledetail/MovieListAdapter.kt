@@ -2,6 +2,7 @@ package com.example.android.movieapplication.ui.peopledetail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -23,7 +24,7 @@ class MovieListAdapter(private val onClickListener: OnClickListener)
         movie?.let {
             holder.bind(it)
             holder.itemView.setOnClickListener {
-                onClickListener.onClick(movie.id, holder.cardView)
+                onClickListener.onClick(movie.id, holder.imageView)
             }
         }
 
@@ -35,7 +36,7 @@ class MovieListAdapter(private val onClickListener: OnClickListener)
             binding.movie = movie
         }
 
-        val cardView = binding.cardView
+        val imageView = binding.imageView
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<Movie>() {
@@ -48,8 +49,8 @@ class MovieListAdapter(private val onClickListener: OnClickListener)
         }
     }
 
-    class OnClickListener(val clickListener: (movieId: Long, cardView: CardView) -> Unit) {
-        fun onClick(movieId: Long, cardView: CardView) = clickListener(movieId, cardView)
+    class OnClickListener(val clickListener: (movieId: Long, cardView: ImageView) -> Unit) {
+        fun onClick(movieId: Long, imageView: ImageView) = clickListener(movieId, imageView)
     }
 
 }
