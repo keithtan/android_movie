@@ -10,17 +10,17 @@ import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.UserPreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.network.MovieDto
 import com.example.android.movieapplication.network.MovieDetail
+import com.example.android.movieapplication.network.MovieDto
 import com.example.android.movieapplication.network.MoviesApiService
 import com.example.android.movieapplication.network.PeopleDetail
 import com.example.android.movieapplication.ui.movies.custommovies.filter.GenreModel
 import com.example.android.movieapplication.ui.movies.custommovies.filter.UserPreferencesSerializer
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
-import dagger.Provides
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
@@ -34,25 +34,6 @@ class MovieDbRepository @Inject constructor(
 
     companion object {
         private const val NETWORK_PAGE_SIZE = 20
-
-        @Volatile
-        private var INSTANCE: MovieDbRepository? = null
-
-        fun getInstance(
-            context: Context,
-            service: MoviesApiService,
-            database: MovieDatabase
-        ): MovieDbRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE?.let {
-                    return it
-                }
-
-                val instance = MovieDbRepository(context, service, database)
-                INSTANCE = instance
-                instance
-            }
-        }
     }
 
     fun getMoviesStream(section: MovieSection): Flow<PagingData<Movie>> {

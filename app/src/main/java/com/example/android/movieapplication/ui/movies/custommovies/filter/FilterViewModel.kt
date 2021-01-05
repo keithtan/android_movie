@@ -1,6 +1,7 @@
 package com.example.android.movieapplication.ui.movies.custommovies.filter
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class FilterViewModel(
+class FilterViewModel @ViewModelInject constructor(
     private val repository: MovieDbRepository,
     application: Application
 ) : ObservableViewModel(application) {

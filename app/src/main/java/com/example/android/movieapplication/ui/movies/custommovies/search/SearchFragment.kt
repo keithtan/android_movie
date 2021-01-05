@@ -26,10 +26,9 @@ import javax.inject.Inject
 class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
-    @Inject lateinit var viewModelFactory: SearchViewModelFactory
     private lateinit var adapter: MovieListAdapter
 
-    private val viewModel: SearchViewModel by viewModels { viewModelFactory }
+    private val viewModel: SearchViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +61,7 @@ class SearchFragment : Fragment() {
         binding.actionSearch.setOnCloseListener { true }
 
         adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+            hideKeyboard()
             val extras = FragmentNavigatorExtras(
                 imageView to "$movieId"
             )

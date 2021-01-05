@@ -13,23 +13,18 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.example.android.movieapplication.R
-import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentFilterBinding
-import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.network.MoviesApi
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class FilterFragment : Fragment() {
 
-    @Inject lateinit var viewModelFactory: FilterViewModelFactory
     private lateinit var binding: FragmentFilterBinding
 
-    private val viewModel: FilterViewModel by viewModels { viewModelFactory }
+    private val viewModel: FilterViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

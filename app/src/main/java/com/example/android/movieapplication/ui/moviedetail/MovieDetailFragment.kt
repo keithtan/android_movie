@@ -10,43 +10,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.databinding.FragmentMovieDetailBinding
-import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.network.MoviesApi
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MovieDetailFragment : Fragment() {
 
-    private lateinit var viewModelFactory: MovieDetailViewModelFactory
     private lateinit var binding: FragmentMovieDetailBinding
     private lateinit var castAdapter: MovieCastAdapter
     private lateinit var videoAdapter: MovieVideoAdapter
 
-    private val viewModel: MovieDetailViewModel by viewModels { viewModelFactory }
+    private val viewModel: MovieDetailViewModel by viewModels()
     private val args: MovieDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        activity?.let {
-            viewModelFactory = MovieDetailViewModelFactory(
-//                args.movieId,
-                SavedStateHandle(),
-                MovieDbRepository.getInstance(
-                    it,
-                    MoviesApi.retrofitService,
-                    MovieDatabase.getInstance(it)
-                ),
-                it.application
-            )
-        }
 
         viewModel.saveMovieId(args.movieId)
 

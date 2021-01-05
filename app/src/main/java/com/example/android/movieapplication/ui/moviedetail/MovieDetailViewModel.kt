@@ -6,6 +6,8 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
@@ -15,10 +17,10 @@ import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.network.MovieDetail
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
-class MovieDetailViewModel(
-//    movieId: Long,
-    private val savedStateHandle: SavedStateHandle,
+class MovieDetailViewModel @ViewModelInject constructor(
+    @Assisted private val savedStateHandle: SavedStateHandle,
     repository: MovieDbRepository,
     app: Application
 ) : AndroidViewModel(app) {

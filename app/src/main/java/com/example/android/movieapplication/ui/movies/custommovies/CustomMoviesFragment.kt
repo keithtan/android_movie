@@ -23,16 +23,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CustomMoviesFragment : Fragment() {
 
     private lateinit var binding: FragmentCustomMoviesBinding
-    @Inject lateinit var viewModelFactory: CustomMoviesViewModelFactory
     private lateinit var adapter: MoviePagingAdapter
 
-    private val viewModel: CustomMoviesViewModel by viewModels { viewModelFactory }
+    private val viewModel: CustomMoviesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

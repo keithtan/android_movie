@@ -6,6 +6,7 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -15,7 +16,7 @@ import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import kotlinx.coroutines.flow.Flow
 
-class CustomMoviesViewModel(
+class CustomMoviesViewModel @ViewModelInject constructor(
     private val repository: MovieDbRepository,
     application: Application
 ) : AndroidViewModel(application) {

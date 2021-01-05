@@ -21,14 +21,15 @@ import com.example.android.movieapplication.databinding.FragmentPeopleDetailBind
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.MoviesApi
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PeopleDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentPeopleDetailBinding
-    private lateinit var viewModelFactory: PeopleDetailViewModelFactory
     private lateinit var adapter: MovieListAdapter
 
-    private val viewModel: PeopleDetailViewModel by viewModels { viewModelFactory }
+    private val viewModel: PeopleDetailViewModel by viewModels()
     private val args: PeopleDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -36,16 +37,7 @@ class PeopleDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        activity?.let {
-            viewModelFactory = PeopleDetailViewModelFactory(
-                args.personId,
-                MovieDbRepository.getInstance(
-                    it,
-                    MoviesApi.retrofitService,
-                    MovieDatabase.getInstance(it)
-                )
-            )
-        }
+        viewModel.savePersonId(args.personId)
 
         binding = FragmentPeopleDetailBinding.inflate(layoutInflater, container, false)
 
