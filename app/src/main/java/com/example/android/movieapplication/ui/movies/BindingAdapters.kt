@@ -24,20 +24,6 @@ fun ImageView.bindPoster(imgUrl: String?) {
     }
 }
 
-@BindingAdapter("backdropUrl")
-fun ImageView.bindBackdrop(imgUrl: String?) {
-    imgUrl?.let {
-        val fullUrl = "https://image.tmdb.org/t/p/w780$it"
-        val imgUri = fullUrl.toUri().buildUpon().scheme("https").build()
-        Glide.with(context)
-            .load(imgUri)
-            .apply(RequestOptions()
-                .placeholder(R.drawable.loading_animation)
-                .error(R.drawable.ic_broken_image))
-            .into(this)
-    }
-}
-
 @BindingAdapter("profileUrl")
 fun ImageView.bindProfile(imgUrl: String?) {
     imgUrl?.let {

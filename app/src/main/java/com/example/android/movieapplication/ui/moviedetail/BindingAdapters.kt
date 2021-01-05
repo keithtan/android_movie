@@ -1,10 +1,14 @@
 package com.example.android.movieapplication.ui.moviedetail
 
 import android.graphics.Color
+import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.network.GenreDto
 import com.example.android.movieapplication.network.MovieDetail.MovieCredits.MovieCast
@@ -14,6 +18,21 @@ import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import java.text.SimpleDateFormat
 import java.util.*
+
+@BindingAdapter("backdropUrl")
+fun ImageView.bindBackdrop(imgUrl: String?) {
+    imgUrl?.let {
+        val fullUrl = "https://image.tmdb.org/t/p/w780$it"
+        val imgUri = fullUrl.toUri().buildUpon().scheme("https").build()
+        Glide.with(context)
+            .load(imgUri)
+            .apply(
+                RequestOptions()
+                .placeholder(R.drawable.loading_animation)
+                .error(R.drawable.ic_broken_image))
+            .into(this)
+    }
+}
 
 @BindingAdapter("runtime")
 fun TextView.bindRuntime(runtime: Int?) {

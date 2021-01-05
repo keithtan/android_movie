@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,7 +21,6 @@ import com.example.android.movieapplication.network.MoviesApi
 import com.example.android.movieapplication.ui.MoviesViewPagerFragmentDirections
 import com.example.android.movieapplication.ui.movies.MoviePagingAdapter
 import com.example.android.movieapplication.ui.movies.MoviesLoadStateAdapter
-import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
