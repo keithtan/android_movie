@@ -8,16 +8,12 @@ import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.network.MovieDetail
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import javax.inject.Inject
 
 class MovieDetailViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
@@ -29,16 +25,18 @@ class MovieDetailViewModel @ViewModelInject constructor(
         savedStateHandle.set(MOVIE_KEY, movieId)
     }
 
-    val movieDetail: LiveData<MovieDetail?> = liveData {
-        val movieId = savedStateHandle.get<Long>(MOVIE_KEY)
-        repository.getMovieDetailsStream(movieId!!)
-            .catch {
-                emit(null)
+    val movieDetail: LiveData<MovieDetail?> = savedStateHandle.getLiveData<Long>(MOVIE_KEY)
+        .switchMap {
+            liveData {
+                repository.getMovieDetailsStream(it!!)
+                    .catch {
+                        emit(null)
+                    }
+                    .collect { value ->
+                        emit(value)
+                    }
             }
-            .collect { value ->
-                emit(value)
-            }
-    }
+        }
 
     val errorText = SpannableString("Details not found...\nCheck your internet connection")
         .apply {

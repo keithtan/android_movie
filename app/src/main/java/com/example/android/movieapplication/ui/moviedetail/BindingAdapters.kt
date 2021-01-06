@@ -36,7 +36,7 @@ fun ImageView.bindBackdrop(imgUrl: String?) {
 
 @BindingAdapter("runtime")
 fun TextView.bindRuntime(runtime: Int?) {
-    this.text = runtime?.let {
+    text = runtime?.let {
         val hours = it.div(60)
         val minutes = it.rem(60)
         String.format("%dh %02dm", hours, minutes)
@@ -45,7 +45,7 @@ fun TextView.bindRuntime(runtime: Int?) {
 
 @BindingAdapter("releaseDate")
 fun TextView.bindReleaseDate(releaseDate: String?) {
-    this.text = releaseDate?.let {
+    text = releaseDate?.let {
         val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             .parse(releaseDate)
         val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
@@ -56,8 +56,8 @@ fun TextView.bindReleaseDate(releaseDate: String?) {
 }
 
 @BindingAdapter("rating")
-fun RatingBar.bindRating(rating: Double?) {
-    this.rating = rating?.div(2)?.toFloat() ?: 0.0f
+fun RatingBar.bindRating(voteAverage: Double?) {
+    rating = voteAverage?.div(2)?.toFloat() ?: 0.0f
 }
 
 @BindingAdapter("genreDisplayChips")

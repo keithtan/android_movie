@@ -108,26 +108,15 @@ class MovieDbRepository @Inject constructor(
         emit(service.getPeopleDetails(personId))
     }
 
-}
-
-fun List<GenreModel>.toDataStoreModel(): List<GenrePreferences> {
-    return this.map {
-        GenrePreferences.newBuilder()
-            .setId(it.id)
-            .setName(it.name)
-            .setIncluded(it.included)
-            .setExcluded(it.excluded)
-            .build()
+    private fun List<GenreModel>.toDataStoreModel(): List<GenrePreferences> {
+        return this.map {
+            GenrePreferences.newBuilder()
+                .setId(it.id)
+                .setName(it.name)
+                .setIncluded(it.included)
+                .setExcluded(it.excluded)
+                .build()
+        }
     }
-}
 
-fun List<GenrePreferences>.toDomainModel(): List<GenreModel> {
-    return this.map {
-        GenreModel(
-            it.id,
-            it.name,
-            it.included,
-            it.excluded
-        )
-    }
 }

@@ -33,40 +33,58 @@ class FilterFragment : Fragment() {
     ): View {
 
         binding = FragmentFilterBinding.inflate(layoutInflater, container, false)
-
-        val toolbar = binding.toolbar
-        toolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
-        }
-        toolbar.title = "Filter Movies"
-        toolbar.inflateMenu(R.menu.filter_menu)
-        toolbar.navigationIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.black_200))
-        toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_save -> {
-                    viewModel.saveFilter()
-                    Snackbar.make(binding.layout, "Filter saved. You may close this dialog.", Snackbar.LENGTH_SHORT)
-                        .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_orange_a100))
-                        .show()
-                    true
-                }
-                else -> true
-            }
-        }
-
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        TooltipCompat.setTooltipText(binding.textView2, "Hold on chips to disable them")
+        initToolbar()
+        setTooltip()
+        setCheckChangedListener()
+        setLongClickListener()
 
         viewModel.filterModel.observe(viewLifecycleOwner) {
             disableAutoCompleteFilters()
         }
 
-        setCheckChangedListener()
-        setLongClickListener()
-
         return binding.root
+    }
+
+    private fun setTooltip() {
+        TooltipCompat.setTooltipText(binding.textView2, "Hold on chips to disable them")
+    }
+
+    private fun initToolbar() {
+        binding.toolbar.apply {
+            setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+            title = "Filter Movies"
+            inflateMenu(R.menu.filter_menu)
+            navigationIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.black_200))
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_save -> {
+                        viewModel.saveFilter()
+                        showFeedback()
+                        true
+                    }
+                    else -> true
+                }
+            }
+        }
+
+    }
+
+    private fun showFeedback() {
+        Snackbar
+            .make(
+                binding.layout,
+                "Filter saved. You may close this dialog.",
+                Snackbar.LENGTH_SHORT
+            )
+            .setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.deep_orange_a100)
+            )
+            .show()
     }
 
     private fun disableAutoCompleteFilters() {
@@ -99,14 +117,12 @@ class FilterFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
         }
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
             duration = resources.getInteger(R.integer.movie_motion_duration_large).toLong()
         }
-
     }
 
 }

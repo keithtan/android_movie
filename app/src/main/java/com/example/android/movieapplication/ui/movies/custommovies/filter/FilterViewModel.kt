@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.data.toDomainModel
 import com.example.android.movieapplication.util.ObservableViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -34,23 +34,23 @@ class FilterViewModel @ViewModelInject constructor(
 
     init {
         viewModelScope.launch {
-            setFilter()
+            setInitialFilter()
         }
     }
 
-    private suspend fun setFilter() {
-        filterModelFlow.first().let {
-            if (it.startYear != DEFAULT_YEAR)
-                startYear.value = it.startYear
-            if (it.endYear != DEFAULT_YEAR)
-                endYear.value = it.endYear
-            if (it.voteAverage != DEFAULT_VOTE)
-                voteAverage.value = it.voteAverage
-            if (it.genrePrefList.isEmpty()) {
+    private suspend fun setInitialFilter() {
+        filterModelFlow.first().let { filter ->
+            if (filter.startYear != DEFAULT_YEAR)
+                startYear.value = filter.startYear
+            if (filter.endYear != DEFAULT_YEAR)
+                endYear.value = filter.endYear
+            if (filter.voteAverage != DEFAULT_VOTE)
+                voteAverage.value = filter.voteAverage
+            if (filter.genrePrefList.isEmpty()) {
                 _genres.value = repository.getNetworkGenres()
             }
             else {
-                _genres.value = it.genrePrefList
+                _genres.value = filter.genrePrefList
             }
         }
     }
@@ -81,6 +81,17 @@ class FilterViewModel @ViewModelInject constructor(
                 excluded = isSelected
                 included = false
             }
+    }
+
+    private fun List<GenrePreferences>.toDomainModel(): List<GenreModel> {
+        return this.map {
+            GenreModel(
+                it.id,
+                it.name,
+                it.included,
+                it.excluded
+            )
+        }
     }
 
 }

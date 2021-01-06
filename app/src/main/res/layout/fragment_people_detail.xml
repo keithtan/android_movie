@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.example.android.movieapplication.ui.peopledetail.PeopleDetailViewModel" />
@@ -28,7 +29,7 @@
             tools:src="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/textView12"
+            android:id="@+id/name_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -38,15 +39,13 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
         <TextView
-            android:id="@+id/textView13"
+            android:id="@+id/name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text="@{viewModel.peopleDetail.name}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.95"
-            app:layout_constraintStart_toEndOf="@+id/textView12"
-            app:layout_constraintTop_toTopOf="@+id/textView12" />
+            app:layout_constraintTop_toTopOf="@+id/name_label" />
 
         <TextView
             android:id="@+id/textView9"
@@ -57,17 +56,15 @@
             android:text="@string/people_birth"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12" />
+            app:layout_constraintTop_toBottomOf="@+id/name_label" />
 
         <TextView
             android:id="@+id/birthday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="@{viewModel.birthday}"
+            android:text="@{viewModel.peopleDetail.birthday}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.954"
-            app:layout_constraintStart_toEndOf="@+id/textView9"
             app:layout_constraintTop_toTopOf="@+id/textView9" />
 
         <TextView
@@ -76,6 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:visibility="@{viewModel.peopleDetail.deathday != null ? View.VISIBLE : View.GONE}"
             android:text="@string/people_death"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -88,9 +86,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@{viewModel.peopleDetail.deathday}"
+            android:visibility="@{viewModel.peopleDetail.deathday != null ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.952"
-            app:layout_constraintStart_toEndOf="@+id/death_label"
             app:layout_constraintTop_toBottomOf="@+id/birthday" />
 
         <TextView
@@ -134,6 +131,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
+            app:movies="@{viewModel.peopleDetail.movieCredits.movieList}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -151,6 +149,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button" />
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.errorText}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

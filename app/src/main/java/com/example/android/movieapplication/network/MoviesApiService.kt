@@ -23,13 +23,13 @@ private val currentDate: String
 
 interface MoviesApiService {
     @GET("discover/movie?sort_by=release_date.desc&vote_average.gte=5")
-    suspend fun getLatest(
+    suspend fun getLatestMovies(
         @Query("page") page: Int,
         @Query("release_date.lte") release_date: String = currentDate
     ): MovieDto
 
     @GET("discover/movie?sort_by=release_date.asc")
-    suspend fun getComingSoon(
+    suspend fun getComingSoonMovies(
         @Query("page") page: Int,
         @Query("release_date.gte") release_date: String = currentDate
     ): MovieDto
@@ -79,28 +79,4 @@ class MovieDbInterceptor @Inject constructor() : Interceptor {
                 .build()
         )
     }
-}
-
-object MoviesApi {
-    private const val BASE_URL = "https://api.themoviedb.org/3/"
-
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(MovieDbInterceptor())
-        .build()
-
-    private val moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
-
-    private val retrofit = Retrofit.Builder()
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .addCallAdapterFactory(CoroutineCallAdapterFactory())
-        .baseUrl(BASE_URL)
-        .client(client)
-        .build()
-
-    val retrofitService : MoviesApiService by lazy {
-        retrofit.create(MoviesApiService::class.java)
-    }
-
 }

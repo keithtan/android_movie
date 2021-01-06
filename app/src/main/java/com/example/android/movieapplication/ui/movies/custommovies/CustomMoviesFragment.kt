@@ -41,8 +41,20 @@ class CustomMoviesFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        binding.retryButton.setOnClickListener { adapter.retry() }
+        initRetryButton()
+        initFloatingActionButton()
+        handleFabAppearance()
 
+        setHasOptionsMenu(true)
+
+        return binding.root
+    }
+
+    private fun initRetryButton() {
+        binding.retryButton.setOnClickListener { adapter.retry() }
+    }
+
+    private fun handleFabAppearance() {
         binding.movieList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -51,32 +63,40 @@ class CustomMoviesFragment : Fragment() {
                 else binding.floatingActionButton.hide()
             }
         })
-
-        binding.floatingActionButton.hide()
-
-        binding.floatingActionButton.setOnClickListener {
-            binding.movieList.layoutManager?.smoothScrollToPosition(binding.movieList, RecyclerView.State(), 0)
-        }
-
-        viewModel.filter.observe(viewLifecycleOwner) {
-            search()
-        }
-
-        setHasOptionsMenu(true)
-
-        return binding.root
     }
 
-    private var searchJob: Job? = null
-
-    private fun search() {
-        // Make sure we cancel the previous job before creating a new one
-        searchJob?.cancel()
-        searchJob = lifecycleScope.launch {
-            viewModel.searchCustomMovies().collectLatest {
-                adapter.submitData(it)
-            }
+    private fun initFloatingActionButton() {
+        binding.floatingActionButton.hide()
+        binding.floatingActionButton.setOnClickListener {
+            binding.movieList.layoutManager?.smoothScrollToPosition(
+                binding.movieList,
+                RecyclerView.State(),
+                0
+            )
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter =
+            MoviePagingAdapter(
+                MoviePagingAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+                    val extras = FragmentNavigatorExtras(
+                        imageView to "$movieId"
+                    )
+                    findNavController()
+                        .navigate(
+                            MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
+                                movieId
+                            ),
+                            extras
+                        )
+
+                })
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
+        initAdapter()
+        search()
     }
 
     private fun initAdapter() {
@@ -114,28 +134,16 @@ class CustomMoviesFragment : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        adapter =
-            MoviePagingAdapter(
-                MoviePagingAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
-                    val extras = FragmentNavigatorExtras(
-                        imageView to "$movieId"
-                    )
-                    findNavController()
-                        .navigate(
-                            MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
-                                movieId
-                            ),
-                            extras
-                        )
+    private var searchJob: Job? = null
 
-                })
-        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-
-        initAdapter()
-        search()
-
+    private fun search() {
+        // Make sure we cancel the previous job before creating a new one
+        searchJob?.cancel()
+        searchJob = lifecycleScope.launch {
+            viewModel.searchCustomMovies().collectLatest {
+                adapter.submitData(it)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

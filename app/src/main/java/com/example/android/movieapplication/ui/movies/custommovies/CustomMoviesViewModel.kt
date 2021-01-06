@@ -8,7 +8,6 @@ import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -16,19 +15,19 @@ import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 
 class CustomMoviesViewModel @ViewModelInject constructor(
     private val repository: MovieDbRepository,
     application: Application
 ) : AndroidViewModel(application) {
 
-    fun searchCustomMovies(): Flow<PagingData<Movie>> {
-        return repository.getMoviesStream(MovieSection.CUSTOM)
+    val filter = repository.userPreferencesFlow
+
+    fun searchCustomMovies(): Flow<PagingData<Movie>> = filter.flatMapLatest {
+        repository.getMoviesStream(MovieSection.CUSTOM)
             .cachedIn(viewModelScope)
     }
-
-    val filter = repository.userPreferencesFlow.asLiveData()
 
     val emptyText = SpannableString("No movies found..\nTry a different filter")
         .apply {

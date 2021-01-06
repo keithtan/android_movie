@@ -1,56 +1,63 @@
 package com.example.android.movieapplication.ui.peopledetail
 
+import android.app.Application
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import androidx.core.content.ContextCompat
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.network.PeopleDetail
-import com.example.android.movieapplication.ui.moviedetail.MovieDetailViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import java.util.*
 
 class PeopleDetailViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
-    repository: MovieDbRepository
-) : ViewModel() {
+    repository: MovieDbRepository,
+    app: Application
+) : AndroidViewModel(app) {
 
     fun savePersonId(personId: Long) {
         savedStateHandle.set(PERSON_KEY, personId)
     }
 
-    val peopleDetail: LiveData<PeopleDetail?> = liveData {
-        val personId = savedStateHandle.get<Long>(PERSON_KEY)
-        repository.getPeopleDetails(personId!!)
-            .catch { e ->
-                println(e)
-                emit(null)
+    val peopleDetail: LiveData<PeopleDetail?> = savedStateHandle.getLiveData<Long>(PERSON_KEY)
+        .switchMap {
+            liveData {
+                repository.getPeopleDetails(it!!)
+                    .catch {
+                        emit(null)
+                    }
+                    .collect { value ->
+                        emit(value)
+                    }
             }
-            .collect { value ->
-                emit(value)
-            }
-    }
-
-    val birthday = peopleDetail.map { detail ->
-        detail?.birthday?.let { birth ->
-            val year = findYearDiff(birth)
-            birth.plus(" ($year years old)")
         }
 
-    }
-
-    private fun findYearDiff(birth: String): Int {
-        val today = Calendar.getInstance().get(Calendar.YEAR)
-        val date = birth.split("-").map { it.toInt() }
-        var year = today.minus(date[0])
-        if (Calendar.getInstance().get(Calendar.MONTH) < date[1] ||
-            Calendar.getInstance().get(Calendar.YEAR) == date[1] && Calendar.getInstance()
-                .get(Calendar.DAY_OF_MONTH) < date[2]
-        ) {
-            year -= 1
+    val errorText = SpannableString("Details not found...\nCheck your internet connection")
+        .apply {
+            setSpan(
+                RelativeSizeSpan(1.5f),
+                0,
+                17,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ForegroundColorSpan(
+                    ContextCompat.getColor(
+                        app.applicationContext,
+                        R.color.deep_orange_a200
+                    )
+                ),
+                0,
+                17,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
-        return year
-    }
 
     companion object {
         private const val PERSON_KEY = "personId"

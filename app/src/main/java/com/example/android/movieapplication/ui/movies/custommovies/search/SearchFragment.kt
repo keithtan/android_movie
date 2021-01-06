@@ -2,25 +2,19 @@ package com.example.android.movieapplication.ui.movies.custommovies.search
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import com.example.android.movieapplication.data.MovieDbRepository
+import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentSearchBinding
-import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.network.MoviesApi
 import com.example.android.movieapplication.ui.peopledetail.MovieListAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -36,53 +30,65 @@ class SearchFragment : Fragment() {
     ): View {
 
         binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
-
-        val toolbar = binding.toolbar
-        toolbar.setNavigationOnClickListener {
-            hideKeyboard()
-            findNavController().popBackStack()
-        }
-
-        binding.actionSearch.queryHint = "Search Movies"
-        binding.actionSearch.isIconified = false
-        binding.actionSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                hideKeyboard()
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (!newText.isNullOrBlank()) {
-                    viewModel.searchMovies(newText)
-                }
-                return true
-            }
-        })
-        binding.actionSearch.setOnCloseListener { true }
-
-        adapter = MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
-            hideKeyboard()
-            val extras = FragmentNavigatorExtras(
-                imageView to "$movieId"
-            )
-            findNavController()
-                .navigate(
-                    SearchFragmentDirections.actionSearchFragmentToMovieDetailFragment(
-                        movieId
-                    ),
-                    extras
-                )
-        })
-
-        binding.searchedMovies.adapter = adapter
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.movies.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
+        initAdapter()
+
+        setHasOptionsMenu(true)
 
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.apply {
+            // Remove existing menu items
+            removeItem(R.id.action_filter)
+            removeItem(R.id.action_search)
+
+            inflater.inflate(R.menu.search_menu, this)
+            initSearchView(this)
+        }
+    }
+
+    private fun initSearchView(menu: Menu) {
+        (menu.getItem(0).actionView as SearchView).apply {
+            queryHint = "Search Movies"
+            isIconified = false
+            setQuery(viewModel.query.value, false)
+            setOnCloseListener { true }
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    hideKeyboard()
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (!newText.isNullOrBlank()) {
+                        viewModel.setQuery(newText)
+                    }
+                    return true
+                }
+            })
+        }
+    }
+
+    private fun initAdapter() {
+        adapter =
+            MovieListAdapter(MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
+                val extras = FragmentNavigatorExtras(
+                    imageView to "$movieId"
+                )
+                findNavController()
+                    .navigate(
+                        SearchFragmentDirections.actionSearchFragmentToMovieDetailFragment(
+                            movieId
+                        ),
+                        extras
+                    )
+            })
+
+        binding.searchedMovies.adapter = adapter
     }
 
     private fun hideKeyboard() {
@@ -93,7 +99,12 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (activity as AppCompatActivity).supportActionBar?.hide()
+        (activity as AppCompatActivity).supportActionBar?.show()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        hideKeyboard()
     }
 
 }

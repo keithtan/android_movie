@@ -10,6 +10,7 @@ import com.example.android.movieapplication.UserPreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.RemoteKeys
+import com.example.android.movieapplication.network.FilterDto
 import com.example.android.movieapplication.network.MoviesApiService
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +29,6 @@ class MovieRemoteMediator(
 ) : RemoteMediator<Int, Movie>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Movie>): MediatorResult {
-        println("loadType: " + loadType)
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
@@ -36,47 +36,17 @@ class MovieRemoteMediator(
             }
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
-//                if (remoteKeys == null) {
-//                    // The LoadType is PREPEND so some data was loaded before,
-//                    // so we should have been able to get remote keys
-//                    // If the remoteKeys are null, then we're an invalid state and we have a bug
-//                    throw InvalidObjectException("Remote key and the prevKey should not be null")
-//                }
                 // If the previous key is null, then we can't request more data
-                val prevKey = remoteKeys?.prevKey
-                if (prevKey == null) {
-                    return MediatorResult.Success(endOfPaginationReached = true)
-                }
-                remoteKeys.prevKey
+                remoteKeys?.prevKey ?: return MediatorResult.Success(endOfPaginationReached = true)
             }
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
-//                if (remoteKeys?.nextKey == null) {
-//                    throw InvalidObjectException("Remote key should not be null for $loadType")
-//                }
                 remoteKeys?.nextKey ?: 1
             }
         }
 
         try {
-            val filter = userPreferencesFlow.first()
-            val withGenreFilter = filter.genrePrefList.joinIncludedIds()
-            val withoutGenreFilter = filter.genrePrefList.joinExcludedIds()
-            val apiResponse =
-                when (position) {
-                    MovieSection.LATEST -> service.getLatest(page)
-                    MovieSection.COMINGSOON -> service.getComingSoon(page)
-                    MovieSection.CUSTOM -> service.getCustomMovies(
-                        page,
-                        filter.startYear.toStartDate(),
-                        filter.endYear.toEndDate(),
-                        filter.voteAverage,
-                        withGenreFilter,
-                        withoutGenreFilter
-                    )
-                }
-
-            val movies = apiResponse.results
+            val movies = getMoviesFromNetwork(page)
             val endOfPaginationReached = movies.isEmpty()
             movieDatabase.withTransaction {
                 // clear all tables in the database
@@ -102,6 +72,25 @@ class MovieRemoteMediator(
         } catch (exception: HttpException) {
             return MediatorResult.Error(exception)
         }
+    }
+
+    private suspend fun getMoviesFromNetwork(page: Int): List<Movie> {
+        val filter = userPreferencesFlow.first().toNetworkModel()
+        val apiResponse =
+            when (position) {
+                MovieSection.LATEST -> service.getLatestMovies(page)
+                MovieSection.COMINGSOON -> service.getComingSoonMovies(page)
+                MovieSection.CUSTOM -> service.getCustomMovies(
+                    page,
+                    filter.startDate,
+                    filter.endDate,
+                    filter.voteAverage,
+                    filter.includedGenres,
+                    filter.excludedGenres
+                )
+            }
+
+        return apiResponse.results
     }
 
     private suspend fun getRemoteKeyClosestToCurrentPosition(
@@ -160,6 +149,16 @@ class MovieRemoteMediator(
         }.joinToString("%2C") {
             it.id.toString()
         }
+    }
+
+    private fun UserPreferences.toNetworkModel(): FilterDto {
+        return FilterDto(
+            startYear.toStartDate(),
+            endYear.toEndDate(),
+            voteAverage,
+            genrePrefList.joinIncludedIds(),
+            genrePrefList.joinExcludedIds()
+        )
     }
 
 }
