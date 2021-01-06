@@ -1,21 +1,52 @@
 package com.example.android.movieapplication.ui.movies.moviesection
 
+import android.app.Application
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.db.Movie
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 
 class MovieSectionViewModel @ViewModelInject constructor(
-    private val repository: MovieDbRepository
-) : ViewModel() {
+    private val repository: MovieDbRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
-    fun searchMovies(section: MovieSection): Flow<PagingData<Movie>> {
-        return repository.getMoviesStream(section)
+    val filter = repository.userPreferencesFlow
+
+    fun searchMovies(movieSection: MovieSection): Flow<PagingData<Movie>> = filter.flatMapLatest {
+        repository.getMoviesStream(movieSection)
             .cachedIn(viewModelScope)
     }
+
+    val emptyText = SpannableString("No movies found..\nTry a different filter")
+        .apply {
+            setSpan(
+                RelativeSizeSpan(1.5f),
+                0,
+                15,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ForegroundColorSpan(
+                    ContextCompat.getColor(
+                        application.applicationContext,
+                        R.color.deep_orange_a200
+                    )
+                ),
+                0,
+                15,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
 
 }

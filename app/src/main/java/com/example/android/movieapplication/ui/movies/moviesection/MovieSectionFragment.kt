@@ -14,7 +14,7 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.movieapplication.databinding.FragmentOverviewBinding
+import com.example.android.movieapplication.databinding.FragmentMovieSectionBinding
 import com.example.android.movieapplication.ui.MoviesViewPagerFragmentDirections
 import com.example.android.movieapplication.ui.movies.MoviePagingAdapter
 import com.example.android.movieapplication.ui.movies.MoviesLoadStateAdapter
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MovieSectionFragment(private val section: MovieSection) : Fragment() {
 
-    private lateinit var binding: FragmentOverviewBinding
+    private lateinit var binding: FragmentMovieSectionBinding
     private lateinit var adapter: MoviePagingAdapter
 
     private val viewModel: MovieSectionViewModel by viewModels()
@@ -36,7 +36,7 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentOverviewBinding.inflate(inflater, container, false)
+        binding = FragmentMovieSectionBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
@@ -110,6 +110,11 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
             binding.progressBar.isVisible = loadingState
             // Show the retry state if initial load or refresh fails.
             binding.retryButton.isVisible = retryState
+
+            // Show info text if there are no movies
+            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
+                binding.emptyText.isVisible = adapter.itemCount < 1
+            }
 
             // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
             val errorState = loadState.source.append as? LoadState.Error

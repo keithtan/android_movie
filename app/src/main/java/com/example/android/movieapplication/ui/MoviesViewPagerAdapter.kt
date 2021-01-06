@@ -4,9 +4,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSectionFragment
 
 class MoviesViewPagerAdapter(
-    val list: ArrayList<Fragment>,
+    val list: ArrayList<MovieSectionFragment>,
     fm: FragmentManager,
     lifecycle: Lifecycle
 ) : FragmentStateAdapter(fm, lifecycle) {

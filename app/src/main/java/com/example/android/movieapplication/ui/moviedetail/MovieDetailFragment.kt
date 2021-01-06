@@ -1,7 +1,6 @@
 package com.example.android.movieapplication.ui.moviedetail
 
 import android.os.Bundle
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.transition.TransitionInflater
 import com.example.android.movieapplication.databinding.FragmentMovieDetailBinding
 import com.example.android.movieapplication.network.MovieDetail
 import dagger.hilt.android.AndroidEntryPoint
