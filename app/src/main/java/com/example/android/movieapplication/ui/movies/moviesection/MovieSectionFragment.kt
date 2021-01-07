@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,7 +41,8 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
 
         initRetryButton()
         initFloatingActionButton()
-        handleFabAppearance()
+        initAdapter()
+        search()
 
         return binding.root
     }
@@ -51,19 +51,13 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
         binding.retryButton.setOnClickListener { adapter.retry() }
     }
 
-    private fun handleFabAppearance() {
-        binding.movieList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val position = binding.movieList.computeVerticalScrollOffset()
-                if (position > 0) binding.floatingActionButton.show()
-                else binding.floatingActionButton.hide()
-            }
-        })
-    }
-
     private fun initFloatingActionButton() {
         binding.floatingActionButton.hide()
+        setSmoothScroll()
+        handleFabAppearance()
+    }
+
+    private fun setSmoothScroll() {
         binding.floatingActionButton.setOnClickListener {
             binding.movieList.layoutManager?.smoothScrollToPosition(
                 binding.movieList,
@@ -73,8 +67,29 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun handleFabAppearance() {
+        binding.movieList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                showFabOnScrollOffset()
+            }
+
+            private fun showFabOnScrollOffset() {
+                val position = binding.movieList.computeVerticalScrollOffset()
+                if (position > 0) binding.floatingActionButton.show()
+                else binding.floatingActionButton.hide()
+            }
+        })
+    }
+
+    private fun initAdapter() {
+        setAdapter()
+        setRestorationPolicy()
+        addLoadStateHeaderAndFooter()
+        addLoadStateListener()
+    }
+
+    private fun setAdapter() {
         adapter =
             MoviePagingAdapter(
                 MoviePagingAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
@@ -90,31 +105,31 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
                         )
 
                 })
-        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-
-        initAdapter()
-        search()
     }
 
-    private fun initAdapter() {
+    private fun setRestorationPolicy() {
+        adapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+    }
+
+    private fun addLoadStateHeaderAndFooter() {
         binding.movieList.adapter = adapter.withLoadStateHeaderAndFooter(
             header = MoviesLoadStateAdapter { adapter.retry() },
             footer = MoviesLoadStateAdapter { adapter.retry() }
         )
-        adapter.addLoadStateListener { loadState ->
-            val loadingState = loadState.source.refresh is LoadState.Loading && adapter.itemCount == 0
-            val retryState = loadState.source.refresh is LoadState.Error
-            // Only show the list if refresh succeeds.
-            binding.movieList.isVisible = !(loadingState || retryState)
-            // Show loading spinner during initial load or refresh.
-            binding.progressBar.isVisible = loadingState
-            // Show the retry state if initial load or refresh fails.
-            binding.retryButton.isVisible = retryState
+    }
 
-            // Show info text if there are no movies
-            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
-                binding.emptyText.isVisible = adapter.itemCount < 1
-            }
+    private fun addLoadStateListener() {
+        adapter.addLoadStateListener { loadState ->
+            // Show loading spinner during initial load or refresh.
+            viewModel.loadingState.value = loadState.source.refresh is LoadState.Loading
+                    && adapter.itemCount == 0
+            // Show the retry state if initial load or refresh fails.
+            viewModel.retryState.value = loadState.source.refresh is LoadState.Error
+            // Show empty text if there are no movies
+            viewModel.emptyState.value = loadState.source.refresh is LoadState.NotLoading
+                    && loadState.append.endOfPaginationReached
+                    && adapter.itemCount < 1
 
             // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
             val errorState = loadState.source.append as? LoadState.Error

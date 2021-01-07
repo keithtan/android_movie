@@ -8,6 +8,7 @@ import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -48,5 +49,9 @@ class MovieSectionViewModel @ViewModelInject constructor(
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
+
+    val loadingState = MutableLiveData<Boolean>()
+    val retryState = MutableLiveData<Boolean>()
+    val emptyState = MutableLiveData<Boolean>()
 
 }
