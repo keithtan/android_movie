@@ -25,13 +25,13 @@ interface MoviesApiService {
     @GET("discover/movie?sort_by=release_date.desc&vote_average.gte=5")
     suspend fun getLatestMovies(
         @Query("page") page: Int,
-        @Query("release_date.lte") release_date: String = currentDate
+        @Query("release_date.lte") releaseDate: String = currentDate
     ): MovieDto
 
     @GET("discover/movie?sort_by=release_date.asc")
     suspend fun getComingSoonMovies(
         @Query("page") page: Int,
-        @Query("release_date.gte") release_date: String = currentDate
+        @Query("release_date.gte") releaseDate: String = currentDate
     ): MovieDto
 
     @GET("discover/movie")
@@ -49,9 +49,6 @@ interface MoviesApiService {
         @Query("query") query: String
     ): MovieDto
 
-    @GET("movie/now_playing")
-    suspend fun getMovies(@Query("page") page: Int): MovieDto
-
     @GET("movie/{movieId}?append_to_response=credits,videos")
     suspend fun getMovieDetails(@Path("movieId") movieId: Long): MovieDetail
 
@@ -60,6 +57,44 @@ interface MoviesApiService {
 
     @GET("person/{personId}?append_to_response=movie_credits")
     suspend fun getPeopleDetails(@Path("personId") personId: Long): PeopleDetail
+
+
+    @GET("discover/tv?sort_by=first_air_date.desc&vote_average.gte=5")
+    suspend fun getLatestTvShows(
+        @Query("page") page: Int,
+        @Query("first_air_date.lte") firstAirDate: String = currentDate
+    ): TvShowDto
+
+    @GET("discover/tv?sort_by=first_air_date.asc")
+    suspend fun getComingSoonTvShows(
+        @Query("page") page: Int,
+        @Query("first_air_date.gte") firstAirDate: String = currentDate
+    ): TvShowDto
+
+    @GET("discover/tv")
+    suspend fun getCustomTvShows(
+        @Query("page") page: Int,
+        @Query("first_air_date.gte") firstAirDateGte: String?,
+        @Query("first_air_date.lte") firstAirDateLte: String?,
+        @Query("vote_average.gte") voteAverage: Float?,
+        @Query("with_genres") genreWithFilter: String?,
+        @Query("without_genres") genreWithoutFilter: String?
+    ): TvShowDto
+
+    @GET("search/tv")
+    suspend fun getSearchedTvShows(
+        @Query("query") query: String
+    ): TvShowDto
+
+    @GET("tv/{tvShowId}?append_to_response=credits,videos")
+    suspend fun getTvShowDetails(@Path("tvShowId") tvShowId: Long): TvShowDetail
+
+//    @GET("genre/movie/list")
+//    suspend fun getGenres(): GenresDto
+//
+//    @GET("person/{personId}?append_to_response=movie_credits")
+//    suspend fun getPeopleDetails(@Path("personId") personId: Long): PeopleDetail
+
 }
 
 class MovieDbInterceptor @Inject constructor() : Interceptor {

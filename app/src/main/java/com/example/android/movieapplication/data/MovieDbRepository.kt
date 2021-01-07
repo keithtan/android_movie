@@ -10,13 +10,12 @@ import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.UserPreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.network.MovieDetail
-import com.example.android.movieapplication.network.MovieDto
-import com.example.android.movieapplication.network.MoviesApiService
-import com.example.android.movieapplication.network.PeopleDetail
+import com.example.android.movieapplication.db.TvShow
+import com.example.android.movieapplication.network.*
 import com.example.android.movieapplication.ui.movies.custommovies.filter.GenreModel
 import com.example.android.movieapplication.ui.movies.custommovies.filter.UserPreferencesSerializer
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.tvshows.TvShowSection
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -106,6 +105,32 @@ class MovieDbRepository @Inject constructor(
 
     suspend fun getPeopleDetails(personId: Long): Flow<PeopleDetail> = flow {
         emit(service.getPeopleDetails(personId))
+    }
+
+    fun getTvShowsStream(section: TvShowSection): Flow<PagingData<TvShow>> {
+        val pagingSourceFactory =  { database.tvShowsDao().tvShows(section.ordinal) }
+        return Pager(
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE,
+                enablePlaceholders = true,
+                initialLoadSize = 20
+            ),
+            remoteMediator = TvShowRemoteMediator(
+                service,
+                database,
+                section,
+                userPreferencesFlow
+            ),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow
+    }
+
+    suspend fun getSearchedTvShowsStream(query: String): TvShowDto {
+        return service.getSearchedTvShows(query)
+    }
+
+    fun getTvShowDetailsStream(tvShowId: Long): Flow<TvShowDetail> = flow {
+        emit(service.getTvShowDetails(tvShowId))
     }
 
     private fun List<GenreModel>.toDataStoreModel(): List<GenrePreferences> {

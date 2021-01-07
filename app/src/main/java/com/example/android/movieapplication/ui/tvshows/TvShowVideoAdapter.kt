@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.ui.moviedetail
+package com.example.android.movieapplication.ui.tvshows
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,16 +6,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.movieapplication.databinding.ListMovieVideoBinding
-import com.example.android.movieapplication.network.MovieDetail.MovieVideos.VideoDetail
+import com.example.android.movieapplication.databinding.ListTvShowVideoBinding
+import com.example.android.movieapplication.network.TvShowDetail.TvShowVideos.VideoDetail
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 
-class MovieVideoAdapter(val lifecycle: Lifecycle)
-    : ListAdapter<VideoDetail, MovieVideoAdapter.VideoViewHolder>(DiffCallback) {
+class TvShowVideoAdapter(val lifecycle: Lifecycle)
+    : ListAdapter<VideoDetail, TvShowVideoAdapter.VideoViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
-        return VideoViewHolder(ListMovieVideoBinding.inflate(LayoutInflater.from(parent.context)))
+        return VideoViewHolder(ListTvShowVideoBinding.inflate(LayoutInflater.from(parent.context)))
     }
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
@@ -25,7 +25,7 @@ class MovieVideoAdapter(val lifecycle: Lifecycle)
         }
     }
 
-    inner class VideoViewHolder(private val binding: ListMovieVideoBinding)
+    inner class VideoViewHolder(private val binding: ListTvShowVideoBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun bind(video: VideoDetail) {
             lifecycle.addObserver(binding.youtubePlayerView)

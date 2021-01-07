@@ -11,6 +11,8 @@ import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentTvViewPagerBinding
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSectionFragment
+import com.example.android.movieapplication.ui.tvshows.TvShowSection
+import com.example.android.movieapplication.ui.tvshows.TvShowSectionFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
 
@@ -24,12 +26,12 @@ class TvViewPagerFragment : Fragment() {
         val binding = FragmentTvViewPagerBinding.inflate(layoutInflater, container, false)
 
         val fragmentList = arrayListOf(
-            MovieSectionFragment(MovieSection.LATEST),
-            MovieSectionFragment(MovieSection.COMINGSOON),
-            MovieSectionFragment(MovieSection.CUSTOM)
+            TvShowSectionFragment(TvShowSection.LATEST),
+            TvShowSectionFragment(TvShowSection.COMINGSOON),
+            TvShowSectionFragment(TvShowSection.CUSTOM)
         )
 
-        val adapter = MoviesViewPagerAdapter(
+        val adapter = TvShowsViewPagerAdapter(
             fragmentList,
             requireActivity().supportFragmentManager,
             lifecycle

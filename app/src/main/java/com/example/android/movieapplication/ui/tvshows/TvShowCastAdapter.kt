@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.ui.moviedetail
+package com.example.android.movieapplication.ui.tvshows
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,14 +6,14 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.movieapplication.databinding.ListMovieCastBinding
-import com.example.android.movieapplication.network.MovieDetail.MovieCredits.MovieCast
+import com.example.android.movieapplication.databinding.ListTvShowCastBinding
+import com.example.android.movieapplication.network.TvShowDetail.TvShowCredits.TvShowCast
 
-class MovieCastAdapter(private val onClickListener: OnClickListener)
-    : ListAdapter<MovieCast, MovieCastAdapter.CastViewHolder>(DiffCallback) {
+class TvShowCastAdapter(private val onClickListener: OnClickListener)
+    : ListAdapter<TvShowCast, TvShowCastAdapter.CastViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CastViewHolder {
-        return CastViewHolder(ListMovieCastBinding.inflate(LayoutInflater.from(parent.context)))
+        return CastViewHolder(ListTvShowCastBinding.inflate(LayoutInflater.from(parent.context)))
     }
 
     override fun onBindViewHolder(holder: CastViewHolder, position: Int) {
@@ -26,21 +26,21 @@ class MovieCastAdapter(private val onClickListener: OnClickListener)
         }
     }
 
-    class CastViewHolder(private val binding: ListMovieCastBinding)
+    class CastViewHolder(private val binding: ListTvShowCastBinding)
         : RecyclerView.ViewHolder(binding.root) {
-        fun bind(movieCast: MovieCast) {
-            binding.movieCast = movieCast
+        fun bind(tvShowCast: TvShowCast) {
+            binding.tvShowCast = tvShowCast
         }
 
         val imageView = binding.imageView
     }
 
-    companion object DiffCallback : DiffUtil.ItemCallback<MovieCast>() {
-        override fun areItemsTheSame(oldItem: MovieCast, newItem: MovieCast): Boolean {
+    companion object DiffCallback : DiffUtil.ItemCallback<TvShowCast>() {
+        override fun areItemsTheSame(oldItem: TvShowCast, newItem: TvShowCast): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: MovieCast, newItem: MovieCast): Boolean {
+        override fun areContentsTheSame(oldItem: TvShowCast, newItem: TvShowCast): Boolean {
             return oldItem == newItem
         }
     }

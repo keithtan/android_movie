@@ -5,14 +5,12 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.UserPreferences
-import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.db.MovieRemoteKeys
-import com.example.android.movieapplication.network.FilterDto
+import com.example.android.movieapplication.db.TvShow
+import com.example.android.movieapplication.db.TvShowRemoteKeys
 import com.example.android.movieapplication.network.MoviesApiService
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.tvshows.TvShowSection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import retrofit2.HttpException
@@ -21,14 +19,14 @@ import java.io.IOException
 private const val MOVIE_DB_STARTING_PAGE_INDEX = 1
 
 @OptIn(ExperimentalPagingApi::class)
-class MovieRemoteMediator(
+class TvShowRemoteMediator(
     private val service: MoviesApiService,
     private val movieDatabase: MovieDatabase,
-    private val position: MovieSection,
+    private val position: TvShowSection,
     private val userPreferencesFlow: Flow<UserPreferences>
-) : RemoteMediator<Int, Movie>() {
+) : RemoteMediator<Int, TvShow>() {
 
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, Movie>): MediatorResult {
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, TvShow>): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
@@ -46,24 +44,24 @@ class MovieRemoteMediator(
         }
 
         try {
-            val movies = getMoviesFromNetwork(page)
-            val endOfPaginationReached = movies.isEmpty()
+            val tvShows = getTvShowsFromNetwork(page)
+            val endOfPaginationReached = tvShows.isEmpty()
             movieDatabase.withTransaction {
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
-                    movieDatabase.movieRemoteKeysDao().clearRemoteKeys()
-                    movieDatabase.moviesDao().clearMovies(position.ordinal)
+                    movieDatabase.tvShowRemoteKeysDao().clearRemoteKeys()
+                    movieDatabase.tvShowsDao().clearTvShows(position.ordinal)
                 }
                 val prevKey = if (page == MOVIE_DB_STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1
-                val keys = movies.map {
-                    MovieRemoteKeys(movieId = it.id, prevKey = prevKey, nextKey = nextKey)
+                val keys = tvShows.map {
+                    TvShowRemoteKeys(tvShowId = it.id, prevKey = prevKey, nextKey = nextKey)
                 }
-                movieDatabase.movieRemoteKeysDao().insertAll(keys)
-                movies.map {
+                movieDatabase.tvShowRemoteKeysDao().insertAll(keys)
+                tvShows.map {
                     it.position = position.ordinal
                 }
-                movieDatabase.moviesDao().insertAll(movies)
+                movieDatabase.tvShowsDao().insertAll(tvShows)
             }
 
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
@@ -74,13 +72,13 @@ class MovieRemoteMediator(
         }
     }
 
-    private suspend fun getMoviesFromNetwork(page: Int): List<Movie> {
+    private suspend fun getTvShowsFromNetwork(page: Int): List<TvShow> {
         val filter = userPreferencesFlow.first().toNetworkModel()
         val apiResponse =
             when (position) {
-                MovieSection.LATEST -> service.getLatestMovies(page)
-                MovieSection.COMINGSOON -> service.getComingSoonMovies(page)
-                MovieSection.CUSTOM -> service.getCustomMovies(
+                TvShowSection.LATEST -> service.getLatestTvShows(page)
+                TvShowSection.COMINGSOON -> service.getComingSoonTvShows(page)
+                TvShowSection.CUSTOM -> service.getCustomTvShows(
                     page,
                     filter.startDate,
                     filter.endDate,
@@ -94,34 +92,34 @@ class MovieRemoteMediator(
     }
 
     private suspend fun getRemoteKeyClosestToCurrentPosition(
-        state: PagingState<Int, Movie>
-    ): MovieRemoteKeys? {
+        state: PagingState<Int, TvShow>
+    ): TvShowRemoteKeys? {
         // The paging library is trying to load data after the anchor position
         // Get the item closest to the anchor position
         return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.id?.let { movieId ->
-                movieDatabase.movieRemoteKeysDao().remoteKeysMovieId(movieId)
+            state.closestItemToPosition(position)?.id?.let { tvShowId ->
+                movieDatabase.tvShowRemoteKeysDao().remoteKeysTvShowId(tvShowId)
             }
         }
     }
 
-    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Movie>): MovieRemoteKeys? {
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, TvShow>): TvShowRemoteKeys? {
         // Get the first page that was retrieved, that contained items.
         // From that first page, get the first item
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
-            ?.let { movie ->
+            ?.let { tvShow ->
                 // Get the remote keys of the first items retrieved
-                movieDatabase.movieRemoteKeysDao().remoteKeysMovieId(movie.id)
+                movieDatabase.tvShowRemoteKeysDao().remoteKeysTvShowId(tvShow.id)
             }
     }
 
-    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Movie>): MovieRemoteKeys? {
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, TvShow>): TvShowRemoteKeys? {
         // Get the last page that was retrieved, that contained items.
         // From that last page, get the last item
         return state.pages.lastOrNull() { it.data.isNotEmpty() }?.data?.lastOrNull()
-            ?.let { movie ->
+            ?.let { tvShow ->
                 // Get the remote keys of the last item retrieved
-                movieDatabase.movieRemoteKeysDao().remoteKeysMovieId(movie.id)
+                movieDatabase.tvShowRemoteKeysDao().remoteKeysTvShowId(tvShow.id)
             }
     }
 
