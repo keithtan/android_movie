@@ -58,7 +58,7 @@
     </fragment>
     <fragment
         android:id="@+id/tvViewPagerFragment"
-        android:name="com.example.android.movieapplication.ui.tvshows.TvViewPagerFragment"
+        android:name="com.example.android.movieapplication.ui.TvViewPagerFragment"
         android:label="TV Shows"
         tools:layout="@layout/fragment_tv_view_pager" />
 </navigation>
