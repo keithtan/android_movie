@@ -94,14 +94,14 @@ class MoviesViewPagerFragment : Fragment() {
 
             findNavController()
                 .navigate(
-                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToFilterFragment()
+                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieFilterFragment()
                 )
             true
         }
         R.id.action_search -> {
             findNavController()
                 .navigate(
-                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToSearchFragment()
+                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieSearchFragment()
                 )
             true
         }

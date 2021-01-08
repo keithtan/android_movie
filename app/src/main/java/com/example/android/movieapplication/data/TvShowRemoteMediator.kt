@@ -5,12 +5,12 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.android.movieapplication.UserPreferences
+import com.example.android.movieapplication.TvShowFilterPreferences
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.TvShow
 import com.example.android.movieapplication.db.TvShowRemoteKeys
 import com.example.android.movieapplication.network.MoviesApiService
-import com.example.android.movieapplication.ui.tvshows.TvShowSection
+import com.example.android.movieapplication.ui.tvshows.tvshowsection.TvShowSection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import retrofit2.HttpException
@@ -23,7 +23,7 @@ class TvShowRemoteMediator(
     private val service: MoviesApiService,
     private val movieDatabase: MovieDatabase,
     private val position: TvShowSection,
-    private val userPreferencesFlow: Flow<UserPreferences>
+    private val tvShowPreferencesFlow: Flow<TvShowFilterPreferences>
 ) : RemoteMediator<Int, TvShow>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, TvShow>): MediatorResult {
@@ -73,7 +73,7 @@ class TvShowRemoteMediator(
     }
 
     private suspend fun getTvShowsFromNetwork(page: Int): List<TvShow> {
-        val filter = userPreferencesFlow.first().toNetworkModel()
+        val filter = tvShowPreferencesFlow.first().toNetworkModel()
         val apiResponse =
             when (position) {
                 TvShowSection.LATEST -> service.getLatestTvShows(page)

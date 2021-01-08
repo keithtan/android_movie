@@ -22,7 +22,7 @@ class MovieSectionViewModel @ViewModelInject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    val filter = repository.userPreferencesFlow
+    val filter = repository.movieFilterFlow
 
     fun searchMovies(movieSection: MovieSection): Flow<PagingData<Movie>> = filter.flatMapLatest {
         repository.getMoviesStream(movieSection)

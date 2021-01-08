@@ -5,14 +5,13 @@ import com.squareup.moshi.Json
 data class TvShowDetail(
     val id: Long,
     @Json(name = "backdrop_path") val backdropPath: String?,
-    val genres: List<GenreDto>,
-    val overview: String,
+    val genres: List<TvShowGenreDto>,
+    val overview: String?,
     @Json(name = "poster_path") val posterPath: String?,
-    @Json(name = "first_air_date") val firstAirDate: String,
-    val runtime: Int,
+    @Json(name = "first_air_date") val firstAirDate: String?,
     @Json(name = "spoken_languages") val spokenLanguages: List<Language>,
     val name: String,
-    @Json(name = "vote_average") val voteAverage: Double,
+    @Json(name = "vote_average") val voteAverage: Double?,
     val credits: TvShowCredits,
     val videos: TvShowVideos
 ) {

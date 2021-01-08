@@ -1,17 +1,28 @@
-
-
 option java_package = "com.example.android.movieapplication";
 option java_multiple_files = true;
 
-message UserPreferences {
-  // filter
+message MovieFilterPreferences {
   optional int32 startYear = 1;
   optional int32 endYear = 2;
   optional float voteAverage = 3;
-  repeated GenrePreferences genrePref = 4;
+  repeated MovieGenrePreferences genrePref = 4;
 }
 
-message GenrePreferences {
+message MovieGenrePreferences {
+  required int32 id = 1;
+  required string name = 2;
+  optional bool included = 3;
+  optional bool excluded = 4;
+}
+
+message TvShowFilterPreferences {
+  optional int32 startYear = 1;
+  optional int32 endYear = 2;
+  optional float voteAverage = 3;
+  repeated TvShowGenrePreferences genrePref = 4;
+}
+
+message TvShowGenrePreferences {
   required int32 id = 1;
   required string name = 2;
   optional bool included = 3;

@@ -1,19 +1,13 @@
 package com.example.android.movieapplication.network
 
 import com.example.android.movieapplication.BuildConfig
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import dagger.hilt.InstallIn
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okhttp3.Response
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -53,10 +47,10 @@ interface MoviesApiService {
     suspend fun getMovieDetails(@Path("movieId") movieId: Long): MovieDetail
 
     @GET("genre/movie/list")
-    suspend fun getGenres(): GenresDto
+    suspend fun getMovieGenres(): MovieGenresDto
 
     @GET("person/{personId}?append_to_response=movie_credits")
-    suspend fun getPeopleDetails(@Path("personId") personId: Long): PeopleDetail
+    suspend fun getMovieCastDetails(@Path("personId") personId: Long): MovieCastDetail
 
 
     @GET("discover/tv?sort_by=first_air_date.desc&vote_average.gte=5")
@@ -89,11 +83,11 @@ interface MoviesApiService {
     @GET("tv/{tvShowId}?append_to_response=credits,videos")
     suspend fun getTvShowDetails(@Path("tvShowId") tvShowId: Long): TvShowDetail
 
-//    @GET("genre/movie/list")
-//    suspend fun getGenres(): GenresDto
-//
-//    @GET("person/{personId}?append_to_response=movie_credits")
-//    suspend fun getPeopleDetails(@Path("personId") personId: Long): PeopleDetail
+    @GET("genre/tv/list")
+    suspend fun getTvShowGenres(): TvShowGenresDto
+
+    @GET("person/{personId}?append_to_response=tv_credits")
+    suspend fun getTvShowCastDetails(@Path("personId") personId: Long): TvShowCastDetail
 
 }
 
@@ -107,6 +101,7 @@ class MovieDbInterceptor @Inject constructor() : Interceptor {
             .addQueryParameter("region", "sg")
             .build()
         val urlStr = url.toString().replace("%252C", "%2C")
+        Timber.d(urlStr)
         return chain.proceed(
             chain.request()
                 .newBuilder()

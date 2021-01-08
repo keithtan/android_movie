@@ -82,7 +82,7 @@ class MovieDetailFragment : Fragment() {
                 )
                 findNavController()
                     .navigate(
-                        MovieDetailFragmentDirections.actionMovieDetailFragmentToPeopleDetailFragment(
+                        MovieDetailFragmentDirections.actionMovieDetailFragmentToMovieCastDetailFragment(
                             personId
                         ),
                         extras

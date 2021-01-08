@@ -1,7 +1,6 @@
 package com.example.android.movieapplication.data
 
-import com.example.android.movieapplication.GenrePreferences
-import com.example.android.movieapplication.UserPreferences
+import com.example.android.movieapplication.*
 import com.example.android.movieapplication.network.FilterDto
 
 fun Int.toStartDate(): String? {
@@ -14,7 +13,7 @@ private fun Int.toEndDate(): String? {
     else null
 }
 
-fun List<GenrePreferences>.joinIncludedIds(): String {
+fun List<MovieGenrePreferences>.joinMovieGenreIncludedIds(): String {
     return this.filter {
         it.included
     }.joinToString("%2C") {
@@ -22,7 +21,7 @@ fun List<GenrePreferences>.joinIncludedIds(): String {
     }
 }
 
-fun List<GenrePreferences>.joinExcludedIds(): String {
+fun List<MovieGenrePreferences>.joinMovieGenreExcludedIds(): String {
     return this.filter {
         it.excluded
     }.joinToString("%2C") {
@@ -30,12 +29,38 @@ fun List<GenrePreferences>.joinExcludedIds(): String {
     }
 }
 
-fun UserPreferences.toNetworkModel(): FilterDto {
+fun MovieFilterPreferences.toNetworkModel(): FilterDto {
     return FilterDto(
         startYear.toStartDate(),
         endYear.toEndDate(),
         voteAverage,
-        genrePrefList.joinIncludedIds(),
-        genrePrefList.joinExcludedIds()
+        genrePrefList.joinMovieGenreIncludedIds(),
+        genrePrefList.joinMovieGenreExcludedIds()
+    )
+}
+
+fun List<TvShowGenrePreferences>.joinTvShowIncludedIds(): String {
+    return this.filter {
+        it.included
+    }.joinToString("%2C") {
+        it.id.toString()
+    }
+}
+
+fun List<TvShowGenrePreferences>.joinTvShowExcludedIds(): String {
+    return this.filter {
+        it.excluded
+    }.joinToString("%2C") {
+        it.id.toString()
+    }
+}
+
+fun TvShowFilterPreferences.toNetworkModel(): FilterDto {
+    return FilterDto(
+        startYear.toStartDate(),
+        endYear.toEndDate(),
+        voteAverage,
+        genrePrefList.joinTvShowIncludedIds(),
+        genrePrefList.joinTvShowExcludedIds()
     )
 }

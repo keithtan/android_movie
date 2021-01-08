@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.example.android.movieapplication.ui.tvshows.TvShowDetailViewModel" />
+            type="com.example.android.movieapplication.ui.tvshows.tvshowdetail.TvShowDetailViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -160,8 +160,7 @@
                         android:layout_marginStart="16dp"
                         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
                         app:layout_constraintStart_toEndOf="@+id/runtime_label"
-                        app:layout_constraintTop_toTopOf="@+id/runtime_label"
-                        app:runtime="@{viewModel.tvShowDetail.runtime}" />
+                        app:layout_constraintTop_toTopOf="@+id/runtime_label" />
 
                     <TextView
                         android:id="@+id/release"

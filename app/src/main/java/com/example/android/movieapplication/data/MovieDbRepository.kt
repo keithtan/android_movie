@@ -6,16 +6,19 @@ import androidx.datastore.createDataStore
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.android.movieapplication.GenrePreferences
-import com.example.android.movieapplication.UserPreferences
+import com.example.android.movieapplication.MovieFilterPreferences
+import com.example.android.movieapplication.MovieGenrePreferences
+import com.example.android.movieapplication.TvShowFilterPreferences
+import com.example.android.movieapplication.TvShowGenrePreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.TvShow
 import com.example.android.movieapplication.network.*
-import com.example.android.movieapplication.ui.movies.custommovies.filter.GenreModel
-import com.example.android.movieapplication.ui.movies.custommovies.filter.UserPreferencesSerializer
+import com.example.android.movieapplication.ui.movies.filter.GenreModel
+import com.example.android.movieapplication.ui.movies.filter.MovieFilterPreferencesSerializer
+import com.example.android.movieapplication.ui.tvshows.filter.TvShowFilterPreferencesSerializer
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
-import com.example.android.movieapplication.ui.tvshows.TvShowSection
+import com.example.android.movieapplication.ui.tvshows.tvshowsection.TvShowSection
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -48,7 +51,7 @@ class MovieDbRepository @Inject constructor(
                 service,
                 database,
                 section,
-                userPreferencesFlow
+                movieFilterFlow
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
@@ -62,26 +65,26 @@ class MovieDbRepository @Inject constructor(
         emit(service.getMovieDetails(movieId))
     }
 
-    private val dataStore: DataStore<UserPreferences> =
+    private val movieFilterDataStore: DataStore<MovieFilterPreferences> =
         context.createDataStore(
             fileName = "user_prefs.pb",
-            serializer = UserPreferencesSerializer
+            serializer = MovieFilterPreferencesSerializer
         )
 
-    val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
+    val movieFilterFlow: Flow<MovieFilterPreferences> = movieFilterDataStore.data
         .catch { exception ->
             // dataStore.data throws an IOException when an error is encountered when reading data
             if (exception is IOException) {
-                Timber.e(exception, "Error reading user preferences.")
-                emit(UserPreferences.getDefaultInstance())
+                Timber.e(exception, "Error reading movie preferences.")
+                emit(MovieFilterPreferences.getDefaultInstance())
             } else {
                 throw exception
             }
         }
 
-    suspend fun updateFilter(startYear: Int, endYear: Int, voteAverage: Float, genres: List<GenreModel>) {
-        val genrePrefs = genres.toDataStoreModel()
-        dataStore.updateData { preferences ->
+    suspend fun updateMovieFilter(startYear: Int, endYear: Int, voteAverage: Float, genres: List<GenreModel>) {
+        val genrePrefs = genres.toMovieDataStoreModel()
+        movieFilterDataStore.updateData { preferences ->
             preferences.toBuilder()
                 .setStartYear(startYear)
                 .setEndYear(endYear)
@@ -92,8 +95,8 @@ class MovieDbRepository @Inject constructor(
         }
     }
 
-    suspend fun getNetworkGenres(): List<GenreModel> {
-        return service.getGenres().genres.map {
+    suspend fun getMovieNetworkGenres(): List<GenreModel> {
+        return service.getMovieGenres().movieGenres.map {
             GenreModel(
                 it.id,
                 it.name,
@@ -103,8 +106,8 @@ class MovieDbRepository @Inject constructor(
         }
     }
 
-    suspend fun getPeopleDetails(personId: Long): Flow<PeopleDetail> = flow {
-        emit(service.getPeopleDetails(personId))
+    suspend fun getMovieCastDetails(castId: Long): Flow<MovieCastDetail> = flow {
+        emit(service.getMovieCastDetails(castId))
     }
 
     fun getTvShowsStream(section: TvShowSection): Flow<PagingData<TvShow>> {
@@ -119,7 +122,7 @@ class MovieDbRepository @Inject constructor(
                 service,
                 database,
                 section,
-                userPreferencesFlow
+                tvShowFilterFlow
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
@@ -133,9 +136,66 @@ class MovieDbRepository @Inject constructor(
         emit(service.getTvShowDetails(tvShowId))
     }
 
-    private fun List<GenreModel>.toDataStoreModel(): List<GenrePreferences> {
+    private val tvShowFilterDataStore: DataStore<TvShowFilterPreferences> =
+        context.createDataStore(
+            fileName = "user_prefs.pb",
+            serializer = TvShowFilterPreferencesSerializer
+        )
+
+    val tvShowFilterFlow: Flow<TvShowFilterPreferences> = tvShowFilterDataStore.data
+        .catch { exception ->
+            // dataStore.data throws an IOException when an error is encountered when reading data
+            if (exception is IOException) {
+                Timber.e(exception, "Error reading tv show preferences.")
+                emit(TvShowFilterPreferences.getDefaultInstance())
+            } else {
+                throw exception
+            }
+        }
+
+    suspend fun updateTvShowFilter(startYear: Int, endYear: Int, voteAverage: Float, genres: List<GenreModel>) {
+        val genrePrefs = genres.toTvShowDataStoreModel()
+        tvShowFilterDataStore.updateData { preferences ->
+            preferences.toBuilder()
+                .setStartYear(startYear)
+                .setEndYear(endYear)
+                .setVoteAverage(voteAverage)
+                .clearGenrePref()
+                .addAllGenrePref(genrePrefs)
+                .build()
+        }
+    }
+
+    suspend fun getNetworkTvShowGenres(): List<GenreModel> {
+        return service.getTvShowGenres().tvShowGenres.map {
+            GenreModel(
+                it.id,
+                it.name,
+                included = false,
+                excluded = false
+            )
+        }
+    }
+
+    suspend fun getTvShowCastDetails(castId: Long): Flow<TvShowCastDetail> = flow {
+        emit(service.getTvShowCastDetails(castId))
+    }
+
+
+    private fun List<GenreModel>.toMovieDataStoreModel(): List<MovieGenrePreferences> {
         return this.map {
-            GenrePreferences.newBuilder()
+            MovieGenrePreferences.newBuilder()
+                .setId(it.id)
+                .setName(it.name)
+                .setIncluded(it.included)
+                .setExcluded(it.excluded)
+                .build()
+        }
+    }
+
+    private fun List<GenreModel>.toTvShowDataStoreModel(): List<TvShowGenrePreferences> {
+        return this.map {
+            TvShowGenrePreferences.newBuilder()
                 .setId(it.id)
                 .setName(it.name)
                 .setIncluded(it.included)

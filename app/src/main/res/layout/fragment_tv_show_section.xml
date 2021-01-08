@@ -7,7 +7,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.example.android.movieapplication.ui.tvshows.TvShowSectionViewModel" />
+            type="com.example.android.movieapplication.ui.tvshows.tvshowsection.TvShowSectionViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

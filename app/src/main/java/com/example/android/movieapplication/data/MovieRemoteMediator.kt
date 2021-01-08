@@ -5,12 +5,10 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.android.movieapplication.GenrePreferences
-import com.example.android.movieapplication.UserPreferences
+import com.example.android.movieapplication.MovieFilterPreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.MovieRemoteKeys
-import com.example.android.movieapplication.network.FilterDto
 import com.example.android.movieapplication.network.MoviesApiService
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +23,7 @@ class MovieRemoteMediator(
     private val service: MoviesApiService,
     private val movieDatabase: MovieDatabase,
     private val position: MovieSection,
-    private val userPreferencesFlow: Flow<UserPreferences>
+    private val movieFilterPreferencesFlow: Flow<MovieFilterPreferences>
 ) : RemoteMediator<Int, Movie>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Movie>): MediatorResult {
@@ -75,7 +73,7 @@ class MovieRemoteMediator(
     }
 
     private suspend fun getMoviesFromNetwork(page: Int): List<Movie> {
-        val filter = userPreferencesFlow.first().toNetworkModel()
+        val filter = movieFilterPreferencesFlow.first().toNetworkModel()
         val apiResponse =
             when (position) {
                 MovieSection.LATEST -> service.getLatestMovies(page)

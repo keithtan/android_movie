@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.android.movieapplication.R
-import com.example.android.movieapplication.network.GenreDto
+import com.example.android.movieapplication.network.MovieGenreDto
 import com.example.android.movieapplication.network.MovieDetail.MovieCredits.MovieCast
 import com.example.android.movieapplication.network.MovieDetail.MovieVideos.VideoDetail
 import com.google.android.material.chip.Chip
@@ -61,8 +61,8 @@ fun RatingBar.bindRating(voteAverage: Double?) {
 }
 
 @BindingAdapter("genreDisplayChips")
-fun ChipGroup.bindChips(genres: List<GenreDto>?) {
-    genres?.map {genre ->
+fun ChipGroup.bindChips(movieGenres: List<MovieGenreDto>?) {
+    movieGenres?.map { genre ->
         val chip = Chip(context)
         chip.id = genre.id
         chip.text = genre.name
