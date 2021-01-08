@@ -1,24 +1,23 @@
-package com.example.android.movieapplication.ui.tvshows.filter
+package com.example.android.movieapplication.data
 
 import androidx.datastore.CorruptionException
 import androidx.datastore.Serializer
 import com.example.android.movieapplication.MovieFilterPreferences
-import com.example.android.movieapplication.TvShowFilterPreferences
 import com.google.protobuf.InvalidProtocolBufferException
 import java.io.InputStream
 import java.io.OutputStream
 
-object TvShowFilterPreferencesSerializer : Serializer<TvShowFilterPreferences> {
+object MovieFilterPreferencesSerializer : Serializer<MovieFilterPreferences> {
 
 //    override val defaultValue: UserPreferences = UserPreferences.getDefaultInstance()
 
-    override fun readFrom(input: InputStream): TvShowFilterPreferences {
+    override fun readFrom(input: InputStream): MovieFilterPreferences {
         try {
-            return TvShowFilterPreferences.parseFrom(input)
+            return MovieFilterPreferences.parseFrom(input)
         } catch (exception: InvalidProtocolBufferException) {
             throw CorruptionException("Cannot read proto.", exception)
         }
     }
 
-    override fun writeTo(t: TvShowFilterPreferences, output: OutputStream) = t.writeTo(output)
+    override fun writeTo(t: MovieFilterPreferences, output: OutputStream) = t.writeTo(output)
 }

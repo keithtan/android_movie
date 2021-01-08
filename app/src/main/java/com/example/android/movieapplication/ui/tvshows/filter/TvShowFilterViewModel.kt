@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.android.movieapplication.TvShowGenrePreferences
+import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.ui.movies.filter.FilterModel
 import com.example.android.movieapplication.ui.movies.filter.GenreModel
@@ -85,7 +85,7 @@ class TvShowFilterViewModel @ViewModelInject constructor(
             }
     }
 
-    private fun List<TvShowGenrePreferences>.toDomainModel(): List<GenreModel> {
+    private fun List<GenrePreferences>.toDomainModel(): List<GenreModel> {
         return this.map {
             GenreModel(
                 it.id,

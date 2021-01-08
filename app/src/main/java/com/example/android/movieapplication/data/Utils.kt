@@ -13,7 +13,7 @@ private fun Int.toEndDate(): String? {
     else null
 }
 
-fun List<MovieGenrePreferences>.joinMovieGenreIncludedIds(): String {
+fun List<GenrePreferences>.joinGenreIncludedIds(): String {
     return this.filter {
         it.included
     }.joinToString("%2C") {
@@ -21,7 +21,7 @@ fun List<MovieGenrePreferences>.joinMovieGenreIncludedIds(): String {
     }
 }
 
-fun List<MovieGenrePreferences>.joinMovieGenreExcludedIds(): String {
+fun List<GenrePreferences>.joinGenreExcludedIds(): String {
     return this.filter {
         it.excluded
     }.joinToString("%2C") {
@@ -34,25 +34,9 @@ fun MovieFilterPreferences.toNetworkModel(): FilterDto {
         startYear.toStartDate(),
         endYear.toEndDate(),
         voteAverage,
-        genrePrefList.joinMovieGenreIncludedIds(),
-        genrePrefList.joinMovieGenreExcludedIds()
+        genrePrefList.joinGenreIncludedIds(),
+        genrePrefList.joinGenreExcludedIds()
     )
-}
-
-fun List<TvShowGenrePreferences>.joinTvShowIncludedIds(): String {
-    return this.filter {
-        it.included
-    }.joinToString("%2C") {
-        it.id.toString()
-    }
-}
-
-fun List<TvShowGenrePreferences>.joinTvShowExcludedIds(): String {
-    return this.filter {
-        it.excluded
-    }.joinToString("%2C") {
-        it.id.toString()
-    }
 }
 
 fun TvShowFilterPreferences.toNetworkModel(): FilterDto {
@@ -60,7 +44,7 @@ fun TvShowFilterPreferences.toNetworkModel(): FilterDto {
         startYear.toStartDate(),
         endYear.toEndDate(),
         voteAverage,
-        genrePrefList.joinTvShowIncludedIds(),
-        genrePrefList.joinTvShowExcludedIds()
+        genrePrefList.joinGenreIncludedIds(),
+        genrePrefList.joinGenreExcludedIds()
     )
 }

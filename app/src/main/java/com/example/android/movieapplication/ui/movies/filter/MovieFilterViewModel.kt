@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.android.movieapplication.MovieGenrePreferences
+import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.util.ObservableViewModel
 import kotlinx.coroutines.flow.first
@@ -83,7 +83,7 @@ class MovieFilterViewModel @ViewModelInject constructor(
             }
     }
 
-    private fun List<MovieGenrePreferences>.toDomainModel(): List<GenreModel> {
+    private fun List<GenrePreferences>.toDomainModel(): List<GenreModel> {
         return this.map {
             GenreModel(
                 it.id,

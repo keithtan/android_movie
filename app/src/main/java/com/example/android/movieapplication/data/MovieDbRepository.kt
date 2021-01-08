@@ -6,17 +6,14 @@ import androidx.datastore.createDataStore
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.MovieFilterPreferences
-import com.example.android.movieapplication.MovieGenrePreferences
 import com.example.android.movieapplication.TvShowFilterPreferences
-import com.example.android.movieapplication.TvShowGenrePreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.TvShow
 import com.example.android.movieapplication.network.*
 import com.example.android.movieapplication.ui.movies.filter.GenreModel
-import com.example.android.movieapplication.ui.movies.filter.MovieFilterPreferencesSerializer
-import com.example.android.movieapplication.ui.tvshows.filter.TvShowFilterPreferencesSerializer
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import com.example.android.movieapplication.ui.tvshows.tvshowsection.TvShowSection
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -83,7 +80,7 @@ class MovieDbRepository @Inject constructor(
         }
 
     suspend fun updateMovieFilter(startYear: Int, endYear: Int, voteAverage: Float, genres: List<GenreModel>) {
-        val genrePrefs = genres.toMovieDataStoreModel()
+        val genrePrefs = genres.toDataStoreModel()
         movieFilterDataStore.updateData { preferences ->
             preferences.toBuilder()
                 .setStartYear(startYear)
@@ -154,7 +151,7 @@ class MovieDbRepository @Inject constructor(
         }
 
     suspend fun updateTvShowFilter(startYear: Int, endYear: Int, voteAverage: Float, genres: List<GenreModel>) {
-        val genrePrefs = genres.toTvShowDataStoreModel()
+        val genrePrefs = genres.toDataStoreModel()
         tvShowFilterDataStore.updateData { preferences ->
             preferences.toBuilder()
                 .setStartYear(startYear)
@@ -182,20 +179,9 @@ class MovieDbRepository @Inject constructor(
     }
 
 
-    private fun List<GenreModel>.toMovieDataStoreModel(): List<MovieGenrePreferences> {
+    private fun List<GenreModel>.toDataStoreModel(): List<GenrePreferences> {
         return this.map {
-            MovieGenrePreferences.newBuilder()
-                .setId(it.id)
-                .setName(it.name)
-                .setIncluded(it.included)
-                .setExcluded(it.excluded)
-                .build()
-        }
-    }
-
-    private fun List<GenreModel>.toTvShowDataStoreModel(): List<TvShowGenrePreferences> {
-        return this.map {
-            TvShowGenrePreferences.newBuilder()
+            GenrePreferences.newBuilder()
                 .setId(it.id)
                 .setName(it.name)
                 .setIncluded(it.included)
