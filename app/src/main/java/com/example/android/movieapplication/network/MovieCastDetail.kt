@@ -11,7 +11,9 @@ data class MovieCastDetail(
     val deathday: String?,
     @Json(name = "place_of_birth") val placeOfBirth: String,
     @Json(name = "profile_path") val profilePath: String,
-    @Json(name = "movie_credits") val movieCredits: MovieList
+    @Json(name = "movie_credits") val movieCredits: MovieList?,
+    @Json(name = "tv_credits") val tvShowCredits: MovieList?
+
 ) {
     data class MovieList(
         @Json(name = "cast") val movieList: List<Movie>

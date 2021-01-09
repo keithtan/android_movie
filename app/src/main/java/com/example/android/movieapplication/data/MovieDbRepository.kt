@@ -11,11 +11,9 @@ import com.example.android.movieapplication.MovieFilterPreferences
 import com.example.android.movieapplication.TvShowFilterPreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
-import com.example.android.movieapplication.db.TvShow
 import com.example.android.movieapplication.network.*
 import com.example.android.movieapplication.ui.movies.filter.GenreModel
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
-import com.example.android.movieapplication.ui.tvshows.tvshowsection.TvShowSection
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -48,7 +46,8 @@ class MovieDbRepository @Inject constructor(
                 service,
                 database,
                 section,
-                movieFilterFlow
+                movieFilterFlow,
+                tvShowFilterFlow
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
@@ -92,7 +91,7 @@ class MovieDbRepository @Inject constructor(
         }
     }
 
-    suspend fun getMovieNetworkGenres(): List<GenreModel> {
+    suspend fun getNetworkMovieGenres(): List<GenreModel> {
         return service.getMovieGenres().movieGenres.map {
             GenreModel(
                 it.id,
@@ -107,29 +106,12 @@ class MovieDbRepository @Inject constructor(
         emit(service.getMovieCastDetails(castId))
     }
 
-    fun getTvShowsStream(section: TvShowSection): Flow<PagingData<TvShow>> {
-        val pagingSourceFactory =  { database.tvShowsDao().tvShows(section.ordinal) }
-        return Pager(
-            config = PagingConfig(
-                pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = true,
-                initialLoadSize = 20
-            ),
-            remoteMediator = TvShowRemoteMediator(
-                service,
-                database,
-                section,
-                tvShowFilterFlow
-            ),
-            pagingSourceFactory = pagingSourceFactory
-        ).flow
-    }
 
-    suspend fun getSearchedTvShowsStream(query: String): TvShowDto {
+    suspend fun getSearchedTvShowsStream(query: String): MovieDto {
         return service.getSearchedTvShows(query)
     }
 
-    fun getTvShowDetailsStream(tvShowId: Long): Flow<TvShowDetail> = flow {
+    fun getTvShowDetailsStream(tvShowId: Long): Flow<MovieDetail> = flow {
         emit(service.getTvShowDetails(tvShowId))
     }
 
@@ -174,7 +156,7 @@ class MovieDbRepository @Inject constructor(
         }
     }
 
-    suspend fun getTvShowCastDetails(castId: Long): Flow<TvShowCastDetail> = flow {
+    suspend fun getTvShowCastDetails(castId: Long): Flow<MovieCastDetail> = flow {
         emit(service.getTvShowCastDetails(castId))
     }
 

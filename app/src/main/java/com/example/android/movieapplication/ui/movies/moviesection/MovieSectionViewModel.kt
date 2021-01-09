@@ -22,11 +22,16 @@ class MovieSectionViewModel @ViewModelInject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    val filter = repository.movieFilterFlow
+    private val movieFilter = repository.movieFilterFlow
+    private val tvShowFilter = repository.tvShowFilterFlow
 
-    fun searchMovies(movieSection: MovieSection): Flow<PagingData<Movie>> = filter.flatMapLatest {
-        repository.getMoviesStream(movieSection)
-            .cachedIn(viewModelScope)
+    fun searchMovies(movieSection: MovieSection): Flow<PagingData<Movie>> =
+        combine(movieFilter, tvShowFilter) { t, _ ->
+            t
+        }
+            .flatMapLatest {
+                repository.getMoviesStream(movieSection)
+                    .cachedIn(viewModelScope)
     }
 
     val emptyText = SpannableString("No movies found..\nTry a different filter")

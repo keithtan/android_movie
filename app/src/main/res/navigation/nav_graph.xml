@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/movieDetailFragment"
-        android:name="com.example.android.movieapplication.ui.moviedetail.MovieDetailFragment"
+        android:name="com.example.android.movieapplication.ui.movies.moviedetail.MovieDetailFragment"
         android:label=""
         tools:layout="@layout/fragment_movie_detail">
         <argument
@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_movieDetailFragment_to_movieCastDetailFragment"
             app:destination="@id/movieCastDetailFragment" />
+        <argument
+            android:name="section"
+            app:argType="com.example.android.movieapplication.ui.movies.moviesection.MovieSection" />
     </fragment>
     <fragment
         android:id="@+id/moviesViewPagerFragment"
@@ -35,10 +38,14 @@
     <fragment
         android:id="@+id/movieFilterFragment"
         android:name="com.example.android.movieapplication.ui.movies.filter.MovieFilterFragment"
-        android:label="MovieFilterFragment" />
+        android:label="MovieFilterFragment" >
+        <argument
+            android:name="section"
+            app:argType="com.example.android.movieapplication.ui.movies.moviesection.MovieSection" />
+    </fragment>
     <fragment
         android:id="@+id/movieCastDetailFragment"
-        android:name="com.example.android.movieapplication.ui.moviecastdetail.MovieCastDetailFragment"
+        android:name="com.example.android.movieapplication.ui.movies.moviecastdetail.MovieCastDetailFragment"
         android:label="MovieCastDetailFragment" >
         <argument
             android:name="castId"
@@ -46,6 +53,9 @@
         <action
             android:id="@+id/action_movieCastDetailFragment_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />
+        <argument
+            android:name="section"
+            app:argType="com.example.android.movieapplication.ui.movies.moviesection.MovieSection" />
     </fragment>
     <fragment
         android:id="@+id/movieSearchFragment"
@@ -55,6 +65,9 @@
         <action
             android:id="@+id/action_movieSearchFragment_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />
+        <argument
+            android:name="section"
+            app:argType="com.example.android.movieapplication.ui.movies.moviesection.MovieSection" />
     </fragment>
     <fragment
         android:id="@+id/tvViewPagerFragment"
@@ -62,47 +75,13 @@
         android:label="TV Shows"
         tools:layout="@layout/fragment_tv_view_pager" >
         <action
-            android:id="@+id/action_tvViewPagerFragment_to_tvShowDetailFragment"
-            app:destination="@id/tvShowDetailFragment" />
+            android:id="@+id/action_tvViewPagerFragment_to_movieSearchFragment"
+            app:destination="@id/movieSearchFragment" />
         <action
-            android:id="@+id/action_tvViewPagerFragment_to_tvShowSearchFragment"
-            app:destination="@id/tvShowSearchFragment" />
+            android:id="@+id/action_tvViewPagerFragment_to_movieFilterFragment"
+            app:destination="@id/movieFilterFragment" />
         <action
-            android:id="@+id/action_tvViewPagerFragment_to_tvShowFilterFragment"
-            app:destination="@id/tvShowFilterFragment" />
+            android:id="@+id/action_tvViewPagerFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/tvShowDetailFragment"
-        android:name="com.example.android.movieapplication.ui.tvshows.tvshowdetail.TvShowDetailFragment"
-        android:label="TvShowDetailFragment" >
-        <argument
-            android:name="tvShowId"
-            app:argType="long" />
-        <action
-            android:id="@+id/action_tvShowDetailFragment_to_tvShowCastDetailFragment"
-            app:destination="@id/tvShowCastDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/tvShowCastDetailFragment"
-        android:name="com.example.android.movieapplication.ui.tvshows.tvshowcastdetail.TvShowCastDetailFragment"
-        android:label="TvShowCastDetailFragment" >
-        <argument
-            android:name="castId"
-            app:argType="long" />
-        <action
-            android:id="@+id/action_tvShowCastDetailFragment_to_tvShowDetailFragment"
-            app:destination="@id/tvShowDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/tvShowSearchFragment"
-        android:name="com.example.android.movieapplication.ui.tvshows.search.TvShowSearchFragment"
-        android:label="TvShowSearchFragment" >
-        <action
-            android:id="@+id/action_tvShowSearchFragment_to_tvShowDetailFragment"
-            app:destination="@id/tvShowDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/tvShowFilterFragment"
-        android:name="com.example.android.movieapplication.ui.tvshows.filter.TvShowFilterFragment"
-        android:label="TvShowFilterFragment" />
 </navigation>

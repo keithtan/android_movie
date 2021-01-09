@@ -7,7 +7,6 @@ import okhttp3.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -57,13 +56,13 @@ interface MoviesApiService {
     suspend fun getLatestTvShows(
         @Query("page") page: Int,
         @Query("first_air_date.lte") firstAirDate: String = currentDate
-    ): TvShowDto
+    ): MovieDto
 
     @GET("discover/tv?sort_by=first_air_date.asc")
     suspend fun getComingSoonTvShows(
         @Query("page") page: Int,
         @Query("first_air_date.gte") firstAirDate: String = currentDate
-    ): TvShowDto
+    ): MovieDto
 
     @GET("discover/tv")
     suspend fun getCustomTvShows(
@@ -73,21 +72,21 @@ interface MoviesApiService {
         @Query("vote_average.gte") voteAverage: Float?,
         @Query("with_genres") genreWithFilter: String?,
         @Query("without_genres") genreWithoutFilter: String?
-    ): TvShowDto
+    ): MovieDto
 
     @GET("search/tv")
     suspend fun getSearchedTvShows(
         @Query("query") query: String
-    ): TvShowDto
+    ): MovieDto
 
     @GET("tv/{tvShowId}?append_to_response=credits,videos")
-    suspend fun getTvShowDetails(@Path("tvShowId") tvShowId: Long): TvShowDetail
+    suspend fun getTvShowDetails(@Path("tvShowId") tvShowId: Long): MovieDetail
 
     @GET("genre/tv/list")
     suspend fun getTvShowGenres(): TvShowGenresDto
 
     @GET("person/{personId}?append_to_response=tv_credits")
-    suspend fun getTvShowCastDetails(@Path("personId") personId: Long): TvShowCastDetail
+    suspend fun getTvShowCastDetails(@Path("personId") personId: Long): MovieCastDetail
 
 }
 
@@ -101,7 +100,6 @@ class MovieDbInterceptor @Inject constructor() : Interceptor {
             .addQueryParameter("region", "sg")
             .build()
         val urlStr = url.toString().replace("%252C", "%2C")
-        Timber.d(urlStr)
         return chain.proceed(
             chain.request()
                 .newBuilder()

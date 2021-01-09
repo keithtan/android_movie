@@ -1,11 +1,10 @@
-package com.example.android.movieapplication.ui.tvshows.tvshowcastdetail
+package com.example.android.movieapplication.ui.movies.moviecastdetail
 
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.movieapplication.db.Movie
-import com.example.android.movieapplication.db.TvShow
-import com.example.android.movieapplication.ui.tvshows.TvShowListAdapter
+import com.example.android.movieapplication.ui.movies.MovieListAdapter
 import java.util.*
 
 @BindingAdapter("birthday")
@@ -29,8 +28,8 @@ private fun findYearDiff(birth: String): Int {
     return year
 }
 
-@BindingAdapter("tvShows")
-fun RecyclerView.bindMovies(tvShows: List<TvShow>?) {
-    val adapter = adapter as TvShowListAdapter
-    adapter.submitList(tvShows)
+@BindingAdapter("movies")
+fun RecyclerView.bindMovies(movies: List<Movie>?) {
+    val adapter = adapter as MovieListAdapter
+    adapter.submitList(movies)
 }

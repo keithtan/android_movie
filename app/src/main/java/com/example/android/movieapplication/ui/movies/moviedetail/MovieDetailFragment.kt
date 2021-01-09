@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.ui.tvshows.tvshowdetail
+package com.example.android.movieapplication.ui.movies.moviedetail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,35 +15,36 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
-import com.example.android.movieapplication.databinding.FragmentTvShowDetailBinding
-import com.example.android.movieapplication.network.TvShowDetail
+import com.example.android.movieapplication.databinding.FragmentMovieDetailBinding
+import com.example.android.movieapplication.network.MovieDetail
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TvShowDetailFragment : Fragment() {
+class MovieDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentTvShowDetailBinding
-    private lateinit var castAdapter: TvShowCastAdapter
-    private lateinit var videoAdapter: TvShowVideoAdapter
+    private lateinit var binding: FragmentMovieDetailBinding
+    private lateinit var castAdapter: MovieCastAdapter
+    private lateinit var videoAdapter: MovieVideoAdapter
 
-    private val viewModel: TvShowDetailViewModel by viewModels()
-    private val args: TvShowDetailFragmentArgs by navArgs()
+    private val viewModel: MovieDetailViewModel by viewModels()
+    private val args: MovieDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-        viewModel.saveMovieId(args.tvShowId)
+        viewModel.saveMovieId(args.movieId)
+        viewModel.setSection(args.section)
 
-        binding = FragmentTvShowDetailBinding.inflate(layoutInflater, container, false)
+        binding = FragmentMovieDetailBinding.inflate(layoutInflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
         initCastAdapter()
         initVideoAdapter()
 
-        viewModel.tvShowDetail.observe(viewLifecycleOwner) {
+        viewModel.movieDetail.observe(viewLifecycleOwner) {
             handleNetworkError(it)
             (view?.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
@@ -55,7 +56,7 @@ class TvShowDetailFragment : Fragment() {
         return binding.root
     }
 
-    private fun handleNetworkError(it: TvShowDetail?) {
+    private fun handleNetworkError(it: MovieDetail?) {
         if (it == null) {
             binding.appbar.setExpanded(false, false)
             binding.collapseToolbar.scrimAnimationDuration = 0L
@@ -70,28 +71,25 @@ class TvShowDetailFragment : Fragment() {
     }
 
     private fun initVideoAdapter() {
-        videoAdapter =
-            TvShowVideoAdapter(
-                lifecycle
-            )
+        videoAdapter = MovieVideoAdapter(lifecycle)
         binding.movieVideos.adapter = videoAdapter
     }
 
     private fun initCastAdapter() {
         castAdapter =
-            TvShowCastAdapter(
-                TvShowCastAdapter.OnClickListener { castId: Long, imageView: ImageView ->
-                    val extras = FragmentNavigatorExtras(
-                        imageView to "$castId"
-                    )
+            MovieCastAdapter(MovieCastAdapter.OnClickListener { personId: Long, imageView: ImageView ->
+                val extras = FragmentNavigatorExtras(
+                    imageView to "$personId"
+                )
                 findNavController()
                     .navigate(
-                        TvShowDetailFragmentDirections.actionTvShowDetailFragmentToTvShowCastDetailFragment(
-                            castId
+                        MovieDetailFragmentDirections.actionMovieDetailFragmentToMovieCastDetailFragment(
+                            personId,
+                            args.section
                         ),
                         extras
                     )
-                })
+            })
         binding.movieCast.adapter = castAdapter
     }
 

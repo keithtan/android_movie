@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.example.android.movieapplication.MovieFilterPreferences
+import com.example.android.movieapplication.TvShowFilterPreferences
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.MovieRemoteKeys
@@ -22,8 +23,9 @@ private const val MOVIE_DB_STARTING_PAGE_INDEX = 1
 class MovieRemoteMediator(
     private val service: MoviesApiService,
     private val movieDatabase: MovieDatabase,
-    private val position: MovieSection,
-    private val movieFilterPreferencesFlow: Flow<MovieFilterPreferences>
+    private val section: MovieSection,
+    private val movieFilterPreferencesFlow: Flow<MovieFilterPreferences>,
+    private val tvShowFilterPreferencesFlow: Flow<TvShowFilterPreferences>
 ) : RemoteMediator<Int, Movie>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Movie>): MediatorResult {
@@ -50,7 +52,7 @@ class MovieRemoteMediator(
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
                     movieDatabase.movieRemoteKeysDao().clearRemoteKeys()
-                    movieDatabase.moviesDao().clearMovies(position.ordinal)
+                    movieDatabase.moviesDao().clearMovies(section.ordinal)
                 }
                 val prevKey = if (page == MOVIE_DB_STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1
@@ -59,7 +61,7 @@ class MovieRemoteMediator(
                 }
                 movieDatabase.movieRemoteKeysDao().insertAll(keys)
                 movies.map {
-                    it.position = position.ordinal
+                    it.position = section.position
                 }
                 movieDatabase.moviesDao().insertAll(movies)
             }
@@ -73,18 +75,29 @@ class MovieRemoteMediator(
     }
 
     private suspend fun getMoviesFromNetwork(page: Int): List<Movie> {
-        val filter = movieFilterPreferencesFlow.first().toNetworkModel()
+        val movieFilter = movieFilterPreferencesFlow.first().toNetworkModel()
+        val tvShowFilter = tvShowFilterPreferencesFlow.first().toNetworkModel()
         val apiResponse =
-            when (position) {
-                MovieSection.LATEST -> service.getLatestMovies(page)
-                MovieSection.COMINGSOON -> service.getComingSoonMovies(page)
-                MovieSection.CUSTOM -> service.getCustomMovies(
+            when (section) {
+                MovieSection.MOVIE_LATEST -> service.getLatestMovies(page)
+                MovieSection.MOVIE_COMING_SOON -> service.getComingSoonMovies(page)
+                MovieSection.MOVIE_CUSTOM -> service.getCustomMovies(
                     page,
-                    filter.startDate,
-                    filter.endDate,
-                    filter.voteAverage,
-                    filter.includedGenres,
-                    filter.excludedGenres
+                    movieFilter.startDate,
+                    movieFilter.endDate,
+                    movieFilter.voteAverage,
+                    movieFilter.includedGenres,
+                    movieFilter.excludedGenres
+                )
+                MovieSection.TV_SHOW_LATEST -> service.getLatestTvShows(page)
+                MovieSection.TV_SHOW_COMING_SOON -> service.getComingSoonTvShows(page)
+                MovieSection.TV_SHOW_CUSTOM -> service.getCustomTvShows(
+                    page,
+                    tvShowFilter.startDate,
+                    tvShowFilter.endDate,
+                    tvShowFilter.voteAverage,
+                    tvShowFilter.includedGenres,
+                    tvShowFilter.excludedGenres
                 )
             }
 

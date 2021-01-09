@@ -24,9 +24,9 @@ class MoviesViewPagerFragment : Fragment() {
         val binding = FragmentMoviesViewPagerBinding.inflate(layoutInflater, container, false)
 
         val fragmentList = arrayListOf(
-            MovieSectionFragment(MovieSection.LATEST),
-            MovieSectionFragment(MovieSection.COMINGSOON),
-            MovieSectionFragment(MovieSection.CUSTOM)
+            MovieSectionFragment(MovieSection.MOVIE_LATEST),
+            MovieSectionFragment(MovieSection.MOVIE_COMING_SOON),
+            MovieSectionFragment(MovieSection.MOVIE_CUSTOM)
         )
 
         val adapter = MoviesViewPagerAdapter(
@@ -94,14 +94,18 @@ class MoviesViewPagerFragment : Fragment() {
 
             findNavController()
                 .navigate(
-                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieFilterFragment()
+                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieFilterFragment(
+                        MovieSection.MOVIE_CUSTOM
+                    )
                 )
             true
         }
         R.id.action_search -> {
             findNavController()
                 .navigate(
-                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieSearchFragment()
+                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieSearchFragment(
+                        MovieSection.MOVIE_CUSTOM
+                    )
                 )
             true
         }

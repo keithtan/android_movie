@@ -9,8 +9,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentTvViewPagerBinding
-import com.example.android.movieapplication.ui.tvshows.tvshowsection.TvShowSection
-import com.example.android.movieapplication.ui.tvshows.tvshowsection.TvShowSectionFragment
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSectionFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
 
@@ -24,14 +24,14 @@ class TvViewPagerFragment : Fragment() {
         val binding = FragmentTvViewPagerBinding.inflate(layoutInflater, container, false)
 
         val fragmentList = arrayListOf(
-            TvShowSectionFragment(
-                TvShowSection.LATEST
+            MovieSectionFragment(
+                MovieSection.TV_SHOW_LATEST
             ),
-            TvShowSectionFragment(
-                TvShowSection.COMINGSOON
+            MovieSectionFragment(
+                MovieSection.TV_SHOW_COMING_SOON
             ),
-            TvShowSectionFragment(
-                TvShowSection.CUSTOM
+            MovieSectionFragment(
+                MovieSection.TV_SHOW_CUSTOM
             )
         )
 
@@ -100,14 +100,18 @@ class TvViewPagerFragment : Fragment() {
 
             findNavController()
                 .navigate(
-                    TvViewPagerFragmentDirections.actionTvViewPagerFragmentToTvShowFilterFragment()
+                    TvViewPagerFragmentDirections.actionTvViewPagerFragmentToMovieFilterFragment(
+                        MovieSection.TV_SHOW_CUSTOM
+                    )
                 )
             true
         }
         R.id.action_search -> {
             findNavController()
                 .navigate(
-                    TvViewPagerFragmentDirections.actionTvViewPagerFragmentToTvShowSearchFragment()
+                    TvViewPagerFragmentDirections.actionTvViewPagerFragmentToMovieSearchFragment(
+                        MovieSection.TV_SHOW_CUSTOM
+                    )
                 )
             true
         }

@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.ui.tvshows.tvshowcastdetail
+package com.example.android.movieapplication.ui.movies.moviecastdetail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,35 +15,36 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
 import com.example.android.movieapplication.R
-import com.example.android.movieapplication.databinding.FragmentTvShowCastDetailBinding
-import com.example.android.movieapplication.ui.tvshows.TvShowListAdapter
+import com.example.android.movieapplication.databinding.FragmentMovieCastDetailBinding
+import com.example.android.movieapplication.ui.movies.MovieListAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TvShowCastDetailFragment : Fragment() {
+class MovieCastDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentTvShowCastDetailBinding
-    private lateinit var adapter: TvShowListAdapter
+    private lateinit var binding: FragmentMovieCastDetailBinding
+    private lateinit var adapter: MovieListAdapter
 
-    private val viewModel: TvShowCastDetailViewModel by viewModels()
-    private val args: TvShowCastDetailFragmentArgs by navArgs()
+    private val viewModel: MovieCastDetailViewModel by viewModels()
+    private val args: MovieCastDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-        viewModel.saveCastId(args.castId)
+        viewModel.savePersonId(args.castId)
+        viewModel.setSection(args.section)
 
-        binding = FragmentTvShowCastDetailBinding.inflate(layoutInflater, container, false)
+        binding = FragmentMovieCastDetailBinding.inflate(layoutInflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
         initAdapter()
         initBiographyButton()
 
-        viewModel.tvShowCastDetail.observe(viewLifecycleOwner) {
+        viewModel.movieCastDetail.observe(viewLifecycleOwner) {
             (view?.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
             }
@@ -56,7 +57,7 @@ class TvShowCastDetailFragment : Fragment() {
         binding.button.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Biography")
-                .setMessage(viewModel.tvShowCastDetail.value?.biography)
+                .setMessage(viewModel.movieCastDetail.value?.biography)
                 .setPositiveButton("OK") { dialog, _ ->
                     dialog.dismiss()
                 }
@@ -66,15 +67,16 @@ class TvShowCastDetailFragment : Fragment() {
 
     private fun initAdapter() {
         adapter =
-            TvShowListAdapter(
-                TvShowListAdapter.OnClickListener { castId: Long, imageView: ImageView ->
+            MovieListAdapter(
+                MovieListAdapter.OnClickListener { movieId: Long, imageView: ImageView ->
                     val extras = FragmentNavigatorExtras(
-                        imageView to "$castId"
+                        imageView to "$movieId"
                     )
                     findNavController()
                         .navigate(
-                            TvShowCastDetailFragmentDirections.actionTvShowCastDetailFragmentToTvShowDetailFragment(
-                                castId
+                            MovieCastDetailFragmentDirections.actionMovieCastDetailFragmentToMovieDetailFragment(
+                                movieId,
+                                args.section
                             ),
                             extras
                         )

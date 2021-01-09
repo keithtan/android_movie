@@ -15,6 +15,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.movieapplication.databinding.FragmentMovieSectionBinding
 import com.example.android.movieapplication.ui.MoviesViewPagerFragmentDirections
+import com.example.android.movieapplication.ui.TvViewPagerFragmentDirections
 import com.example.android.movieapplication.ui.movies.MoviePagingAdapter
 import com.example.android.movieapplication.ui.movies.MoviesLoadStateAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -96,14 +97,45 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
                     val extras = FragmentNavigatorExtras(
                         imageView to "$movieId"
                     )
+
                     findNavController()
                         .navigate(
-                            MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
-                                movieId
-                            ),
+                            when (section) {
+                                MovieSection.MOVIE_LATEST,
+                                MovieSection.MOVIE_COMING_SOON,
+                                MovieSection.MOVIE_CUSTOM ->
+                                    MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
+                                        movieId,
+                                        section
+                                    )
+                                MovieSection.TV_SHOW_LATEST,
+                                MovieSection.TV_SHOW_COMING_SOON,
+                                MovieSection.TV_SHOW_CUSTOM ->
+                                    TvViewPagerFragmentDirections.actionTvViewPagerFragmentToMovieDetailFragment(
+                                        movieId,
+                                        section
+                                    )
+                            },
                             extras
                         )
 
+//                    if (section.position < 3)
+//                    findNavController()
+//                        .navigate(
+//                            MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
+//                                movieId,
+//                                section
+//                            ),
+//                            extras
+//                        )
+//                    else findNavController()
+//                            .navigate(
+//                                TvViewPagerFragmentDirections.actionTvViewPagerFragmentToMovieDetailFragment(
+//                                    movieId,
+//                                    section
+//                                ),
+//                                extras
+//                            )
                 })
     }
 

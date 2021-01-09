@@ -12,8 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentMovieFilterBinding
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
@@ -25,6 +27,7 @@ class MovieFilterFragment : Fragment() {
     private lateinit var binding: FragmentMovieFilterBinding
 
     private val viewModel: MovieFilterViewModel by viewModels()
+    private val args: MovieFilterFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,12 +39,18 @@ class MovieFilterFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        viewModel.setInitialFilter(args.section)
+
         initToolbar()
         setTooltip()
         setCheckChangedListener()
         setLongClickListener()
 
-        viewModel.filterModel.observe(viewLifecycleOwner) {
+        viewModel.movieFilterModel.observe(viewLifecycleOwner) {
+            disableAutoCompleteFilters()
+        }
+
+        viewModel.tvShowFilterModel.observe(viewLifecycleOwner) {
             disableAutoCompleteFilters()
         }
 
@@ -63,7 +72,10 @@ class MovieFilterFragment : Fragment() {
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_save -> {
-                        viewModel.saveFilter()
+                        if (args.section == MovieSection.MOVIE_CUSTOM)
+                            viewModel.saveMovieFilter()
+                        else if (args.section == MovieSection.TV_SHOW_CUSTOM)
+                            viewModel.saveTvShowFilter()
                         showFeedback()
                         true
                     }

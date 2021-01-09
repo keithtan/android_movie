@@ -8,6 +8,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.data.MovieDbRepository
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import com.example.android.movieapplication.util.ObservableViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -26,20 +27,29 @@ class MovieFilterViewModel @ViewModelInject constructor(
     val genres: LiveData<List<GenreModel>>
         get() = _genres
 
-    private val filterModelFlow = repository.movieFilterFlow.map {
+    private val movieFilterModelFlow = repository.movieFilterFlow.map {
         val genreList = it.genrePrefList.toDomainModel()
         FilterModel(it.startYear, it.endYear, it.voteAverage, genreList)
     }
-    val filterModel = filterModelFlow.asLiveData()
+    val movieFilterModel = movieFilterModelFlow.asLiveData()
 
-    init {
+    private val tvShowFilterModelFlow = repository.tvShowFilterFlow.map {
+        val genreList = it.genrePrefList.toDomainModel()
+        FilterModel(it.startYear, it.endYear, it.voteAverage, genreList)
+    }
+    val tvShowFilterModel = tvShowFilterModelFlow.asLiveData()
+
+    fun setInitialFilter(section: MovieSection) {
         viewModelScope.launch {
-            setInitialFilter()
+            if (section == MovieSection.MOVIE_CUSTOM)
+                setInitialMovieFilter()
+            else if (section == MovieSection.TV_SHOW_CUSTOM)
+                setInitialTvShowFilter()
         }
     }
 
-    private suspend fun setInitialFilter() {
-        filterModelFlow.first().let { filter ->
+    private suspend fun setInitialMovieFilter() {
+        movieFilterModelFlow.first().let { filter ->
             if (filter.startYear != DEFAULT_YEAR)
                 startYear.value = filter.startYear
             if (filter.endYear != DEFAULT_YEAR)
@@ -47,7 +57,7 @@ class MovieFilterViewModel @ViewModelInject constructor(
             if (filter.voteAverage != DEFAULT_VOTE)
                 voteAverage.value = filter.voteAverage
             if (filter.genrePrefList.isEmpty()) {
-                _genres.value = repository.getMovieNetworkGenres()
+                _genres.value = repository.getNetworkMovieGenres()
             }
             else {
                 _genres.value = filter.genrePrefList
@@ -55,9 +65,36 @@ class MovieFilterViewModel @ViewModelInject constructor(
         }
     }
 
-    fun saveFilter() {
+    private suspend fun setInitialTvShowFilter() {
+        tvShowFilterModelFlow.first().let { filter ->
+            if (filter.startYear != DEFAULT_YEAR)
+                startYear.value = filter.startYear
+            if (filter.endYear != DEFAULT_YEAR)
+                endYear.value = filter.endYear
+            if (filter.voteAverage != DEFAULT_VOTE)
+                voteAverage.value = filter.voteAverage
+            if (filter.genrePrefList.isEmpty()) {
+                _genres.value = repository.getNetworkTvShowGenres()
+            }
+            else {
+                _genres.value = filter.genrePrefList
+            }
+        }
+    }
+
+    fun saveMovieFilter() {
         viewModelScope.launch {
             repository.updateMovieFilter(
+                startYear.value!!,
+                endYear.value!!,
+                voteAverage.value!!,
+                _genres.value!!)
+        }
+    }
+
+    fun saveTvShowFilter() {
+        viewModelScope.launch {
+            repository.updateTvShowFilter(
                 startYear.value!!,
                 endYear.value!!,
                 voteAverage.value!!,

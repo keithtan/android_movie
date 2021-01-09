@@ -5,17 +5,13 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        Movie::class, MovieRemoteKeys::class,
-        TvShow::class, TvShowRemoteKeys::class],
-    version = 5,
+        Movie::class, MovieRemoteKeys::class],
+    version = 3,
     exportSchema = false
 )
 abstract class MovieDatabase : RoomDatabase() {
 
     abstract fun moviesDao(): MoviesDao
     abstract fun movieRemoteKeysDao(): MovieRemoteKeysDao
-
-    abstract fun tvShowsDao(): TvShowsDao
-    abstract fun tvShowRemoteKeysDao(): TvShowRemoteKeysDao
 
 }

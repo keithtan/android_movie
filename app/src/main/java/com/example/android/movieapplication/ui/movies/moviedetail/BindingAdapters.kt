@@ -1,4 +1,4 @@
-package com.example.android.movieapplication.ui.tvshows.tvshowdetail
+package com.example.android.movieapplication.ui.movies.moviedetail
 
 import android.graphics.Color
 import android.widget.ImageView
@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.android.movieapplication.R
-import com.example.android.movieapplication.network.TvShowDetail.TvShowCredits.TvShowCast
-import com.example.android.movieapplication.network.TvShowDetail.TvShowVideos.VideoDetail
-import com.example.android.movieapplication.network.TvShowGenreDto
+import com.example.android.movieapplication.network.MovieGenreDto
+import com.example.android.movieapplication.network.MovieDetail.MovieCredits.MovieCast
+import com.example.android.movieapplication.network.MovieDetail.MovieVideos.VideoDetail
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
@@ -61,8 +61,8 @@ fun RatingBar.bindRating(voteAverage: Double?) {
 }
 
 @BindingAdapter("genreDisplayChips")
-fun ChipGroup.bindChips(tvShowGenres: List<TvShowGenreDto>?) {
-    tvShowGenres?.map { genre ->
+fun ChipGroup.bindChips(movieGenres: List<MovieGenreDto>?) {
+    movieGenres?.map { genre ->
         val chip = Chip(context)
         chip.id = genre.id
         chip.text = genre.name
@@ -80,14 +80,14 @@ fun ChipGroup.bindChips(tvShowGenres: List<TvShowGenreDto>?) {
 }
 
 @BindingAdapter("cast")
-fun RecyclerView.bindCast(cast: List<TvShowCast>?) {
-    val adapter = adapter as TvShowCastAdapter
+fun RecyclerView.bindCast(cast: List<MovieCast>?) {
+    val adapter = adapter as MovieCastAdapter
     adapter.submitList(cast)
 }
 
 @BindingAdapter("videos")
 fun RecyclerView.bindVideos(videoList: List<VideoDetail>?) {
-    val adapter = adapter as TvShowVideoAdapter
+    val adapter = adapter as MovieVideoAdapter
     adapter.submitList(videoList)
 }
 

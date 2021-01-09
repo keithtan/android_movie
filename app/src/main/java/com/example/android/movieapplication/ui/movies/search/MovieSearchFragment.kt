@@ -11,9 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentMovieSearchBinding
 import com.example.android.movieapplication.ui.movies.MovieListAdapter
+import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,6 +25,7 @@ class MovieSearchFragment : Fragment() {
     private lateinit var adapter: MovieListAdapter
 
     private val viewModel: MovieSearchViewModel by viewModels()
+    private val args: MovieSearchFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +35,8 @@ class MovieSearchFragment : Fragment() {
         binding = FragmentMovieSearchBinding.inflate(layoutInflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        viewModel.setSection(args.section)
 
         initAdapter()
 
@@ -83,7 +88,8 @@ class MovieSearchFragment : Fragment() {
                     findNavController()
                         .navigate(
                             MovieSearchFragmentDirections.actionMovieSearchFragmentToMovieDetailFragment(
-                                movieId
+                                movieId,
+                                args.section
                             ),
                             extras
                         )

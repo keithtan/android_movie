@@ -7,14 +7,14 @@
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.example.android.movieapplication.ui.moviecastdetail.MovieCastDetailViewModel" />
+            type="com.example.android.movieapplication.ui.movies.moviecastdetail.MovieCastDetailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/people_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.moviecastdetail.MovieCastDetailFragment">
+        tools:context=".ui.movies.moviecastdetail.MovieCastDetailFragment">
 
         <ImageView
             android:id="@+id/imageView3"
@@ -136,7 +136,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
-            app:movies="@{viewModel.movieCastDetail.movieCredits.movieList}"
+            app:movies="@{viewModel.list}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
