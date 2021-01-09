@@ -7,7 +7,7 @@ import com.squareup.moshi.Json
 @Entity(tableName = "movies")
 data class Movie(
     @PrimaryKey(autoGenerate = true) val movieId: Long = 0,
-    var position: Int = 0,
+    var section: String = "",
     @Json(name = "release_date") val releaseDate: String?,
     @Json(name = "first_air_date") val firstAirDate: String?,
     val id: Long,

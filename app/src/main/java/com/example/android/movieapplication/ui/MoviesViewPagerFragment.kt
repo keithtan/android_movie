@@ -9,8 +9,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentMoviesViewPagerBinding
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSectionFragment
+import com.example.android.movieapplication.ui.movies.moviesection.TYPE
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
 
@@ -24,9 +25,9 @@ class MoviesViewPagerFragment : Fragment() {
         val binding = FragmentMoviesViewPagerBinding.inflate(layoutInflater, container, false)
 
         val fragmentList = arrayListOf(
-            MovieSectionFragment(MovieSection.MOVIE_LATEST),
-            MovieSectionFragment(MovieSection.MOVIE_COMING_SOON),
-            MovieSectionFragment(MovieSection.MOVIE_CUSTOM)
+            MovieSectionFragment(Section.MovieSection(TYPE.LATEST)),
+            MovieSectionFragment(Section.MovieSection(TYPE.COMING_SOON)),
+            MovieSectionFragment(Section.MovieSection(TYPE.CUSTOM))
         )
 
         val adapter = MoviesViewPagerAdapter(
@@ -95,7 +96,7 @@ class MoviesViewPagerFragment : Fragment() {
             findNavController()
                 .navigate(
                     MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieFilterFragment(
-                        MovieSection.MOVIE_CUSTOM
+                        Section.MovieSection(TYPE.CUSTOM)
                     )
                 )
             true
@@ -104,7 +105,7 @@ class MoviesViewPagerFragment : Fragment() {
             findNavController()
                 .navigate(
                     MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieSearchFragment(
-                        MovieSection.MOVIE_CUSTOM
+                        Section.MovieSection(TYPE.CUSTOM)
                     )
                 )
             true

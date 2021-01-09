@@ -19,12 +19,14 @@ import com.example.android.movieapplication.ui.TvViewPagerFragmentDirections
 import com.example.android.movieapplication.ui.movies.MoviePagingAdapter
 import com.example.android.movieapplication.ui.movies.MoviesLoadStateAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
-class MovieSectionFragment(private val section: MovieSection) : Fragment() {
+class MovieSectionFragment(private val section: Section) : Fragment() {
 
     private lateinit var binding: FragmentMovieSectionBinding
     private lateinit var adapter: MoviePagingAdapter
@@ -39,6 +41,8 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
         binding = FragmentMovieSectionBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
+//        println(MovieSection.Movie1)
+//        println(MovieSection.TvShow1)
 
         initRetryButton()
         initFloatingActionButton()
@@ -101,16 +105,12 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
                     findNavController()
                         .navigate(
                             when (section) {
-                                MovieSection.MOVIE_LATEST,
-                                MovieSection.MOVIE_COMING_SOON,
-                                MovieSection.MOVIE_CUSTOM ->
+                                is Section.MovieSection ->
                                     MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
                                         movieId,
                                         section
                                     )
-                                MovieSection.TV_SHOW_LATEST,
-                                MovieSection.TV_SHOW_COMING_SOON,
-                                MovieSection.TV_SHOW_CUSTOM ->
+                                is Section.TvShowSection ->
                                     TvViewPagerFragmentDirections.actionTvViewPagerFragmentToMovieDetailFragment(
                                         movieId,
                                         section
@@ -118,24 +118,6 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
                             },
                             extras
                         )
-
-//                    if (section.position < 3)
-//                    findNavController()
-//                        .navigate(
-//                            MoviesViewPagerFragmentDirections.actionViewPagerFragmentToMovieDetailFragment(
-//                                movieId,
-//                                section
-//                            ),
-//                            extras
-//                        )
-//                    else findNavController()
-//                            .navigate(
-//                                TvViewPagerFragmentDirections.actionTvViewPagerFragmentToMovieDetailFragment(
-//                                    movieId,
-//                                    section
-//                                ),
-//                                extras
-//                            )
                 })
     }
 
@@ -183,9 +165,11 @@ class MovieSectionFragment(private val section: MovieSection) : Fragment() {
     private fun search() {
         // Make sure we cancel the previous job before creating a new one
         searchJob?.cancel()
-        searchJob = lifecycleScope.launch {
-            viewModel.searchMovies(section).collectLatest {
-                adapter.submitData(it)
+        searchJob = viewLifecycleOwner.lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                viewModel.searchMovies(section).collectLatest {
+                    adapter.submitData(it)
+                }
             }
         }
     }

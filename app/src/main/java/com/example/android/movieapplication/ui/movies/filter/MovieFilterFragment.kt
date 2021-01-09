@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentMovieFilterBinding
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
@@ -66,16 +66,19 @@ class MovieFilterFragment : Fragment() {
             setNavigationOnClickListener {
                 findNavController().popBackStack()
             }
-            title = "Filter Movies"
+            title = when (args.section) {
+                is Section.MovieSection -> "Filter Movies"
+                is Section.TvShowSection -> "Filter TV Shows"
+            }
             inflateMenu(R.menu.filter_menu)
             navigationIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.black_200))
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_save -> {
-                        if (args.section == MovieSection.MOVIE_CUSTOM)
-                            viewModel.saveMovieFilter()
-                        else if (args.section == MovieSection.TV_SHOW_CUSTOM)
-                            viewModel.saveTvShowFilter()
+                        when (args.section) {
+                            is Section.MovieSection -> viewModel.saveMovieFilter()
+                            is Section.TvShowSection -> viewModel.saveTvShowFilter()
+                        }
                         showFeedback()
                         true
                     }

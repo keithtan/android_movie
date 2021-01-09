@@ -11,9 +11,12 @@ import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.db.MovieRemoteKeys
 import com.example.android.movieapplication.network.MoviesApiService
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
+import com.example.android.movieapplication.ui.movies.moviesection.TYPE
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -23,7 +26,7 @@ private const val MOVIE_DB_STARTING_PAGE_INDEX = 1
 class MovieRemoteMediator(
     private val service: MoviesApiService,
     private val movieDatabase: MovieDatabase,
-    private val section: MovieSection,
+    private val section: Section,
     private val movieFilterPreferencesFlow: Flow<MovieFilterPreferences>,
     private val tvShowFilterPreferencesFlow: Flow<TvShowFilterPreferences>
 ) : RemoteMediator<Int, Movie>() {
@@ -48,11 +51,15 @@ class MovieRemoteMediator(
         try {
             val movies = getMoviesFromNetwork(page)
             val endOfPaginationReached = movies.isEmpty()
+            val key = when (section) {
+                is Section.MovieSection -> "0" + section.type.name
+                is Section.TvShowSection -> "1" + section.type.name
+            }
             movieDatabase.withTransaction {
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
                     movieDatabase.movieRemoteKeysDao().clearRemoteKeys()
-                    movieDatabase.moviesDao().clearMovies(section.ordinal)
+                    movieDatabase.moviesDao().clearMovies(key)
                 }
                 val prevKey = if (page == MOVIE_DB_STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1
@@ -61,7 +68,7 @@ class MovieRemoteMediator(
                 }
                 movieDatabase.movieRemoteKeysDao().insertAll(keys)
                 movies.map {
-                    it.position = section.position
+                    it.section = key
                 }
                 movieDatabase.moviesDao().insertAll(movies)
             }
@@ -79,26 +86,36 @@ class MovieRemoteMediator(
         val tvShowFilter = tvShowFilterPreferencesFlow.first().toNetworkModel()
         val apiResponse =
             when (section) {
-                MovieSection.MOVIE_LATEST -> service.getLatestMovies(page)
-                MovieSection.MOVIE_COMING_SOON -> service.getComingSoonMovies(page)
-                MovieSection.MOVIE_CUSTOM -> service.getCustomMovies(
-                    page,
-                    movieFilter.startDate,
-                    movieFilter.endDate,
-                    movieFilter.voteAverage,
-                    movieFilter.includedGenres,
-                    movieFilter.excludedGenres
-                )
-                MovieSection.TV_SHOW_LATEST -> service.getLatestTvShows(page)
-                MovieSection.TV_SHOW_COMING_SOON -> service.getComingSoonTvShows(page)
-                MovieSection.TV_SHOW_CUSTOM -> service.getCustomTvShows(
-                    page,
-                    tvShowFilter.startDate,
-                    tvShowFilter.endDate,
-                    tvShowFilter.voteAverage,
-                    tvShowFilter.includedGenres,
-                    tvShowFilter.excludedGenres
-                )
+                is Section.MovieSection -> {
+                    when (section.type) {
+                        TYPE.LATEST -> service.getLatestMovies(page)
+                        TYPE.COMING_SOON -> service.getComingSoonMovies(page)
+                        TYPE.CUSTOM -> service.getCustomMovies(
+                            page,
+                            movieFilter.startDate,
+                            movieFilter.endDate,
+                            movieFilter.voteAverage,
+                            movieFilter.includedGenres,
+                            movieFilter.excludedGenres
+                        )
+                    }
+
+                }
+                is Section.TvShowSection -> {
+                    when (section.type) {
+                        TYPE.LATEST -> service.getLatestTvShows(page)
+                        TYPE.COMING_SOON -> service.getComingSoonTvShows(page)
+                        TYPE.CUSTOM -> service.getCustomTvShows(
+                            page,
+                            tvShowFilter.startDate,
+                            tvShowFilter.endDate,
+                            tvShowFilter.voteAverage,
+                            tvShowFilter.includedGenres,
+                            tvShowFilter.excludedGenres
+                        )
+                    }
+
+                }
             }
 
         return apiResponse.results

@@ -13,7 +13,7 @@ import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.db.MovieDatabase
 import com.example.android.movieapplication.network.*
 import com.example.android.movieapplication.ui.movies.filter.GenreModel
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -34,8 +34,12 @@ class MovieDbRepository @Inject constructor(
         private const val NETWORK_PAGE_SIZE = 20
     }
 
-    fun getMoviesStream(section: MovieSection): Flow<PagingData<Movie>> {
-        val pagingSourceFactory =  { database.moviesDao().movies(section.ordinal) }
+    fun getMoviesStream(section: Section): Flow<PagingData<Movie>> {
+        val key = when (section) {
+            is Section.MovieSection -> "0" + section.type.name
+            is Section.TvShowSection -> "1" + section.type.name
+        }
+        val pagingSourceFactory =  { database.moviesDao().movies(key) }
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,

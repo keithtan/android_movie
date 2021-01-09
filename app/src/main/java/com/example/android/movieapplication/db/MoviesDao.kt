@@ -12,9 +12,9 @@ interface MoviesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(repos: List<Movie>)
 
-    @Query("SELECT * FROM movies WHERE position = :position")
-    fun movies(position: Int): PagingSource<Int, Movie>
+    @Query("SELECT * FROM movies WHERE section = :section")
+    fun movies(section: String): PagingSource<Int, Movie>
 
-    @Query("DELETE FROM movies WHERE position = :position")
-    suspend fun clearMovies(position: Int)
+    @Query("DELETE FROM movies WHERE section = :section")
+    suspend fun clearMovies(section: String)
 }

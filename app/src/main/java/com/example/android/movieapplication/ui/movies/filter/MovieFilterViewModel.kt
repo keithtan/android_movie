@@ -8,7 +8,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.android.movieapplication.GenrePreferences
 import com.example.android.movieapplication.data.MovieDbRepository
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
 import com.example.android.movieapplication.util.ObservableViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -39,12 +39,12 @@ class MovieFilterViewModel @ViewModelInject constructor(
     }
     val tvShowFilterModel = tvShowFilterModelFlow.asLiveData()
 
-    fun setInitialFilter(section: MovieSection) {
+    fun setInitialFilter(section: Section) {
         viewModelScope.launch {
-            if (section == MovieSection.MOVIE_CUSTOM)
-                setInitialMovieFilter()
-            else if (section == MovieSection.TV_SHOW_CUSTOM)
-                setInitialTvShowFilter()
+            when (section) {
+                is Section.MovieSection -> setInitialMovieFilter()
+                is Section.TvShowSection -> setInitialTvShowFilter()
+            }
         }
     }
 

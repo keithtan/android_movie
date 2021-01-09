@@ -15,7 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentMovieSearchBinding
 import com.example.android.movieapplication.ui.movies.MovieListAdapter
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,7 +58,10 @@ class MovieSearchFragment : Fragment() {
 
     private fun initSearchView(menu: Menu) {
         (menu.getItem(0).actionView as SearchView).apply {
-            queryHint = "Search Movies"
+            queryHint = when (args.section) {
+                is Section.MovieSection -> "Search Movies"
+                is Section.TvShowSection -> "Search TV Shows"
+            }
             isIconified = false
             setQuery(viewModel.query.value, false)
             setOnCloseListener { true }

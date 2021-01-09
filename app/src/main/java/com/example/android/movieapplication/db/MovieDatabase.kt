@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [
         Movie::class, MovieRemoteKeys::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class MovieDatabase : RoomDatabase() {

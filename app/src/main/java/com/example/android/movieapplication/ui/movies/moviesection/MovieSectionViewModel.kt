@@ -7,14 +7,13 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.db.Movie
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
 class MovieSectionViewModel @ViewModelInject constructor(
@@ -25,12 +24,12 @@ class MovieSectionViewModel @ViewModelInject constructor(
     private val movieFilter = repository.movieFilterFlow
     private val tvShowFilter = repository.tvShowFilterFlow
 
-    fun searchMovies(movieSection: MovieSection): Flow<PagingData<Movie>> =
+    fun searchMovies(section: Section): Flow<PagingData<Movie>> =
         combine(movieFilter, tvShowFilter) { t, _ ->
             t
         }
             .flatMapLatest {
-                repository.getMoviesStream(movieSection)
+                repository.getMoviesStream(section)
                     .cachedIn(viewModelScope)
     }
 

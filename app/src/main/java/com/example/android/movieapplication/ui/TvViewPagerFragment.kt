@@ -9,8 +9,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.databinding.FragmentTvViewPagerBinding
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
 import com.example.android.movieapplication.ui.movies.moviesection.MovieSectionFragment
+import com.example.android.movieapplication.ui.movies.moviesection.TYPE
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
 
@@ -25,13 +26,13 @@ class TvViewPagerFragment : Fragment() {
 
         val fragmentList = arrayListOf(
             MovieSectionFragment(
-                MovieSection.TV_SHOW_LATEST
+                Section.TvShowSection(TYPE.LATEST)
             ),
             MovieSectionFragment(
-                MovieSection.TV_SHOW_COMING_SOON
+                Section.TvShowSection(TYPE.COMING_SOON)
             ),
             MovieSectionFragment(
-                MovieSection.TV_SHOW_CUSTOM
+                Section.TvShowSection(TYPE.CUSTOM)
             )
         )
 
@@ -101,7 +102,7 @@ class TvViewPagerFragment : Fragment() {
             findNavController()
                 .navigate(
                     TvViewPagerFragmentDirections.actionTvViewPagerFragmentToMovieFilterFragment(
-                        MovieSection.TV_SHOW_CUSTOM
+                        Section.TvShowSection(TYPE.CUSTOM)
                     )
                 )
             true
@@ -110,7 +111,7 @@ class TvViewPagerFragment : Fragment() {
             findNavController()
                 .navigate(
                     TvViewPagerFragmentDirections.actionTvViewPagerFragmentToMovieSearchFragment(
-                        MovieSection.TV_SHOW_CUSTOM
+                        Section.TvShowSection(TYPE.CUSTOM)
                     )
                 )
             true

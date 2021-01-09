@@ -12,7 +12,7 @@ import androidx.lifecycle.*
 import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.network.MovieDetail
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 
@@ -22,8 +22,8 @@ class MovieDetailViewModel @ViewModelInject constructor(
     app: Application
 ) : AndroidViewModel(app) {
 
-    private val _section = MutableLiveData<MovieSection>()
-    fun setSection(section: MovieSection) {
+    private val _section = MutableLiveData<Section>()
+    fun setSection(section: Section) {
         println("SECTION: " + section)
         _section.value = section
     }
@@ -36,9 +36,10 @@ class MovieDetailViewModel @ViewModelInject constructor(
         .switchMap {
             liveData {
                 when (_section.value) {
-                    MovieSection.MOVIE_LATEST,
-                    MovieSection.MOVIE_COMING_SOON,
-                    MovieSection.MOVIE_CUSTOM ->
+//                    MovieSection.MOVIE_LATEST,
+//                    MovieSection.MOVIE_COMING_SOON,
+//                    MovieSection.MOVIE_CUSTOM ->
+                    is Section.MovieSection ->
                         repository.getMovieDetailsStream(it!!)
                             .catch {
                                 emit(null)
@@ -46,9 +47,10 @@ class MovieDetailViewModel @ViewModelInject constructor(
                             .collect { value ->
                                 emit(value)
                             }
-                    MovieSection.TV_SHOW_LATEST,
-                    MovieSection.TV_SHOW_COMING_SOON,
-                    MovieSection.TV_SHOW_CUSTOM ->
+//                    MovieSection.TV_SHOW_LATEST,
+//                    MovieSection.TV_SHOW_COMING_SOON,
+//                    MovieSection.TV_SHOW_CUSTOM ->
+                    is Section.TvShowSection ->
                         repository.getTvShowDetailsStream(it!!)
                             .catch {e ->
                                 println(e)

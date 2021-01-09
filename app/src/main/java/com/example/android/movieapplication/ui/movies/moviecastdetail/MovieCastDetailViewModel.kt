@@ -13,7 +13,7 @@ import com.example.android.movieapplication.R
 import com.example.android.movieapplication.data.MovieDbRepository
 import com.example.android.movieapplication.db.Movie
 import com.example.android.movieapplication.network.MovieCastDetail
-import com.example.android.movieapplication.ui.movies.moviesection.MovieSection
+import com.example.android.movieapplication.ui.movies.moviesection.Section
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 
@@ -23,8 +23,8 @@ class MovieCastDetailViewModel @ViewModelInject constructor(
     app: Application
 ) : AndroidViewModel(app) {
 
-    private val _section = MutableLiveData<MovieSection>()
-    fun setSection(section: MovieSection) {
+    private val _section = MutableLiveData<Section>()
+    fun setSection(section: Section) {
         _section.value = section
     }
 
@@ -36,9 +36,10 @@ class MovieCastDetailViewModel @ViewModelInject constructor(
         .switchMap {
             liveData {
                 when (_section.value) {
-                    MovieSection.MOVIE_LATEST,
-                    MovieSection.MOVIE_COMING_SOON,
-                    MovieSection.MOVIE_CUSTOM ->
+//                    MovieSection.MOVIE_LATEST,
+//                    MovieSection.MOVIE_COMING_SOON,
+//                    MovieSection.MOVIE_CUSTOM ->
+                    is Section.MovieSection ->
                         repository.getMovieCastDetails(it!!)
                             .catch {
                                 emit(null)
@@ -46,9 +47,10 @@ class MovieCastDetailViewModel @ViewModelInject constructor(
                             .collect { value ->
                                 emit(value)
                             }
-                    MovieSection.TV_SHOW_LATEST,
-                    MovieSection.TV_SHOW_COMING_SOON,
-                    MovieSection.TV_SHOW_CUSTOM ->
+//                    MovieSection.TV_SHOW_LATEST,
+//                    MovieSection.TV_SHOW_COMING_SOON,
+//                    MovieSection.TV_SHOW_CUSTOM ->
+                    is Section.TvShowSection ->
                         repository.getTvShowCastDetails(it!!)
                             .catch {
                                 emit(null)
@@ -62,12 +64,16 @@ class MovieCastDetailViewModel @ViewModelInject constructor(
 
     val list: LiveData<List<Movie>> = movieCastDetail.map {
         when (_section.value) {
-            MovieSection.MOVIE_LATEST,
-            MovieSection.MOVIE_COMING_SOON,
-            MovieSection.MOVIE_CUSTOM -> it?.movieCredits?.movieList ?: emptyList()
-            MovieSection.TV_SHOW_LATEST,
-            MovieSection.TV_SHOW_COMING_SOON,
-            MovieSection.TV_SHOW_CUSTOM -> it?.tvShowCredits?.movieList ?: emptyList()
+//            MovieSection.MOVIE_LATEST,
+//            MovieSection.MOVIE_COMING_SOON,
+//            MovieSection.MOVIE_CUSTOM ->
+            is Section.MovieSection ->
+                it?.movieCredits?.movieList ?: emptyList()
+//            MovieSection.TV_SHOW_LATEST,
+//            MovieSection.TV_SHOW_COMING_SOON,
+//            MovieSection.TV_SHOW_CUSTOM ->
+            is Section.TvShowSection ->
+                it?.tvShowCredits?.movieList ?: emptyList()
             else -> emptyList()
         }
     }

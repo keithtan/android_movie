@@ -18,7 +18,7 @@
             app:destination="@id/movieCastDetailFragment" />
         <argument
             android:name="section"
-            app:argType="com.example.android.movieapplication.ui.movies.moviesection.MovieSection" />
+            app:argType="com.example.android.movieapplication.ui.movies.moviesection.Section" />
     </fragment>
     <fragment
         android:id="@+id/moviesViewPagerFragment"
@@ -41,7 +41,7 @@
         android:label="MovieFilterFragment" >
         <argument
             android:name="section"
-            app:argType="com.example.android.movieapplication.ui.movies.moviesection.MovieSection" />
+            app:argType="com.example.android.movieapplication.ui.movies.moviesection.Section" />
     </fragment>
     <fragment
         android:id="@+id/movieCastDetailFragment"
@@ -55,7 +55,7 @@
             app:destination="@id/movieDetailFragment" />
         <argument
             android:name="section"
-            app:argType="com.example.android.movieapplication.ui.movies.moviesection.MovieSection" />
+            app:argType="com.example.android.movieapplication.ui.movies.moviesection.Section" />
     </fragment>
     <fragment
         android:id="@+id/movieSearchFragment"
@@ -67,7 +67,7 @@
             app:destination="@id/movieDetailFragment" />
         <argument
             android:name="section"
-            app:argType="com.example.android.movieapplication.ui.movies.moviesection.MovieSection" />
+            app:argType="com.example.android.movieapplication.ui.movies.moviesection.Section" />
     </fragment>
     <fragment
         android:id="@+id/tvViewPagerFragment"
